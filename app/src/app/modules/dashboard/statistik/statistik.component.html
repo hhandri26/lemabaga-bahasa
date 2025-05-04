@@ -1,0 +1,115 @@
+<div class="flex flex-col flex-auto w-full">
+    <div class="flex flex-wrap w-full max-w-screen-xl mx-auto p-4 md:p-4">
+        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-3 gap-8 w-full">
+            <div *ngIf="chartJabatan" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden p-6">
+                <div class="flex items-start justify-between">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Jenjang Jabatan</div>
+                </div>
+                <div class="flex flex-col flex-auto mt-6 h-44">
+                    <apx-chart class="flex-auto w-full h-full" [series]="chartJabatan.series" [chart]="chartJabatan.chart" [colors]="chartJabatan.colors" [dataLabels]="chartJabatan.dataLabels" [plotOptions]="chartJabatan.plotOptions" [xaxis]="chartJabatan.xaxis">
+                    </apx-chart>
+                </div>
+                <div class="mt-8">
+                    <div class="-my-3 divide-y">
+                        <ng-container *ngFor="let dataset of chartJabatan.series[0].data; let i = index">
+                            <div class="grid grid-cols-2 py-2">
+                                <div class="flex items-center">
+                                    <div class="flex-0 w-2 h-2 rounded-full" [style.backgroundColor]="chartJabatan.colors[i]">
+                                    </div>
+                                    <div class="ml-3 truncate">{{chartJabatan.xaxis.categories[i]}}</div>
+                                </div>
+                                <div class="text-right text-secondary">{{dataset}}</div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="chartBahasa" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden p-6">
+                <div class="flex items-start justify-between">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Riwayat Kemahiran Berbahasa</div>
+                </div>
+                <div class="flex flex-col flex-auto mt-6 h-44">
+                    <apx-chart class="flex-auto w-full h-full" [series]="chartBahasa.series" [chart]="chartBahasa.chart" [colors]="chartBahasa.colors" [dataLabels]="chartBahasa.dataLabels" [plotOptions]="chartBahasa.plotOptions" [xaxis]="chartBahasa.xaxis">
+                    </apx-chart>
+                </div>
+                <div class="mt-8">
+                    <div class="-my-3 divide-y">
+                        <ng-container *ngFor="let dataset of chartBahasa.series[0].data; let i = index">
+                            <div class="grid grid-cols-2 py-2">
+                                <div class="flex items-center">
+                                    <div class="flex-0 w-2 h-2 rounded-full" [style.backgroundColor]="chartBahasa.colors[i]">
+                                    </div>
+                                    <div class="ml-3 truncate">{{chartBahasa.xaxis.categories[i]}}</div>
+                                </div>
+                                <div class="text-right text-secondary">{{dataset}}</div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="chartGolongan" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden p-6">
+                <div class="flex items-start justify-between">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Pangkat / Golongan</div>
+                </div>
+                <div class="flex flex-col flex-auto mt-6 h-44">
+                    <apx-chart class="flex-auto w-full h-full" [series]="chartGolongan.series" [chart]="chartGolongan.chart" [colors]="chartGolongan.colors" [dataLabels]="chartGolongan.dataLabels" [plotOptions]="chartGolongan.plotOptions" [xaxis]="chartGolongan.xaxis">
+                    </apx-chart>
+                </div>
+                <div class="mt-8">
+                    <div class="-my-3 divide-y">
+                        <ng-container *ngFor="let dataset of chartGolongan.series[0].data; let i = index">
+                            <div class="grid grid-cols-2 py-2">
+                                <div class="flex items-center">
+                                    <div class="flex-0 w-2 h-2 rounded-full" [style.backgroundColor]="chartGolongan.colors[i]">
+                                    </div>
+                                    <div class="ml-3 truncate">{{chartGolongan.xaxis.categories[i]}}</div>
+                                </div>
+                                <div class="text-right text-secondary">{{dataset}}</div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-8 w-full mt-6 md:mt-8">
+            <div *ngIf="chartProvinsi" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden p-6">
+                <div class="flex items-start justify-between">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate">Sebaran Berdasarkan Provinsi</div>
+                </div>
+                <div class="flex flex-col flex-auto mt-6 h-full">
+                    <apx-chart class="flex-auto w-full h-full" [series]="chartProvinsi.series" [chart]="chartProvinsi.chart"
+                        [colors]="chartProvinsi.colors" [dataLabels]="chartProvinsi.dataLabels"
+                        [plotOptions]="chartProvinsi.plotOptions" [xaxis]="chartProvinsi.xaxis" [legend]="chartProvinsi.legend">
+                    </apx-chart>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-1 lg:grid-cols-1 gap-8 w-full mt-6 md:mt-8">
+            <div *ngIf="errorMessage" class="text-red-600">{{ errorMessage }}</div>
+            <div *ngIf="pnsList.length > 0" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden p-6">
+                <div class="flex items-start justify-between">
+                    <div class="text-lg font-medium tracking-tight leading-6 truncate">
+                        Daftar Penerjemah yang bertugas di Provinsi {{ pnsList[0].provinsiNama }}
+                    </div>
+                </div>
+                <div class="mt-6">
+                    <ul class="-my-3 divide-y">
+                        <li *ngFor="let pns of pnsList; trackBy: trackByFn" class="grid grid-cols-2 py-2">
+                            <div class="flex items-center">
+                                <div class="flex-0 w-2 h-2 rounded-full"></div>
+                                <div class="ml-3 truncate">{{ pns.nama }}</div>
+                            </div>
+                            <div class="text-right text-secondary">{{ pns.nip }} (Provinsi: {{ pns.provinsiNama }})</div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div *ngIf="pnsList.length === 0" class="flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden p-6">
+                <p>Tidak ada data tersedia.</p>
+            </div>
+        </div>
+
+    </div>
+</div>

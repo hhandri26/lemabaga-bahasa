@@ -1,0 +1,59 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Set Bobot Penilaian</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <div class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto">
+        <div class="flex flex-col w-full">
+            <div class="grid grid-cols-2 gap-4">
+                <div>Disiplin</div>
+                <div class="text-right">{{slider1.value}}</div>
+                <div class="col-span-2">
+                    <mat-slider class="w-full" [max]="100" [min]="0"
+                        [(ngModel)]="valueDiscipline" #slider1>
+                    </mat-slider>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>Keaktifan</div>
+                <div class="text-right">{{slider2.value}}</div>
+                <div class="col-span-2">
+                    <mat-slider class="w-full" [max]="100" [min]="0"
+                        [(ngModel)]="valueActiveness" #slider2>
+                    </mat-slider>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>Pre-test</div>
+                <div class="text-right">{{slider3.value}}</div>
+                <div class="col-span-2">
+                    <mat-slider class="w-full" [max]="100" [min]="0"
+                        [(ngModel)]="valuePreTest" #slider3>
+                    </mat-slider>
+                </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4">
+                <div>Post-test</div>
+                <div class="text-right">{{slider4.value}}</div>
+                <div class="col-span-2">
+                    <mat-slider class="w-full" [max]="100" [min]="0"
+                        [(ngModel)]="valuePostTest" #slider4>
+                    </mat-slider>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+    <button mat-button (click)="matDialogRef.close()">
+        Tutup
+    </button>
+    <button mat-flat-button [color]="'primary'" class="ml-4" (click)="create()">
+        Submit
+    </button>
+</div>

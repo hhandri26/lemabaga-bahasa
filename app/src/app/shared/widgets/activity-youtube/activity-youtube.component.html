@@ -1,0 +1,14 @@
+<ng-container *ngIf="!item.track?.isChecked">
+    <div class="flex justify-center">
+        <div>
+            <button class="sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'" (click)="checked()">
+                <span class="ml-2 mr-1">Lihat Materi</span>
+            </button>
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="item.track?.isChecked">
+    <iframe width="100%" height="400" [src]="item.link" frameborder="0"
+        allowfullscreen></iframe>
+</ng-container>

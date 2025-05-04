@@ -1,0 +1,176 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Cetak KAK</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="mt-4">
+                <ng-container *ngIf="kak; else error">
+                    <table width="100%" class="table table-bordered" style="font-size: .9rem !important;">
+                        <tr>
+                            <td colspan="4">NIP</td>
+                            <td colspan="4">{{kak?.pns.nip}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">NAMA</td>
+                            <td colspan="4">{{kak?.pns.nama}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">JABATAN</td>
+                            <td colspan="4">{{kak?.pns.jabatanNama}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">JABATAN ANGKA KREDIT MINIMAL</td>
+                            <td colspan="4">{{kak?.pns.jabatanAkMinimal}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">INSTANSI</td>
+                            <td colspan="4">{{kak?.pns.instansiNama}}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="4">UNIT KERJA</td>
+                            <td colspan="4">{{kak?.pns.unitKerjaNama}}</td>
+                        </tr>
+                        <tr class="tbl_header">
+                            <td align="center" colspan="4">Hasil penilaian kinerja</td>
+                            <td align="center" rowspan="2">Angka kredit minimal yang harus didapat setiap tahun</td>
+                            <td align="center" rowspan="2">Angka kredit yang didapat (kolom 4 x kolom 5)</td>
+                            <td align="center" rowspan="2">Angka kredit sebelumnya / kelebihan</td>
+                            <td align="center" rowspan="2">Angka kredit saat ini (kolom 6 + kolom 7)</td>
+                        </tr>
+                        <tr class="tbl_header">
+                            <td align="center">TAHUN</td>
+                            <td align="center">ANGKA</td>
+                            <td align="center">SEBUTAN</td>
+                            <td align="center">PERSENTASE</td>
+                        </tr>
+                        <tr class="numbering">
+                            <td align="center">1</td>
+                            <td align="center">2</td>
+                            <td align="center">3</td>
+                            <td align="center">4</td>
+                            <td align="center">5</td>
+                            <td align="center">6</td>
+                            <td align="center">7</td>
+                            <td align="center">8</td>
+                        </tr>
+                        <tr>
+                            <td align="center">{{kak?.tahun_lalu}}</td>
+                            <td align="center">-</td>
+                            <td align="center">-</td>
+                            <td align="center">-</td>
+                            <td align="center">-</td>
+                            <td align="center">-</td>
+                            <td align="center">-</td>
+                            <td align="center">{{kak?.angkaKreditTahunLalu}}</td>
+                        </tr>
+                        <tr>
+                            <td align="center">{{kak?.tahun}}</td>
+                            <td align="center">{{kak?.nilaiSkp}}</td>
+                            <td align="center">{{kak?.klasifikasiNilaiSkp.sebutan}}</td>
+                            <td align="center">{{kak?.klasifikasiNilaiSkp.persentase}}%</td>
+                            <td align="center">
+                                <ng-container *ngIf="kak?.angkaKreditMinimal === null; else angkaKreditMinimal">
+                                    -
+                                </ng-container>
+                                <ng-template #angkaKreditMinimal>
+                                    {{kak.angkaKreditMinimal}}
+                                </ng-template>
+                            </td>
+                            <td align="center">{{kak?.angkaKreditDidapat}}</td>
+                            <td align="center">{{kak?.angkaKreditTahunLalu}}</td>
+                            <td align="center">{{kak?.angkaKreditHasilKonversi}}</td>
+                        </tr>
+                        <tr>
+                            <td align="left" colspan="8">{{kak?.narasi}}</td>
+                        </tr>
+                    </table>
+                    <hr />
+                    <div class="flex items-center">
+                        <div class="flex flex-col w-full">
+                            <div class="mt-4 flex items-center">
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Tanggal PAK</mat-label>
+                                    <input matInput [matDatepicker]="_tglSk" [formControlName]="'tglPak'" (focus)="_tglSk.open()" [max]="this._helperService.maxDate()">
+                                    <mat-datepicker-toggle matSuffix [for]="_tglSk">
+                                    </mat-datepicker-toggle>
+                                    <mat-datepicker #_tglSk></mat-datepicker>
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Blanko</mat-label>
+                                    <mat-select [formControlName]="'isBlanko'">
+                                        <mat-option *ngFor="let item of blankoList" [value]="item.id">{{item.name}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                                    <mat-label>KARPEG</mat-label>
+                                    <input matInput [formControlName]="'noKarpeg'" [spellcheck]="false">
+                                </mat-form-field>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>NIP</mat-label>
+                                    <input matInput [formControlName]="'spesimenNip'" [spellcheck]="false">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Nama</mat-label>
+                                    <input matInput [formControlName]="'spesimenNama'" [spellcheck]="false">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                                    <mat-label>Jabatan</mat-label>
+                                    <input matInput [formControlName]="'spesimenJabatan'" [spellcheck]="false">
+                                </mat-form-field>
+                            </div>
+                            <div class="mt-4 flex items-center">
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Tembusan 1</mat-label>
+                                    <input matInput [formControlName]="'tembusan1'" [spellcheck]="false">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Tembusan 2</mat-label>
+                                    <input matInput [formControlName]="'tembusan2'" [spellcheck]="false">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Tembusan 3</mat-label>
+                                    <input matInput [formControlName]="'tembusan3'" [spellcheck]="false">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Tembusan 4</mat-label>
+                                    <input matInput [formControlName]="'tembusan4'" [spellcheck]="false">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Tembusan 5</mat-label>
+                                    <input matInput [formControlName]="'tembusan5'" [spellcheck]="false">
+                                </mat-form-field>
+                                <mat-form-field class="fuse-mat-no-subscript min-w-60 pr-8">
+                                    <mat-label>Tembusan 6</mat-label>
+                                    <input matInput [formControlName]="'tembusan6'" [spellcheck]="false">
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-template #error>
+                    <fuse-alert [type]="'error'">
+                        <span fuseAlertTitle>{{kakError}}</span>
+                    </fuse-alert>
+                </ng-template>
+            </div>
+        </div>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Tutup
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="submit()">
+            Cetak
+        </button>
+    </div>
+</div>

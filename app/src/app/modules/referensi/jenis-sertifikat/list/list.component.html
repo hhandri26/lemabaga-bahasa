@@ -1,0 +1,59 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+
+    <mat-drawer-container class="flex-auto h-full bg-card dark:bg-transparent" (backdropClick)="onBackdropClicked()">
+
+        <mat-drawer class="w-full md:w-160 dark:bg-gray-900" [mode]="drawerMode" [opened]="false" [position]="'end'" [disableClose]="true" #matDrawer>
+            <router-outlet></router-outlet>
+        </mat-drawer>
+
+        <mat-drawer-content class="flex flex-col">
+            <div class="flex-auto">
+                <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+                    <div>
+                        <div class="text-2xl font-extrabold tracking-tight leading-none">
+                            Referensi&nbsp;Jenis&nbsp;Sertifikat&nbsp;&nbsp;</div>
+                        <div class="ml-0.5 font-medium text-secondary">
+                            <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;data jenis sertifikat
+                            </ng-container>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center">
+                        <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            <span class="ml-2 mr-1">Jenis Sertifikat</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="relative">
+                    <ng-container *ngIf="items$ | async as _items">
+                        <ng-container *ngIf="_items.length; else noItems">
+                            <ng-container *ngFor="let item of _items; let i = index; trackBy: trackByFn">
+                                <a class="z-20 flex items-center px-2 py-2 md:px-8 cursor-pointer border-b" [ngClass]="{
+                                    'hover:bg-gray-100 dark:hover:bg-hover': !selected || selected.id !== item.id,
+                                    'bg-primary-50 dark:bg-hover': selected && selected.id === item.id}" [routerLink]="['./', item.id]">
+                                    <div class="min-w-0 ml-4">
+                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                            <div class="font-medium tracking-tight leading-6 truncate text-md">
+                                                {{item.nama}}</div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+
+                    <ng-template #noItems>
+                        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">Tidak ada data referensi!
+                        </div>
+                    </ng-template>
+                </div>
+                <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)" [pageSize]="pagination.perPage"
+                    [pageSizeOptions]="[10, 50, 100]" [pageSize]="10" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+            </div>
+
+        </mat-drawer-content>
+    </mat-drawer-container>
+
+</div>

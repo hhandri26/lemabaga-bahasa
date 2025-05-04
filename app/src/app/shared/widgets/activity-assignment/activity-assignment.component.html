@@ -1,0 +1,85 @@
+<div class="flex flex-col w-full">
+    <ng-container *ngIf="role === 'ROLE_USER'">
+        <div class="text-lg font-medium">Berikut tugas yang harus Anda kerjakan :</div>
+        <div class="flex flex-wrap my-2">
+            <ng-container *ngFor="let attachment of item.documents.courseDocumentPayloads">
+                <app-widget-lampiran-dokumen class="m-2" [item]="attachment"></app-widget-lampiran-dokumen>
+            </ng-container>
+        </div>
+        <fuse-alert [type]="'warn'" *ngIf="!item?.track?.isChecked">
+            <div class="text-md font-medium">Harap unggah tugas Anda sebelum <strong>{{item.dueDateCompletion | date: 'd/M/yyyy h:mm'}} WIB</strong></div>
+        </fuse-alert>
+        <fuse-alert [type]="'info'" *ngIf="item?.track?.isChecked">
+            <div class="text-md">Tugas Anda telah disubmit pada
+                <strong>{{item.track?.feedbacks[0]?.feedbackDate | date: 'd/M/yyyy h:mm'}} WIB</strong></div>
+        </fuse-alert>
+        <button class="fuse-mat-button-large mt-5" [disabled]="item?.track?.isChecked" (click)="toggleSubmit(item)" mat-flat-button [color]="'primary'">
+            <mat-icon [svgIcon]="'heroicons_outline:check'"></mat-icon>
+            <span class="ml-2 mr-1">Kirim Tugas</span>
+        </button>
+    </ng-container>
+    <ng-container *ngIf="role !== 'ROLE_USER'">
+        <div class="text-lg font-medium">Tugas yang harus dikerjakan oleh peserta:</div>
+        <div class="flex flex-wrap my-2">
+            <ng-container *ngFor="let attachment of item.documents.courseDocumentPayloads">
+                <app-widget-lampiran-dokumen class="m-2" [item]="attachment"></app-widget-lampiran-dokumen>
+            </ng-container>
+        </div>
+        <div class="text-lg font-medium">Tugas yang sudah dikumpulkan:</div>
+        <div class="flex flex-wrap">
+            <table mat-table class="mt-0" [dataSource]="dataSource">
+                <ng-container matColumnDef="nama">
+                    <th mat-header-cell *matHeaderCellDef class="p-2">Nama</th>
+                    <td mat-cell *matCellDef="let row" class="p-2">
+                        <div class="min-w-0 space-y-1">
+                            <div class="font-semibold leading-5">
+                                {{row.participantNama | titlecase}}
+                            </div>
+                            <div class="text-sm leading-5">
+                                {{row.participantNip}}
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="keterangan">
+                    <th mat-header-cell *matHeaderCellDef class="p-2">Keterangan</th>
+                    <td mat-cell *matCellDef="let row" class="p-2">
+                        <div class="min-w-0 space-y-1">
+                            <div class="leading-5 truncate">
+                                {{row.keterangan ?? '-'}}
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="feedback">
+                    <th mat-header-cell *matHeaderCellDef class="p-2">Lampiran Tugas</th>
+                    <td mat-cell *matCellDef="let row" class="p-2">
+                        <div class="min-w-0 space-y-1">
+                            <div class="leading-5 truncate">
+                                <ng-container *ngIf="row.feedbackDate">
+                                    <button mat-icon-button (click)="download(row.documentId)">
+                                        <mat-icon [svgIcon]="'heroicons_outline:document-download'"></mat-icon>
+                                    </button>
+                                    <div class="hidden md:block truncate text-sm">
+                                        <i>{{row.feedbackDate | date:'d/M/yyyy h:mm'}}</i>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="!row.feedbackDate">
+                                    -
+                                </ng-container>
+                            </div>
+                        </div>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+            <mat-paginator [pageSize]="pageSize" [length]="length" [pageSizeOptions]="[10, 25, 100]"
+                showFirstLastButtons></mat-paginator>
+        </div>
+    </ng-container>
+
+</div>

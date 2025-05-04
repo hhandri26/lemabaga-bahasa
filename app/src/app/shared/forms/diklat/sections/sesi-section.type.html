@@ -1,0 +1,22 @@
+<div class="kt-section">
+    <div class="kt-section__content">
+        <ng-container *ngFor="let field of field.fieldGroup; let i = index;">
+            <formly-field class="col-11" [field]="field"></formly-field>
+            <div class="col-1 text-right">
+                <button mat-button (click)="remove(i)" color="warn">
+					<mat-icon>close</mat-icon>
+				</button>
+            </div>
+        </ng-container>
+        <div class="row kt-mt-10">
+            <div class="col-12 text-right">
+                <button class="kt-mr-10" mat-raised-button (click)="add()">
+					+ SESI
+				</button>
+                <ng-container *ngIf="field.fieldGroup.length">
+                    <button [disabled]="!formControl.valid" mat-raised-button color="warn" (click)="submit()">SIMPAN SESI</button>
+                </ng-container>
+            </div>
+        </div>
+    </div>
+</div>

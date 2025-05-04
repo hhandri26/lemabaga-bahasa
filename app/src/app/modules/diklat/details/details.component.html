@@ -1,0 +1,263 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+
+    <mat-drawer-container class="flex-auto h-full">
+
+        <!-- Drawer -->
+        <mat-drawer class="w-90 dark:bg-gray-900" [autoFocus]="false" [mode]="drawerMode" [opened]="drawerOpened"
+            #matDrawer>
+            <div class="flex flex-col items-start p-6 border-b">
+                <!-- Back to courses -->
+                <a class="inline-flex items-center leading-6 text-primary hover:underline mb-3"
+                    [routerLink]="['/diklat']">
+                    <span class="inline-flex items-center">
+                        <mat-icon class="icon-size-5 text-current"
+                            [svgIcon]="'heroicons_solid:arrow-sm-left'"></mat-icon>
+                        <span class="ml-1.5 font-medium leading-5">Kembali ke daftar kursus</span>
+                    </span>
+                </a>
+                <!-- Course category -->
+                <ng-container *ngIf="(course.courseGroup.jenisKegiatan | fuseFindByKey:'id':categories) as category">
+                    <div class="py-0.5 px-3 rounded-full text-sm font-semibold"
+                        [ngClass]="{'text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500': category.id === 'DIKLAT_TEKNIS',
+                                    'text-green-800 bg-green-100 dark:text-green-50 dark:bg-green-500': category.id === 'DIKLAT_FUNGSIONAL',
+                                    'text-pink-800 bg-pink-100 dark:text-pink-50 dark:bg-pink-500': category.id === 'cloud',
+                                    'text-amber-800 bg-amber-100 dark:text-amber-50 dark:bg-amber-500': category.id === 'firebase'}">
+                        {{category.name}}
+                    </div>
+                </ng-container>
+                <!-- Course title & description -->
+                <div class="mt-3 text-2xl font-semibold">{{course?.title}}</div>
+                <div class="text-secondary">{{course?.summary}}</div>
+                <!-- Course time -->
+                <div class="mt-6 flex items-center leading-5 text-md text-secondary">
+                    <mat-icon class="icon-size-5 text-hint" [svgIcon]="'heroicons_solid:calendar'"></mat-icon>
+                    <div class="ml-1.5">{{course.startDate}} - {{course.endDate}}</div>
+                </div>
+                <ng-container *ngIf="role === 'ROLE_USER'">
+                    <div class="mt-6 flex items-center w-full">
+                        <button class="sm:mt-0" mat-flat-button [disabled]="!course.preTestId" [color]="'primary'" (click)="doTest('PRETEST')">
+                            <span class="ml-2 mr-1">Pre Test</span>
+                        </button>
+                        <button class="sm:mt-0 ml-auto" mat-flat-button [disabled]="!course.postTestId" [color]="'primary'" (click)="doTest('POSTTEST')">
+                            <span class="ml-2 mr-1">Post Test</span>
+                        </button>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="role !== 'ROLE_USER'">
+                    <div class="mt-6 flex items-center w-full">
+                        <button class="sm:mt-0" mat-flat-button [color]="'primary'" (click)="doTest('PRETEST')">
+                            <span class="ml-2 mr-1">Hasil Pre Test</span>
+                        </button>
+                        <button class="sm:mt-0 ml-auto" mat-flat-button [color]="'primary'" (click)="doTest('POSTTEST')">
+                            <span class="ml-2 mr-1">Hasil Post Test</span>
+                        </button>
+                    </div>
+                </ng-container>
+            </div>
+
+            <div class="flex flex-col items-start bg-gray-100">
+                <ng-container *ngFor="let section of course.sections">
+                    <mat-accordion class="w-full my-2">
+                        <mat-expansion-panel>
+                            <mat-expansion-panel-header class="text-md right-aligned-header">
+                                <mat-panel-title>
+                                    {{section.title}}
+                                </mat-panel-title>
+                                <mat-panel-description class="text-right">
+                                    {{section.startDate | date:'ccc, d MMM yyyy'}}
+                                </mat-panel-description>
+                            </mat-expansion-panel-header>
+                            <p class="text-sm mb-2">{{section.summary}}</p>
+                            <ng-container *ngFor="let activity of section.courseActivityGroupDetails">
+                                <div class="grid grid-cols-12 py-2 gap-x-1 border-b">
+                                    <div class="col-span-9">
+                                        <div class="flex flex-row space-x-2 text-md leading-5">
+                                            <!-- <div class="hidden sm:block">&bull;</div> -->
+                                            <div class="text-md font-semibold">{{activity.title}}</div>
+                                        </div>
+                                        <div class="text-sm text-secondary">{{activity.startTime}}-{{activity.endTime}}
+                                            WIB</div>
+                                    </div>
+                                    <div class="col-span-3 font-medium text-md text-secondary justify-end">
+                                        <div class="flex flex-row space-x-2 text-md leading-5">
+                                            <div class="text-md font-semibold">{{activity.pelaksana}}</div>
+                                        </div>
+                                        <div class="text-sm text-secondary">{{activity.jp}} JP</div>
+                                    </div>
+                                    <ng-container *ngFor="let activityDetail of activity.activityDetails">
+                                        <div class="col-span-11 ml-2 text-md mt-3">
+                                            <div class="flex">
+                                                <mat-icon *ngIf="activityDetail.track?.isChecked"
+                                                    class="icon-size-5 text-green-600"
+                                                    [svgIcon]="'heroicons_solid:check-circle'"></mat-icon>
+                                                <mat-icon *ngIf="!activityDetail.track?.isChecked"
+                                                    class="icon-size-5 text-grey-600"
+                                                    [svgIcon]="'heroicons_solid:minus-circle'"></mat-icon>
+                                                <div class="ml-2 leading-5">{{activityDetail.activityType | diklatType}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-span-1">
+                                            <button class="ml-auto" (click)="setDetail(activity, activityDetail)"
+                                                mat-icon-button><mat-icon class="icon-size-5"
+                                                    [svgIcon]="'heroicons_solid:arrow-narrow-right'"></mat-icon></button>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </mat-expansion-panel>
+                    </mat-accordion>
+                </ng-container>
+            </div>
+            <!-- Steps -->
+            <div class="py-2 px-8">
+                <ol>
+                    <ng-container *ngFor="let step of course?.steps; let last = last; trackBy: trackByFn">
+                        <li class="relative group py-6" [class.current-step]="step.order === currentStep">
+                            <ng-container *ngIf="!last">
+                                <div class="absolute top-6 left-4 w-0.5 h-full -ml-px" [ngClass]="{'bg-primary': step.order < currentStep,
+                                                'bg-gray-300 dark:bg-gray-600': step.order >= currentStep}"></div>
+                            </ng-container>
+                            <div class="relative flex items-start cursor-pointer" (click)="goToStep(step.order)">
+                                <div class="flex flex-0 items-center justify-center w-8 h-8 rounded-full ring-2 ring-inset bg-card dark:bg-default"
+                                    [ngClass]="{'bg-primary dark:bg-primary text-on-primary group-hover:bg-primary-800 ring-transparent': step.order < currentStep,
+                                                'ring-primary': step.order === currentStep,
+                                                'ring-gray-300 dark:ring-gray-600 group-hover:ring-gray-400': step.order > currentStep}">
+                                    <!-- Check icon, show if the step is completed -->
+                                    <ng-container *ngIf="step.order < currentStep">
+                                        <mat-icon class="icon-size-5 text-current"
+                                            [svgIcon]="'heroicons_solid:check'"></mat-icon>
+                                    </ng-container>
+                                    <!-- Step order, show if the step is the current step -->
+                                    <ng-container *ngIf="step.order === currentStep">
+                                        <div class="text-md font-semibold text-primary dark:text-primary-500">
+                                            {{step.order + 1}}</div>
+                                    </ng-container>
+                                    <!-- Step order, show if the step is not completed -->
+                                    <ng-container *ngIf="step.order > currentStep">
+                                        <div class="text-md font-semibold text-hint group-hover:text-secondary">
+                                            {{step.order + 1}}</div>
+                                    </ng-container>
+                                </div>
+                                <div class="ml-4">
+                                    <div class="font-medium leading-4">{{step.title}}</div>
+                                    <div class="mt-1.5 text-md leading-4 text-secondary">{{step.subtitle}}</div>
+                                </div>
+                            </div>
+                        </li>
+                    </ng-container>
+                </ol>
+            </div>
+
+        </mat-drawer>
+
+        <!-- Drawer content -->
+        <mat-drawer-content class="flex flex-col overflow-hidden">
+
+            <!-- Header -->
+            <div
+                class="lg:hidden flex flex-0 items-center py-2 pl-4 pr-6 sm:py-4 md:pl-6 md:pr-8 border-b lg:border-b-0 bg-card dark:bg-transparent">
+                <!-- Title & Actions -->
+                <a mat-icon-button [routerLink]="['..']">
+                    <mat-icon [svgIcon]="'heroicons_outline:arrow-sm-left'"></mat-icon>
+                </a>
+                <h2 class="ml-2.5 text-md sm:text-xl font-medium tracking-tight truncate">
+                    {{course?.title}}
+                </h2>
+            </div>
+            <mat-progress-bar class="hidden lg:block flex-0 h-0.5 w-full"
+                [value]="100 * (currentStep + 1) / course?.totalSteps"></mat-progress-bar>
+
+            <!-- Main -->
+            <div class="flex-auto overflow-y-auto" cdkScrollable>
+                <!-- Steps -->
+                <mat-tab-group class="fuse-mat-no-header" [animationDuration]="'200'" #courseSteps>
+                    <mat-tab>
+                        <ng-template matTabContent>
+                            <div
+                                class="prose ring-primary prose-sm max-w-3xl mx-auto sm:my-2 lg:mt-4 p-6 sm:p-10 sm:py-12 rounded-2xl shadow overflow-hidden bg-card">
+                                <ng-container *ngIf="activity;else noActivity">
+                                    <div class="text-md text-secondary">{{activity.title}}</div>
+                                    <h2 class="text-2xl sm:text-3xl mt-1">{{activityDetail.activityType | diklatType}}</h2>
+                                    <div class="w-8 h-1 my-2 rounded bg-accent mb-10"></div>
+                                    <ng-container *ngIf="activityDetail.activityType === 'MATERIAL'">
+                                        <ng-container *ngIf="activityDetail.materiType === 'YOUTUBE'">
+                                            <app-widget-activity-youtube
+                                                [item]="activityDetail"></app-widget-activity-youtube>
+                                        </ng-container>
+                                        <ng-container *ngIf="activityDetail.materiType === 'VIDEO'">
+                                            <app-widget-activity-video
+                                                [item]="activityDetail"></app-widget-activity-video>
+                                        </ng-container>
+                                        <ng-container *ngIf="activityDetail.materiType === 'DOCUMENT'">
+                                            <app-widget-activity-document
+                                                [item]="activityDetail"></app-widget-activity-document>
+                                        </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="activityDetail.activityType === 'URL'">
+                                        <app-widget-activity-url [item]="activityDetail"></app-widget-activity-url>
+                                    </ng-container>
+                                    <ng-container *ngIf="activityDetail.activityType === 'ATTENDANCE'">
+                                        <app-widget-activity-attendance
+                                            [item]="activityDetail"></app-widget-activity-attendance>
+                                    </ng-container>
+                                    <ng-container *ngIf="activityDetail.activityType === 'ASSIGNMENT'">
+                                        <app-widget-activity-assignment
+                                            [item]="activityDetail"></app-widget-activity-assignment>
+                                    </ng-container>
+                                    <ng-container *ngIf="activityDetail.activityType === 'POSTTEST' || activityDetail.activityType === 'PRETEST'">
+                                        <app-widget-quiz-question [item]="activityDetail"></app-widget-quiz-question>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-template #noActivity>
+                                    <img [src]="getFilePath(course.coverImagePath)" class="h-full">
+                                </ng-template>
+                            </div>
+                        </ng-template>
+                    </mat-tab>
+                </mat-tab-group>
+
+                <!-- Navigation - Desktop -->
+                <!-- <div class="z-10 sticky hidden lg:flex bottom-4 p-4">
+                    <div class="flex items-center justify-center mx-auto p-2 rounded-full shadow-lg bg-primary">
+                        <button class="flex-0" mat-flat-button [color]="'primary'" (click)="goToPreviousStep()">
+                            <mat-icon class="mr-2" [svgIcon]="'heroicons_outline:arrow-narrow-left'"></mat-icon>
+                            <span class="mr-1">Prev</span>
+                        </button>
+                        <div class="flex items-center justify-center mx-2.5 font-medium leading-5 text-on-primary">
+                            <span>{{currentStep + 1}}</span>
+                            <span class="mx-0.5 text-hint">/</span>
+                            <span>{{course?.totalSteps}}</span>
+                        </div>
+                        <button class="flex-0" mat-flat-button [color]="'primary'" (click)="goToNextStep()">
+                            <span class="ml-1">Next</span>
+                            <mat-icon class="ml-2" [svgIcon]="'heroicons_outline:arrow-narrow-right'"></mat-icon>
+                        </button>
+                    </div>
+                </div> -->
+            </div>
+
+            <!-- Progress & Navigation - Mobile -->
+            <div class="lg:hidden flex items-center p-4 border-t bg-card">
+                <button mat-icon-button (click)="matDrawer.toggle()">
+                    <mat-icon [svgIcon]="'heroicons_outline:view-list'"></mat-icon>
+                </button>
+                <!-- <div class="flex items-center justify-center ml-1 lg:ml-2 font-medium leading-5">
+                    <span>{{currentStep + 1}}</span>
+                    <span class="mx-0.5 text-hint">/</span>
+                    <span>{{course?.totalSteps}}</span>
+                </div>
+                <mat-progress-bar class="flex-auto ml-6 rounded-full"
+                    [value]="100 * (currentStep + 1) / course?.totalSteps"></mat-progress-bar>
+                <button class="ml-4" mat-icon-button (click)="goToPreviousStep()">
+                    <mat-icon [svgIcon]="'heroicons_outline:arrow-narrow-left'"></mat-icon>
+                </button>
+                <button class="ml-0.5" mat-icon-button (click)="goToNextStep()">
+                    <mat-icon [svgIcon]="'heroicons_outline:arrow-narrow-right'"></mat-icon>
+                </button> -->
+            </div>
+
+        </mat-drawer-content>
+
+    </mat-drawer-container>
+
+</div>

@@ -1,0 +1,58 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Tambah Bobot Penilaian Kinerja</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Klasifikasi Bobot</mat-label>
+                    <mat-select [formControlName]="'sebutan'">
+                        <mat-option *ngFor="let item of klasifikasiBototList" [value]="item.id">{{item.name | replace:'_':' ' | uppercase}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Nilai Minimum</mat-label>
+                    <input matInput [formControlName]="'fromNilai'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Nilai Maksimum</mat-label>
+                    <input matInput [formControlName]="'toNilai'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Persentase Bobot</mat-label>
+                    <input matInput [formControlName]="'persentase'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <div class="mt-4">
+                    <mat-label class="fuse-mat-no-subscript w-full">Status</mat-label><br />
+                    <mat-slide-toggle class="pt-5" formControlName="status">
+                        Aktif
+                    </mat-slide-toggle>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="create()">
+            Submit
+        </button>
+    </div>
+</div>

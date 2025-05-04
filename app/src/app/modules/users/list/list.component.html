@@ -1,0 +1,140 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-hidden">
+
+    <mat-drawer-container class="flex-auto h-full bg-card dark:bg-transparent" (backdropClick)="onBackdropClicked()">
+
+        <mat-drawer class="w-full md:w-160 dark:bg-gray-900" [mode]="drawerMode" [opened]="false" [position]="'end'" [disableClose]="true" #matDrawer>
+            <router-outlet></router-outlet>
+        </mat-drawer>
+
+        <mat-drawer-content class="flex flex-col">
+            <div class="flex-auto">
+                <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+                    <div>
+                        <div class="text-2xl font-extrabold tracking-tight leading-none">Daftar&nbsp;Pengguna&nbsp;&nbsp;</div>
+                        <div class="ml-0.5 font-medium text-secondary">
+                            <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;Pengguna</ng-container>
+                        </div>
+                    </div>
+
+                    <form [formGroup]="form">
+                        <div class="flex items-center mt-4">
+                            <div class="flex-auto">
+                                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-full">
+                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                    <input matInput [formControlName]="'byName'" [autocomplete]="'off'" [placeholder]="'Cari nama'" />
+                                </mat-form-field>
+                            </div>
+                    
+                            <div class="flex-auto ml-4">
+                                <mat-form-field class="fuse-mat-no-subscript">
+                                    <mat-select [formControlName]="'byRole'">
+                                        <mat-option value="">-- Semua Role --</mat-option>
+                                        <ng-container *ngFor="let item of roles$ | async; trackBy: trackByFn">
+                                            <mat-option [value]="item">
+                                                {{
+                                                item === 'ROLE_USER' ? 'Role Penerjemah' :
+                                                item === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' ? 'Role Kepegawaian' :
+                                                item === 'ROLE_PEMBINA_JFP' ? 'Role Pengajar' :
+                                                item === 'ROLE_INSTRUKTUR' ? 'Role Assesor' :
+                                                (item | replace: '_' : ' ' | titlecase)
+                                                }}
+                                            </mat-option>
+                                        </ng-container>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                    
+                            <div class="flex-auto ml-4">
+                                <mat-form-field class="fuse-mat-no-subscript">
+                                    <mat-select [formControlName]="'byKategori'">
+                                        <mat-option value="">-- Semua Kategori --</mat-option>
+                                        <mat-option value="aktif">Aktif</mat-option>
+                                        <mat-option value="non_Aktif">Non Aktif</mat-option>
+                                        <mat-option value="inaktif">Inaktif</mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </div>
+                    
+                        <div class="flex items-center mt-4">
+                            <div class="flex-auto">
+                                <button class="bg-card hover:bg-hover" mat-stroked-button (click)="toggleSearch()">
+                                    <span class="ml-2 mr-1">Cari</span>
+                                </button>
+                            </div>
+
+                            <div class="flex-auto">
+                                <button class="bg-card hover:bg-hover" mat-button [color]="'primary'" (click)="exportToExcel()">
+                                    Export to Excel
+                                </button>
+                            </div>
+                    
+                            <div class="flex-auto">
+                                <button mat-flat-button [color]="'primary'" (click)="create()">
+                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                    <span class="ml-2 mr-1">Pengguna</span>
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="relative">
+                    <ng-container *ngIf="items$ | async as users">
+                        <ng-container *ngIf="users.length; else noItems">
+                            <ng-container *ngFor="let item of users; let i = index; trackBy: trackByFn">
+                                <ng-container *ngIf="i === 0 || item.nama.charAt(0) !== users[i - 1].nama.charAt(0)">
+                                    <div class="z-10 sticky top-0 -mt-px px-6 py-1 md:px-8 border-t border-b font-medium uppercase text-secondary bg-gray-50 dark:bg-gray-900">
+                                        {{item.nama.charAt(0)}}
+                                    </div>
+                                </ng-container>
+                                <a class="z-20 flex items-center px-2 py-2 md:px-8 cursor-pointer border-b" [ngClass]="{
+                                    'hover:bg-gray-100 dark:hover:bg-hover': !selected || selected.id !== item.id,
+                                    'bg-primary-50 dark:bg-hover': selected && selected.id === item.id}" [routerLink]="['./', item.id]">
+                                    <div class="min-w-0 ml-4">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">{{item.nama | titlecase}}</div>
+                                        <div class="text-secondary font-medium">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div
+                                                    class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                                                    <span class="leading-relaxed whitespace-nowrap text-sm">
+                                                        {{
+                                                        item.roles[0] === 'ROLE_USER' ? 'Role Penerjemah' :
+                                                        item.roles[0] === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' ? 'Role Kepegawaian' :
+                                                        item.roles[0] === 'ROLE_PEMBINA_JFP' ? 'Role Pengajar' :
+                                                        item.roles[0] === 'ROLE_INSTRUKTUR' ? 'Role Asesor' :
+                                                        (item.roles[0] | replace: '_' : ' ' | titlecase)
+                                                        }}
+
+                                                    </span>
+                                                </div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide" [ngClass]="{
+                                                'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.kategori === 'non_Aktif',
+                                                'bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-50': item.kategori === 'inaktif',
+                                                'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.kategori === 'aktif'
+                                            }">
+                                                <span class="text-sm font-medium whitespace-nowrap">{{ item.kategori| titlecase |replace: '_' : ' ' }}</span>
+                                            </span>
+
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+
+                    <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)" [pageSize]="pagination.perPage"
+                        [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+
+                    <ng-template #noItems>
+                        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">Tidak ada Pengguna!
+                        </div>
+                    </ng-template>
+                </div>
+            </div>
+        </mat-drawer-content>
+    </mat-drawer-container>
+
+</div>

@@ -1,0 +1,113 @@
+<div class="flex flex-col flex-auto w-full">
+
+    <div class="flex flex-wrap w-full max-w-screen-xl mx-auto">
+        <div class="grid grid-cols-1 xl:grid-cols-2 gap-8 w-full">
+            <!-- <div class="xl:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
+                <div class="p-6">
+                    <div class="flex flex-col sm:flex-row items-start justify-between">
+                        <div class="text-lg font-medium tracking-tight leading-6 truncate mt-2">Usulan Terkini</div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto mx-6">
+                    <ng-container *ngIf="(kegiatanItems$ | async) as items">
+                        <ng-container *ngIf="items.length > 0; else noData">
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div
+                                    class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-3 items-center gap-4 py-3 px-6 md:px-4 border-b">
+                                    <div class="flex flex-auto items-center min-w-0">
+                                        <div class="flex flex-col min-w-0">
+                                            <div
+                                                class="text-md font-semibold tracking-tight leading-7 md:leading-snug truncate ng-star-inserted">
+                                                {{ item.pns.nama | titlecase }}
+                                            </div>
+                                            <div class="flex items-center">
+                                                <div class="leading-6 truncate text-secondary text-sm">
+                                                    {{item.pns.golonganNama}} - {{item.pns.jabatanNama}}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">
+                                            {{item.namaJenisUsul | titlecase}}</div>
+                                        <span
+                                            class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide"
+                                            [ngClass]="{
+                                                'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.actionName === 'DELETE',
+                                                'bg-blue-200 text-blue-800 dark:bg-blue-600 dark:text-blue-50': item.actionName === 'EDIT',
+                                                'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.actionName === 'ADD'}">
+                                            <span
+                                                class="leading-relaxed whitespace-nowrap">{{_action(item.actionName)}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="hidden md:block truncate text-right text-sm">
+                                        <i>{{item.createdDate | date:'d/M/yyyy h:mm'}}</i>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <div class="items-center px-5 py-5 text-center">
+                                <button mat-stroked-button [routerLink]="['/verifikasi-riwayat']">Lihat semua usulan
+                                    perubahan data</button>
+                            </div>
+                        </ng-container>
+                    </ng-container>
+                    <ng-template #noData>
+                        <fuse-alert [type]="'info'" class="mb-5">
+                            <span fuseAlertTitle>Tidak ada usulan perubahan data!</span>
+                        </fuse-alert>
+                    </ng-template>
+                </div>
+            </div> -->
+            <div class="xl:col-span-1 flex flex-col flex-auto bg-card shadow rounded-2xl overflow-hidden">
+                <div class="p-6">
+                    <div class="flex flex-col sm:flex-row items-start justify-between">
+                        <div class="text-lg font-medium tracking-tight leading-6 truncate mt-2">Konfirmasi Undangan Kegiatan</div>
+                    </div>
+                </div>
+                <div class="overflow-x-auto mx-6">
+                    <ng-container *ngIf="user?.pnsId && (kegiatanItems$ | async) as items">
+                        <!-- <ng-container *ngIf="items.length > 0; else noData"> -->
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div
+                                    class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-1 items-center gap-4 py-3 px-6 md:px-4 border-b">
+                                    <div class="flex flex-auto items-center min-w-0">
+                                        <div class="flex flex-col min-w-0">
+                                            <div class="font-medium tracking-tight leading-6 truncate text-md">
+                                                {{item.kegiatanSimpleDto?.judul | titlecase}}</div>
+                                            <div class="text-secondary font-medium">
+                                                <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                    <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.kegiatanSimpleDto.jenisKegiatan
+                                                            | replace:'_':' ' | titlecase}}</span>
+                                                    </div>
+                                                    <div class="hidden sm:block">&bull;</div>
+                                                    <div class="flex items-center">
+                                                        <mat-icon class="icon-size-5 text-hint" svgIcon="heroicons_outline:location-marker"></mat-icon>
+                                                        {{item.kegiatanSimpleDto.lokasi | titlecase}}
+                                                    </div>
+                                                    <div class="hidden sm:block">&bull;</div>
+                                                    <div class="flex items-center">
+                                                        <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                                        <button (click)="toggleOpenFile(item.kegiatanSimpleDto.fileUndanganUrl)" class="ml-1.5 text-sm underline">Undangan</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </ng-container>
+                            <div class="items-center px-5 py-5 text-center">
+                                <button mat-stroked-button [routerLink]="['/undangan']">Lihat semua undangan kegiatan</button>
+                            </div>
+                        </ng-container>
+                    <!-- </ng-container> -->
+                    <ng-template #noData>
+                        <fuse-alert [type]="'info'" class="mb-5">
+                            <span fuseAlertTitle>Tidak ada undangan kegiatan!</span>
+                        </fuse-alert>
+                    </ng-template>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,78 @@
+<div class="flex flex-col flex-auto min-w-0">
+    <!-- Main -->
+    <div class="flex-auto p-6 pt-2">
+        <div class="mb-6 sm:mb-12">
+            <mat-button-toggle-group class="flex flex-wrap -m-2" [(ngModel)]="selectedFilter" (change)="onFilterChange($event)">
+                <ng-container *ngFor="let filter of filters">
+                    <mat-button-toggle class="m-2" [value]="filter">
+                        <span class="text-secondary">{{filter | titlecase}}</span>
+                        <!-- <span class="ml-1.5 font-medium text-secondary">({{numberOfCards[filter]}})</span> -->
+                    </mat-button-toggle>
+                </ng-container>
+            </mat-button-toggle-group>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 sm:mt-10">
+            <ng-container *ngIf="announcements$ | async as announcements">
+                <ng-container *ngFor="let item of announcements">
+                    <!-- {{item|json}} -->
+                    <fuse-card class="flex flex-col max-w-120 w-full filter-interactive m-3" [ngClass]="{'filter-pengumuman': item.type === 'PENGUMUMAN', 'filter-berita': item.type === 'BERITA'}" [flippable]="true" [face]="'front'" #flippableCard01="fuseCard">
+
+                        <ng-container fuseCardFront>
+                            <img class="object-cover max-h-120" [id]="item.id" [src]="item.source_image" alt="Card cover image">
+                            <div class="m-8 mb-4">
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">{{item.created_at}}</div>
+                                    <div class="py-0.5 px-3 rounded-full text-sm font-semibold text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500">
+                                        {{item.type | titlecase}} </div>
+                                </div>
+                                <div class="text-2xl font-semibold leading-tight">{{item.title}}</div>
+                                <div class="mt-4 md:block ">
+                                    <span class="line-clamp-4" [innerHtml]="item.content"></span>
+                                </div>
+                                <div class="mt-3 -mx-3">
+                                    <button class="px-3" mat-button [color]="'primary'" (click)="detail(item.id); flippableCard01.face = flippableCard01.face === 'front' ? 'back' : 'front'">
+                                        Selengkapnya...
+                                    </button>
+                                </div>
+                            </div>
+                        </ng-container>
+                        <ng-container fuseCardBack>
+                            <ng-container *ngIf="announcement$ | async as item">
+                                <div class="flex flex-col flex-auto m-4">
+                                    <button class="ml-1.5" mat-icon-button (click)="flippableCard01.face = flippableCard01.face === 'front' ? 'back' : 'front'">
+                                        <mat-icon [svgIcon]="'heroicons_outline:arrow-narrow-left'"></mat-icon>
+                                    </button>
+                                    <div class="m-4 mt-3">
+                                        <div class="flex items-center justify-between mb-4">
+                                            <div class="flex items-center">{{item.created_at}}</div>
+                                            <div class="py-0.5 px-3 rounded-full text-sm font-semibold text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500">
+                                                {{item.type | titlecase}} </div>
+                                        </div>
+                                        <div class="text-2xl font-semibold leading-tight">{{item.title}}</div>
+                                        <div class="mt-4" [innerHtml]="item.content"></div>
+                                        <!-- <ng-container *ngIf="item?.document_uploads.length > 0">
+                                        <hr class="w-full border-t my-6">
+                                        <div class="flex items-center w-full mb-2" *ngFor="let item of item.document_uploads">
+                                            <div class="mr-2 truncate"> {{item.file_name}} </div>
+                                            <div class="ml-auto text-md text-right whitespace-nowrap text-hint">
+                                                <button mat-icon-button (click)="downloadAttachFile(item.id)">
+                                                    <mat-icon [svgIcon]="'heroicons_outline:document-download'">
+                                                    </mat-icon>
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </ng-container> -->
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </fuse-card>
+                </ng-container>
+            </ng-container>
+
+        </div>
+
+    </div>
+
+</div>

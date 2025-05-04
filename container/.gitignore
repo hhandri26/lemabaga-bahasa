@@ -1,0 +1,4 @@
+# Docker
+.*run
+.*build_image
+nginx/dist/

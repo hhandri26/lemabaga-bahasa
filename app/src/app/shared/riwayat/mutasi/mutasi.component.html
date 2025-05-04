@@ -1,0 +1,290 @@
+    <mat-tab-group class="sm:px-2" [animationDuration]="'0'" class="ml-0 pl-0 mt-5">
+        <mat-tab label="Data Disetujui">
+            <ng-template matTabContent>
+                <div class="flex flex-col w-full">
+                    <div class="relative flex flex-col flex-auto items-center p-6">
+                        <div class="w-full">
+                            <ng-container *ngIf="!insertMode">
+                                <div class="flex flex-auto items-end">
+                                    <div class="flex items-center ml-auto mb-4">
+                                        <button mat-stroked-button (click)="toggleInsertMode(true)">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'">
+                                            </mat-icon>
+                                            <span class="ml-2">Data Baru</span>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <ng-container *ngFor="let item of rwInstansi; trackBy: trackByFn">
+                                    <div class="grid grid-cols-12 gap-x-1">
+                                        <!-- Item -->
+                                        <div class="col-span-11 text-md font-medium">
+                                            <div class="flex flex-col">
+                                                
+                                                <div class="flex flex-col sm:flex-row sm:items-center -ml-0.5 mt-2 sm:mt-1 space-y-1 sm:space-y-0 sm:space-x-3">
+                                                
+                                                    <ng-container *ngIf="item.noSk">
+                                                        <div class="hidden sm:block">&bull;</div>
+                                                        <div class="flex items-center" [matTooltip]="'Nomor SK'">
+                                                            <button (click)="togglePrint(item.dokumenId)" class="ml-4    text-sm underline">{{item.namaInstansi}}</button>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                               
+                                            </div>
+                                        </div>
+                                        <div class="col-span-1 self-center text-right">
+                                            <button class="min-w-10 min-h-10 h-10 px-2 leading-6" mat-stroked-button (click)="toggleDetails(item.id)">
+                                                <mat-icon class="icon-size-5"
+                                                    [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                                </mat-icon>
+                                            </button>
+                                        </div>
+                                        <div class="col-span-12 my-4 border-b"></div>
+                                    </div>
+                                    <ng-container *ngIf="selected?.id === item.id">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                                        </ng-container>
+                                    </ng-container>
+                                </ng-container>
+                                <ng-container *ngIf="!rwInstansi.length">
+                                    <fuse-alert [type]="'info'">
+                                        <span fuseAlertTitle>Belum ada data riwayat instansi</span>
+                                    </fuse-alert>
+                                </ng-container>
+                            </ng-container>
+
+                            <!-- INSERT NEW DATA -->
+                            <ng-container *ngIf="insertMode">
+                                <div class="relative flex flex-col flex-auto items-center p-6">
+                                    <div class="w-full">
+                                        <form [formGroup]="form">
+                                            <div class="flex flex-auto items-end">
+                                                <div class="flex items-center justify-end w-full mx-auto">
+                                                    <button class="ml-auto" mat-button [matTooltip]="'Batalkan Penambahan Data Baru'" (click)="toggleInsertMode(false)">
+                                                        Batal
+                                                    </button>
+                                                    <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Submit Usulan Penambahan Data'" (click)="insert()">
+                                                        Submit Usulan
+                                                    </button>
+                                                </div>          
+                                            </div>
+                                                <div class="mt-4">
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                        <mat-label>Instansi</mat-label>
+                                                        <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocompletePendidikan"
+                                                            [placeholder]="'Cari nama instansi...'">
+                                                        <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear"
+                                                            (click)="form.get('instansiId').setValue('')">
+                                                            <mat-icon>close</mat-icon>
+                                                        </button>
+                                                    </mat-form-field>
+                                                    <mat-autocomplete #matAutocompletePendidikan="matAutocomplete" [displayWith]="displayInstansiFn"
+                                                        [disableRipple]="true">
+                                                        <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent"
+                                                            *ngIf="resultInstansi && !resultInstansi.length">
+                                                            Instansi tidak ditemukan!
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
+                                                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis
+                                                                === 'P') ? 'Pusat' : 'Daerah'}}</span>
+                                                        </mat-option>
+                                                    </mat-autocomplete>
+                                                    <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
+                                                        Anda harus memilih pilihan instansi dari hasil pencarian
+                                                    </mat-error>
+                                                </div>
+                                            <div class="mt-4">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>Satuan Organisasi</mat-label>
+                                                    <input matInput [formControlName]="'satuanorganisasi'" [spellcheck]="false">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="mt-4">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>Unit Kerja</mat-label>
+                                                    <input matInput [formControlName]="'unitkerja'" [spellcheck]="false">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="mt-4">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>No. SK</mat-label>
+                                                    <input matInput [formControlName]="'noSk'" [spellcheck]="false">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="mt-4">
+                                                <div class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>Dokumen SK <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                    <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event)" style="display:none;" />
+                                                    <div class="flex flex-auto items-start">
+                                                        <div class="flex items-center justify-start w-full mx-auto">
+                                                            <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                                Dokumen</button>
+                                                            <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false)">
+                                                                <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                            </button>
+                                                            <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </div>
+                    </div>
+                </div>
+            </ng-template>
+        </mat-tab>
+        <mat-tab label="Riwayat Usulan">
+            <ng-template matTabContent>
+                <app-usulan [items]="rwUsuls"></app-usulan>
+            </ng-template>
+        </mat-tab>
+    </mat-tab-group>
+
+    <ng-template #rowDetailsTemplate let-item>
+        <div class="grid grid-cols-12 gap-x-1">
+            <div class="col-span-12 shadow-lg overflow-hidden mb-4">
+                <div class="flex border-b">
+                    <div class="flex flex-col w-full">
+                        <ng-container *ngIf="!editMode">
+                            <div class="relative flex flex-col flex-auto items-center p-6 pt-0">
+                                <div class="w-full">
+                                    <div class="flex flex-auto items-end">
+                                        <div class="flex items-center ml-auto mb-4">
+                                            <button mat-button [color]="'warn'" [matTooltip]="'Hapus Data'" class="mr-5" (click)="delete()">
+                                                Hapus
+                                            </button>
+                                            <button mat-stroked-button (click)="toggleEditMode(true)">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'">
+                                                </mat-icon>
+                                                <span class="ml-2">Ubah</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="selected">
+                                        <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+                                        
+                                            <div class="flex items-center justify-between py-3">
+                                                <div class="text-secondary">No. SK</div>
+                                                <div>{{selected.noSk ?? '-'}}</div>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3">
+                                                <div class="text-secondary">Satuan Organisasi</div>
+                                                <div>{{selected.satuanorganisasi ?? '-'}}</div>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3">
+                                                <div class="text-secondary">Unit Kerja</div>
+                                                <div>{{selected.unitkerja ?? '-'}}</div>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3">
+                                                <div class="text-secondary">Nama Instansi</div>
+                                                <div>{{selected.namaInstansi ?? '-'}}</div>
+                                            </div>
+                                            <div class="flex items-center justify-between py-3">
+                                                <div class="text-secondary">Dokumen SK</div>
+                                                <button *ngIf="selected.dokumenId" class="px-3" mat-button (click)="togglePrint(selected.dokumenId)">
+                                                    <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
+                                                    </mat-icon>
+                                                    <span>Unduh</span>
+                                                </button>
+                                                <div *ngIf="!selected.dokumenId">-</div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="editMode">
+                            <div class="relative flex flex-col flex-auto items-center p-6">
+                                <div class="w-full">
+                                    <form [formGroup]="form">
+                                        <div class="flex flex-auto items-end">
+                                            <div class="flex items-center justify-end w-full mx-auto">
+                                                <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'" (click)="toggleEditMode(false)">
+                                                    Batal
+                                                </button>
+                                                <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Submit Usulan Perubahan Data'" (click)="update()">
+                                                    Submit Usulan
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <ng-container *ngIf="selected">
+                                        
+                                            <div class="mt-4">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>Instansi</mat-label>
+                                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocompletePendidikan"
+                                                        [placeholder]="'Cari nama instansi...'">
+                                                    <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear"
+                                                        (click)="form.get('instansiId').setValue('')">
+                                                        <mat-icon>close</mat-icon>
+                                                    </button>
+                                                </mat-form-field>
+                                                <mat-autocomplete #matAutocompletePendidikan="matAutocomplete" [displayWith]="displayInstansiFn"
+                                                    [disableRipple]="true">
+                                                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent"
+                                                        *ngIf="resultInstansi && !resultInstansi.length">
+                                                        Instansi tidak ditemukan!
+                                                    </mat-option>
+                                                    <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
+                                                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis
+                                                            === 'P') ? 'Pusat' : 'Daerah'}}</span>
+                                                    </mat-option>
+                                                </mat-autocomplete>
+                                                <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
+                                                    Anda harus memilih pilihan instansi dari hasil pencarian
+                                                </mat-error>
+                                            </div>
+                                            <div class="mt-4">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>Satuan Organisasi</mat-label>
+                                                    <input matInput [formControlName]="'satuanorganisasi'" [spellcheck]="false">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="mt-4">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>Unit Kerja</mat-label>
+                                                    <input matInput [formControlName]="'unitkerja'" [spellcheck]="false">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="mt-4">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>No. SK</mat-label>
+                                                    <input matInput [formControlName]="'noSk'" [spellcheck]="false">
+                                                </mat-form-field>
+                                            </div>
+                                            <div class="mt-4">
+                                                <div class="fuse-mat-no-subscript w-full">
+                                                    <mat-label>Dokumen SK <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                    <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf"
+                                                        (change)="onFileInput($event)" style="display:none;" />
+                                                    <div class="flex flex-auto items-start">
+                                                        <div class="flex items-center justify-start w-full mx-auto">
+                                                            <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'"
+                                                                (click)="fileEditDocument.click()">Unggah
+                                                                Dokumen</button>
+                                                            <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'"
+                                                                (click)="toggleOnFileInputed(false)">
+                                                                <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                            </button>
+                                                            <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </form>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </ng-template>

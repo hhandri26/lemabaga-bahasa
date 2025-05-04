@@ -1,0 +1,259 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+    <div class="flex flex-auto p-6 sm:p-10">
+        <div class="flex flex-col w-full mx-auto lg:w-3/4">
+            <ng-container *ngIf="item$ | async as item">
+                <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between dark:bg-transparent">
+                    <div class="flex-1 min-w-0">
+                        <!-- Breadcrumbs -->
+                        <div class="flex flex-wrap items-center font-medium">
+                            <div>
+                                <a class="inline-flex items-center leading-6 text-primary hover:underline"
+                                    [routerLink]="['/forum']">
+                                    <span class="inline-flex items-center">
+                                        <mat-icon class="icon-size-5 text-current"
+                                            [svgIcon]="'heroicons_solid:arrow-sm-left'"></mat-icon>
+                                        <span class="ml-1.5 font-medium leading-5">Forum</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Title -->
+                        <!-- <div class="mt-2">
+                            <h2 class="text-2xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                                {{item.title}}
+                            </h2>
+                        </div> -->
+                    </div>
+                </div>
+
+                <fuse-card class="flex flex-col w-full mt-5" #expandable="fuseCard">
+                    <div class="flex items-center mx-6 sm:mx-8 mt-6 mb-4">
+                        <img class="w-10 h-10 rounded-full mr-4" [src]="getFilePath(item.createdByPhoto)">
+                        <div class="flex flex-col">
+                            <span class="font-semibold leading-none">{{item.createdByNama}}</span>
+                            <span class="text-sm text-secondary leading-none mt-1">{{item.createdAt |
+                                date:'d/M/yyyy h:mm'}}</span>
+                        </div>
+                    </div>
+                    <div class="relative mb-4">
+                        <img class="h-full" [src]="getFilePath(item.imagePath)">
+                    </div>
+                    <div class="mx-6 sm:mx-8 mt-2 mb-6" [innerHTML]="item.content">
+                    </div>
+                    <div class="flex flex-col sm:flex-row sm:items-center mx-6 sm:mx-8 mb-4 sm:mb-6">
+                        <div class="flex items-center">
+                            <button class="px-3 mr-1" mat-button (click)="toggleVote(item.id)">
+                                <mat-icon
+                                    [ngClass]="{'icon-size-5 text-red-500': item.hasVoted, 'icon-size-5 text-dark-500': !item.hasVoted}"
+                                    [svgIcon]="'heroicons_solid:heart'"></mat-icon>
+                                <ng-container *ngIf="item.voteCount">
+                                    <span class="ml-2">{{item.voteCount}}</span>
+                                </ng-container>
+                            </button>
+                        </div>
+                        <div class="hidden sm:flex flex-auto"></div>
+                        <div class="flex items-center mt-4 sm:mt-0">
+                            <button class="px-3 sm:-mr-4" mat-button
+                                (click)="expandable.expanded = !expandable.expanded; openToggle(item)">
+                                <span class="mr-1">
+                                    <ng-container *ngIf="item.replyCount">
+                                        {{item.replyCount + ' komentar'}}
+                                    </ng-container>
+                                    <ng-container *ngIf="!item.replyCount">
+                                        {{'Belum ada komentar'}}
+                                    </ng-container>
+                                </span>
+                                <mat-icon class="icon-size-5 transition-transform ease-in-out duration-150 rotate-0"
+                                    [ngClass]="{'rotate-180': expandable.expanded}"
+                                    [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
+                            </button>
+                        </div>
+                    </div>
+
+                    <ng-container fuseCardExpansion>
+                        <hr class="border-b m-0">
+                        <div class="flex flex-col mx-4 sm:mx-8 mt-6 mb-3">
+                            <div class="flex items-start">
+                                <mat-form-field class="w-full" [subscriptSizing]="'dynamic'">
+                                    <textarea [formControl]="postFormComment" matInput
+                                        [placeholder]="'Tulis komentar ...'" [rows]="3" cdkTextareaAutosize></textarea>
+                                </mat-form-field>
+                            </div>
+                            <div class="flex items-center ml-auto -mr-3">
+                                <button mat-flat-button [color]="'primary'"
+                                    (click)="submitComment(postFormComment.value, item.id, false, null)">
+                                    <span class="inline-flex items-center">
+                                        <span>Kirim</span>
+                                    </span>
+                                </button>
+                            </div>
+                        </div>
+                        <ng-container *ngIf="posts$ | async as posts">
+                            <ng-container *ngIf="posts?.content.length">
+                                <hr class="border-b mx-4 sm:mx-8 my-0">
+                                <div class="max-h-120 overflow-y-auto">
+                                    <div class="relative flex flex-col mx-4 sm:mx-8 my-6">
+                                        <ng-container *ngFor="let post of posts.content">
+                                            <div class="flex items-start mt-2">
+                                                <img class="w-8 h-8 rounded-full mr-4"
+                                                    [src]="getFilePath(post.createdByPhoto)">
+                                                <div class="flex flex-col mt-0.5 w-full">
+                                                    <span>
+                                                        <b>{{post.createdByNama}}</b> {{post.content}}
+                                                    </span>
+                                                    <div class="flex items-center text-sm text-secondary mt-2">
+                                                        <button class="px-3 mr-1" mat-button
+                                                                (click)="toggleLike(post.id)">
+                                                                <mat-icon
+                                                                    [ngClass]="{'icon-size-5 text-red-500': post.hasLiked, 'icon-size-5 text-dark-500': !post.hasLiked}"
+                                                                    [svgIcon]="'heroicons_solid:heart'"></mat-icon>
+                                                                <ng-container *ngIf="post.likesCount">
+                                                                    <span class="ml-2">{{post.likesCount}}</span>
+                                                                </ng-container>
+                                                            </button>
+                                                        <ng-container *ngIf="post.repliesCount">
+                                                            <button class="px-3" mat-button
+                                                                (click)="openCommentToggle(post)">
+                                                                <span class="mr-1">
+                                                                    <ng-container *ngIf="post.repliesCount">
+                                                                        {{post.repliesCount + ' balasan'}}
+                                                                    </ng-container>
+                                                                    <ng-container *ngIf="!post.repliesCount">
+                                                                        {{'Belum ada balasan'}}
+                                                                    </ng-container>
+                                                                </span>
+                                                                <mat-icon
+                                                                    class="icon-size-5 transition-transform ease-in-out duration-150 rotate-0"
+                                                                    [ngClass]="{'rotate-180': commentActive === post.id}"
+                                                                    [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
+                                                            </button>
+                                                        </ng-container>
+                                                        <ng-container *ngIf="replyFormActive !== post.id">
+                                                            <button class="px-3" mat-button (click)="toggleReply(post.id)">
+                                                                Balas
+                                                            </button>
+                                                        </ng-container>
+                                                        <span>&bull;</span>
+                                                        <span class="ml-3">{{post.createdAt | date:'d/M/yyyy h:mm'}}</span>
+                                                    </div>
+                                                    <ng-container *ngIf="replyFormActive === post.id">
+                                                        <div class="flex flex-col w-full" #replyForm>
+                                                            <mat-form-field [subscriptSizing]="'dynamic'">
+                                                                <textarea class="textarea" matInput
+                                                                    [formControl]="replyFormComment"
+                                                                    [placeholder]="'Ketik balasan Anda di sini'"
+                                                                    [rows]="4"></textarea>
+                                                            </mat-form-field>
+                                                            <div
+                                                                class="flex flex-col sm:flex-row sm:items-center justify-between">
+                                                                <div class="-ml-2">
+                                                                    <!-- Attach file -->
+                                                                    <button mat-icon-button>
+                                                                        <mat-icon class="icon-size-5"
+                                                                            [svgIcon]="'heroicons_solid:paper-clip'"></mat-icon>
+                                                                    </button>
+                                                                    <!-- Insert image -->
+                                                                    <button mat-icon-button>
+                                                                        <mat-icon class="icon-size-5"
+                                                                            [svgIcon]="'heroicons_solid:photograph'"></mat-icon>
+                                                                    </button>
+                                                                </div>
+
+                                                                <div class="flex items-center mt-4 sm:mt-0">
+                                                                    <!-- Discard -->
+                                                                    <button
+                                                                        class="order-last sm:order-first ml-3 sm:ml-0"
+                                                                        mat-button (click)="discard()">
+                                                                        Batal
+                                                                    </button>
+                                                                    <!-- Send -->
+                                                                    <button class="sm:ml-3" mat-flat-button
+                                                                        [color]="'primary'"
+                                                                        (click)="submitComment(replyFormComment.value, item.id, true, post.id)">
+                                                                        Kirim
+                                                                    </button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+
+                                                    <ng-container *ngIf="commentActive === post.id">
+                                                        <ng-container *ngIf="comments$ | async as comments">
+                                                            <ng-container *ngFor="let comment of comments.content">
+                                                                <div class="flex items-start mt-2">
+                                                                    <img class="w-8 h-8 rounded-full mr-4"
+                                                                        [src]="getFilePath(comment.createdByPhoto)">
+                                                                    <div class="flex flex-col mt-0.5">
+                                                                        <span>
+                                                                            <b>{{comment.createdByNama}}</b>
+                                                                            {{comment.content}}
+                                                                        </span>
+                                                                        <div class="flex items-center text-sm text-secondary mt-2">
+                                                                            <button class="px-3 mr-1" mat-button
+                                                                                (click)="toggleLike(comment.id)">
+                                                                                <mat-icon
+                                                                                    [ngClass]="{'icon-size-5 text-red-500': comment.hasLiked, 'icon-size-5 text-dark-500': !comment.hasLiked}"
+                                                                                    [svgIcon]="'heroicons_solid:heart'"></mat-icon>
+                                                                                <ng-container *ngIf="comment.likesCount">
+                                                                                    <span
+                                                                                        class="ml-2">{{comment.likesCount}}</span>
+                                                                                </ng-container>
+                                                                            </button>
+                                                                            <span>&bull;</span>
+                                                                            <span class="ml-3">{{comment.createdAt | date:'d/M/yyyy h:mm'}}</span>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </ng-container>
+                                                        </ng-container>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+
+                                        <!--
+                                        ROOT
+                                        <div class="flex items-start">
+                                            <img class="w-8 h-8 rounded-full mr-4" src="assets/images/avatars/male-05.jpg"
+                                                alt="Card cover image">
+                                            <div class="flex flex-col mt-0.5">
+                                                <span>
+                                                    <b>Rutherford Brannan</b> Oh, I’m in.. Let’s arrange a trip for the next
+                                                    weekend if you want!
+                                                </span>
+                                                <div class="flex items-center text-sm text-secondary mt-2">
+                                                    <span class="mr-2 cursor-pointer hover:underline">Like</span>
+                                                    <span class="mr-2 cursor-pointer hover:underline">Reply</span>
+                                                    <span class="mr-2 cursor-pointer hover:underline">Hide replies</span>
+                                                    <span class="mr-2">&bull;</span>
+                                                    <span>17 min</span>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                        <!--
+                                        SUB
+                                        <div class="flex items-start mt-8 ml-12">
+                                            <img class="w-8 h-8 rounded-full mr-4" src="assets/images/avatars/female-01.jpg"
+                                                alt="Card cover image">
+                                            <div class="flex flex-col mt-0.5">
+                                                <span>
+                                                    <b>Caroline Lundu</b> Yes!! Let's talk about it on lunch!
+                                                </span>
+                                                <div class="flex items-center text-sm text-secondary mt-2">
+                                                    <span class="mr-2 cursor-pointer hover:underline">Like</span>
+                                                    <span class="mr-2 cursor-pointer hover:underline">Reply</span>
+                                                    <span class="mr-2">&bull;</span>
+                                                    <span>15 min</span>
+                                                </div>
+                                            </div>
+                                        </div> -->
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </ng-container>
+                </fuse-card>
+            </ng-container>
+        </div>
+    </div>
+</div>

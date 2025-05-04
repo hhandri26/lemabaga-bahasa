@@ -1,0 +1,176 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div>
+            <div class="text-2xl font-extrabold tracking-tight leading-none">Capaian Angka Kredit</div>
+        </div>
+        <form [formGroup]="form">
+            <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
+
+                <!-- <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50">
+                <mat-icon matPrefix [svgIcon]="'heroicons_outline:search'"></mat-icon>
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'Cari Judul'">
+                </mat-form-field> -->
+                <div class="flex-auto">
+                    <mat-form-field class="min-w-50 fuse-mat-dense fuse-mat-no-subscript w-full">
+                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                        <input matInput #keyword [autocomplete]="'off'" [placeholder]="'Cari PFP'" />
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(items$ | async) as items">
+                <ng-container *ngIf="items.length > 0; else noItems">
+                    <div class="grid">
+                        <!-- Header -->
+                        <div class="item-grid z-10 sticky top-0 grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 gap-3 py-3 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <!-- <div class="hidden md:block">#</div> -->
+                            <div class="md:block col-span-3">Nama</div>
+                            <div class="md:block col-span-4">Instansi</div>
+                            <div class="md:block col-span-1">Nilai AK Terakhir</div>
+                            <div class="md:block col-span-2">Golongan Terakhir AK</div>
+                            <div class="md:block col-span-1">Batas AK</div>
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(items$ | async) as items">
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 items-center gap-2 py-3 px-6 border-b">
+                                    <div class="hidden md:block col-span-3">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">
+                                            {{item.pns.nama | titlecase}}</div>
+                                        <div class="text-secondary font-medium">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div>{{item.pns.nip}}</div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div>{{item.pns.golonganNama}} - {{item.pns.jabatanNama}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-4">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">Komisi Aparatur Sipil Negara</div>
+                                        <div class="text-secondary font-medium">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div>Pusat Data dan Informasi</div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div>Pengembangan Sistem Informasi</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block truncate text-sm col-span-1">
+                                        95
+                                    </div>
+                                    <div class="hidden md:block truncate text-sm col-span-2">IV/b - Penerjemah Ahli Madya</div>
+                                    <div class="hidden md:block truncate text-sm col-span-1">
+                                        98
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selected?.id === item.id">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)" [pageSize]="pagination.perPage"
+                        [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <!-- DETAIL -->
+            <ng-template #rowDetailsTemplate let-item>
+                <ng-container *ngIf="selected">
+                    <div class="shadow-lg overflow-hidden">
+                        <div class="flex">
+                            <div class="flex flex-col w-full">
+                                <div class="flex flex-auto flex-wrap px-2">
+                                    <div class="flex flex-col w-full lg:w-3/4">
+                                        <ng-container *ngIf="selected.actionName === 'EDIT'">
+                                            <div class="grid grid-cols-12 gap-x-1 py-5 px-4">
+                                                <div class="col-span-4 text-sm"></div>
+                                                <div class="col-span-4 text-sm font-semibold">Data semula</div>
+                                                <div class="col-span-4 text-sm font-semibold">Data menjadi</div>
+                                                <div class="col-span-12 my-2 border-b"></div>
+                                                <ng-container *ngFor="let element of selected.payload">
+                                                    <div class="col-span-4 text-sm">{{element.keyLabel}}</div>
+                                                    <div class="col-span-4 text-sm">{{element.before}}</div>
+                                                    <div class="col-span-4 text-sm">{{element.after}}</div>
+                                                    <div class="col-span-12 my-2 border-b"></div>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf="selected.actionName === 'ADD'">
+                                            <div class="grid grid-cols-12 gap-x-1 py-5 px-4">
+                                                <div class="col-span-4 text-sm"></div>
+                                                <div class="col-span-4 text-sm font-semibold">Data yang ditambahkan
+                                                </div>
+                                                <div class="col-span-12 my-2 border-b"></div>
+                                                <ng-container *ngFor="let element of selected.payload">
+                                                    <div class="col-span-4 text-sm">{{element.keyLabel}}</div>
+                                                    <div class="col-span-4 text-sm">{{element.after}}</div>
+                                                    <div class="col-span-12 my-2 border-b"></div>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+                                        <ng-container *ngIf="selected.actionName === 'DELETE'">
+                                            <div class="grid grid-cols-12 gap-x-1 py-5 px-4">
+                                                <div class="col-span-4 text-sm"></div>
+                                                <div class="col-span-4 text-sm font-semibold">Data yang dihapus</div>
+                                                <div class="col-span-12 my-2 border-b"></div>
+                                                <ng-container *ngFor="let element of selected.payload">
+                                                    <div class="col-span-4 text-sm">{{element.keyLabel}}</div>
+                                                    <div class="col-span-4 text-sm">{{element.before}}</div>
+                                                    <div class="col-span-12 my-2 border-b"></div>
+                                                </ng-container>
+                                            </div>
+                                        </ng-container>
+
+                                    </div>
+                                    <div class="flex flex-col w-full lg:w-1/4">
+                                        <div class="my-3">
+                                            <h3 class="mb-2">Lampiran dokumen :</h3>
+                                            <div class="text-secondary font-medium mb-2">
+                                                <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                    <div class="flex items-center">
+                                                        <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file">
+                                                        </mat-icon>
+                                                        <button (click)="togglePrint(selected.dokumenId)" class="ml-1.5 text-sm underline">Dokumen</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <mat-form-field class="fuse-mat-no-subscript w-full mt-4">
+                                                <mat-label>Catatan hasil verifikasi</mat-label>
+                                                <textarea matInput [(ngModel)]="message" [autocomplete]="'off'" [placeholder]="'Jelaskan alasan jika menolak'"></textarea>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end w-full border-t px-8 py-4">
+                            <button mat-button [color]="'warn'" (click)="openConfirmationDialog(false, selected.id)" class="mr-4">Tolak</button>
+                            <button mat-flat-button [color]="'primary'" (click)="openConfirmationDialog(true, selected.id)">Setuju</button>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-template>
+            <ng-template #noItems>
+                <fuse-alert [type]="'info'">
+                    <span fuseAlertTitle>Usulan perubahan data tidak ditemukan!</span>
+                </fuse-alert>
+            </ng-template>
+        </div>
+    </div>
+</div>

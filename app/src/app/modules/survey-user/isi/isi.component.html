@@ -1,0 +1,35 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+    <div class="flex flex-auto p-6 sm:p-10">
+        <div class="flex flex-col flex-auto w-full mx-auto">
+            <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between dark:bg-transparent">
+                <div class="flex-1 min-w-0">
+                    <!-- Breadcrumbs -->
+                    <div class="flex flex-wrap items-center font-medium">
+                        <div>
+                            <a class="inline-flex items-center leading-6 text-primary hover:underline"
+                                [routerLink]="['/survey-user']">
+                                <span class="inline-flex items-center">
+                                    <mat-icon class="icon-size-5 text-current"
+                                        [svgIcon]="'heroicons_solid:arrow-sm-left'"></mat-icon>
+                                    <span class="ml-1.5 font-medium leading-5">{{_item.title}}</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Title -->
+                    <!-- <div class="mt-2">
+                            <h2 class="text-2xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                                {{item.title}}
+                            </h2>
+                        </div> -->
+                </div>
+            </div>
+
+            <div class="flex flex-col w-full mt-5">
+                <div class="mx-6 sm:mx-8 mt-2 mb-6">
+                    <app-widget-survey-question [item]="_item"></app-widget-survey-question>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

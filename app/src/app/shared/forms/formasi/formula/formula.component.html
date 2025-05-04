@@ -1,0 +1,46 @@
+<div class="grid justify-items-end mb-5">
+    <button mat-button (click)="add()">
+        <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>Uraian&nbsp;Tugas
+    </button>
+</div>
+<!-- formula====><pre>{{model|json}}</pre> -->
+<div class="overflow-x-auto relative mb-5 border-b">
+    <table class="w-full text-sm">
+        <thead class="text-xs uppercase bg-gray-100">
+            <tr>
+                <th scope="col" class="py-2 px-2" style="width: 70px;">No</th>
+                <th scope="col" class="py-2 px-2" style="width: 100%;">Uraian&nbsp;Tugas</th>
+                <th scope="col" class="py-2 px-2" style="width: 70px;">Satuan&nbsp;Hasil<br />Output</th>
+                <th scope="col" class="py-2 px-2" style="width: 70px;">Waktu&nbsp;Penyelesaian<br />Output&nbsp;Per&nbsp;Jam</th>
+                <th scope="col" class="py-2 px-2" style="width: 70px;">&nbsp;</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let fieldItemBody of field.fieldGroup; let i = index;">
+                <tr class="border-b">
+                    <td class="py-2 px-2">{{i+1}}</td>
+                    <ng-container *ngFor="let fieldItemBodyItem of fieldItemBody.fieldGroup;let last = last;">
+                        <td class="py-2 px-2">
+                            <formly-field [field]="fieldItemBodyItem"></formly-field>
+                        </td>
+                    </ng-container>
+                    <th scope="row" class="py-2 px-2">
+                        <button mat-button (click)="remove(i)">
+                            <mat-icon svgIcon="heroicons_outline:trash"></mat-icon>
+                        </button>
+                    </th>
+                </tr>
+            </ng-container>
+        </tbody>
+    </table>
+</div>
+<div class="grid justify-items-end mb-5">
+    <button mat-button (click)="calculate()">
+        Kalkulasi
+    </button>
+</div>
+<!-- <ng-container *ngIf="!field.fieldGroup.length">
+    <fuse-alert [type]="'info'">
+        <span fuseAlertTitle>Uraian tugas belum ditambahkan</span>
+    </fuse-alert>
+</ng-container> -->

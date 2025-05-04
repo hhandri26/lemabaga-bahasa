@@ -1,0 +1,475 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+    <div class="flex flex-auto p-6 sm:p-10">
+        <div class="flex flex-col flex-auto w-full mx-auto">
+            <div
+                class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between p-6 border-b bg-card dark:bg-transparent">
+                <div class="flex-1 min-w-0">
+                    <!-- Breadcrumbs -->
+                    <div class="flex flex-wrap items-center font-medium">
+                        <div>
+                            <a class="inline-flex items-center leading-6 text-primary hover:underline"
+                                [routerLink]="['../..']">
+                                <span class="inline-flex items-center">
+                                    <mat-icon class="icon-size-5 text-current"
+                                        [svgIcon]="'heroicons_solid:arrow-sm-left'"></mat-icon>
+                                    <span class="ml-1.5 font-medium leading-5">Daftar Diklat / Kursus</span>
+                                </span>
+                            </a>
+                        </div>
+                    </div>
+                    <!-- Title -->
+                    <div class="mt-3 mb-5">
+                        <h2 class="text-2xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                            {{course.title}}
+                        </h2>
+                    </div>
+                    <mat-tab-group mat-align-tabs="start" animationDuration="0ms">
+                        <mat-tab label="Informasi">
+                            <div class="flex flex-col p-6 bg-card rounded overflow-hidden border-b">
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div>
+                                        <div class="w-full">
+                                            <div class="text-md font-medium">Judul:</div>
+                                            <diklat-text type="text" [data]="course.title"
+                                                (focusOut)="updateCourse($event, course, 'title')"></diklat-text>
+                                        </div>
+                                        <div class="w-full mt-5">
+                                            <div class="text-md font-medium">Keterangan:</div>
+                                            <diklat-text type="text" [data]="course.summary"
+                                                (focusOut)="updateCourse($event, course, 'summary')"></diklat-text>
+                                        </div>
+                                        <div class="w-full mt-5">
+                                            <div class="text-md font-medium">Tanggal:</div>
+                                            <diklat-date-range type="text" [start]="course.startDate"
+                                                [end]="course.endDate"
+                                                (focusOut)="updateDateRangeCourse($event, course)"></diklat-date-range>
+                                        </div>
+                                        <!-- <div class="w-full mt-5">
+                                                <div class="text-md">Sampai&nbsp;Tanggal</div>
+                                                <diklat-date type="text" [data]="course.endDate" (focusOut)="updateCourse($event, course, 'endDate')"></diklat-date>
+                                            </div> -->
+                                    </div>
+                                    <div>
+                                        <div class="w-full">
+                                            <div class="text-md font-medium">Poster Gambar:</div>
+                                            <div class="inline-flex items-center">
+                                                <input id="avatar-file-input"
+                                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                                    type="file" [multiple]="false" [accept]="'image/jpeg, image/png'"
+                                                    (change)="updateFile(avatarFileInput.files, course)"
+                                                    #avatarFileInput>
+                                                <label
+                                                    class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-hover"
+                                                    for="avatar-file-input" matRipple>
+                                                    <mat-icon class="text-accent"
+                                                        [svgIcon]="'heroicons_outline:pencil-alt'"></mat-icon>
+                                                </label>
+                                                <ng-container *ngIf="course.coverImagePath">
+                                                    <a [href]="baseUrl + course.coverImagePath" target="_blank"
+                                                        class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-hover">
+                                                        <mat-icon matSuffix
+                                                            [svgIcon]="'heroicons_solid:zoom-in'"></mat-icon>
+                                                    </a>
+                                                </ng-container>
+                                            </div>
+                                            <img class="object-cover" style="max-width: 240px;"
+                                                *ngIf="course.coverImagePath" [src]="baseUrl + course.coverImagePath">
+                                        </div>
+                                        <!-- <div class="w-full mt-5">
+                                                <div class="text-md font-medium">Poster Vidio:</div>
+                                                <diklat-text type="text" [data]="course.title" (focusOut)="updateCourse($event, course, 'title')"></diklat-text>
+                                            </div> -->
+                                    </div>
+                                </div>
+                            </div>
+                        </mat-tab>
+                        <mat-tab label="Sesi">
+                            <div
+                                class="flex flex-col sm:flex-row items-center justify-between w-full max-w-xs sm:max-w-none">
+                                <button class="mt-8 sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'"
+                                    (click)="toggleSectionCreate(course)">
+                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                    <span class="ml-2 mr-1">Sesi</span>
+                                </button>
+                            </div>
+                            <ng-container *ngIf="(course.sections).length; else noSesi">
+                                <ng-container *ngFor="let section of course.sections">
+                                    <div class="flex flex-col mt-4 bg-card shadow rounded overflow-hidden">
+                                        <div class="bg-gray-50 dark:bg-gray-700 p-4 border-b">
+                                            <div class="flex items-center">
+                                                <div class="flex flex-col w-full">
+                                                    <span class="text-lg font-medium">{{section.title}}</span>
+                                                    <span class="text-secondary">{{section.summary}}</span>
+                                                    <span class="text-md font-semibold">{{section.startDate | date:'ccc, d MMM yyyy'}}</span>
+                                                </div>
+                                                <div class="flex items-center justify-end">
+                                                    <button class="ml-auto px-5" mat-icon-button
+                                                        [matMenuTriggerFor]="postCardMenu08">
+                                                        <mat-icon class="icon-size-5"
+                                                            [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                                                    </button>
+                                                    <button class="mt-8 sm:mt-0 sm:ml-auto" mat-flat-button
+                                                        [color]="'primary'"
+                                                        (click)="toggleAktivtiasCreate(course, section)">
+                                                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                                        <span class="ml-2 mr-1">Aktivitas</span>
+                                                    </button>
+                                                    <mat-menu #postCardMenu08="matMenu">
+                                                        <button mat-menu-item
+                                                            (click)="toggleSectionEdit(course, section)">
+                                                            <span class="flex items-center">
+                                                                <span>Ubah Sesi</span>
+                                                            </span>
+                                                        </button>
+                                                        <button mat-menu-item
+                                                            (click)="toggleDeleteSectionGroup(section)">
+                                                            <span class="flex items-center">
+                                                                <span>Hapus Sesi</span>
+                                                            </span>
+                                                        </button>
+                                                    </mat-menu>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex flex-col p-4 border-b">
+                                            <ng-container
+                                                *ngIf="(section.courseActivityGroupDetails).length; else noActivities">
+                                                <!-- {{section.courseActivityGroupDetails|json}} -->
+                                                <ng-container
+                                                    *ngFor="let activity of section.courseActivityGroupDetails">
+                                                    <div
+                                                        class="lg:block p-4 col-span-full bg-gray-100 dark:bg-transparent">
+                                                        <div class="flex items-center">
+                                                            <div class="flex flex-col w-full">
+                                                                <div
+                                                                    class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                    <div class="text-md font-semibold">
+                                                                        Jam {{activity.startTime}} -
+                                                                        {{activity.endTime}} WIB
+                                                                    </div>
+                                                                    <div class="hidden sm:block">&bull;</div>
+                                                                    <div class="text-md font-semibold">
+                                                                        {{activity.title}}</div>
+                                                                </div>
+                                                                <div
+                                                                    class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                    <div class="flex items-center">{{activity.jp}} JP
+                                                                    </div>
+                                                                    <div class="hidden sm:block">&bull;</div>
+                                                                    <div class="flex items-center">
+                                                                        {{activity.pelaksana}}
+                                                                    </div>
+                                                                    <ng-container *ngIf="activity?.instructureName">
+                                                                        <div class="hidden sm:block">&bull;</div>
+                                                                        <div class="flex items-center">
+                                                                            <mat-icon class="icon-size-5 text-hint"
+                                                                                svgIcon="heroicons_outline:user"></mat-icon>
+                                                                            {{activity.instructureName}}
+                                                                        </div>
+                                                                    </ng-container>
+                                                                </div>
+                                                            </div>
+                                                            <div class="flex items-center justify-end">
+                                                                <button class="ml-auto px-5" mat-icon-button
+                                                                    [matMenuTriggerFor]="menuAktivitas">
+                                                                    <mat-icon class="icon-size-5"
+                                                                        [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                                                                </button>
+                                                                <mat-menu #menuAktivitas="matMenu">
+                                                                    <button mat-menu-item
+                                                                        (click)="toggleSectionEdit(course, section)">
+                                                                        <span class="flex items-center">
+                                                                            <span>Ubah Aktivitas</span>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button mat-menu-item
+                                                                        (click)="toggleDeleteActivityGroup(activity)">
+                                                                        <span class="flex items-center">
+                                                                            <span>Hapus Aktivitas</span>
+                                                                        </span>
+                                                                    </button>
+                                                                </mat-menu>
+                                                                <button class="mt-8 sm:mt-0 sm:ml-auto" mat-flat-button
+                                                                    [color]="'primary'"
+                                                                    [matMenuTriggerFor]="menuDetailAktivitas">
+                                                                    <mat-icon
+                                                                        [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                                                    <span class="ml-2 mr-1">Detail Aktivitas</span>
+                                                                </button>
+                                                                <mat-menu #menuDetailAktivitas="matMenu">
+                                                                    <button mat-menu-item
+                                                                        (click)="toggleAktivtiasMateriCreate(activity)">
+                                                                        <span class="flex items-center">
+                                                                            <span>Membagikan materi</span>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button mat-menu-item
+                                                                        (click)="toggleAktivtiasUrlCreate(activity)">
+                                                                        <span class="flex items-center">
+                                                                            <span>Membagikan url</span>
+                                                                        </span>
+                                                                    </button>
+                                                                    <button mat-menu-item
+                                                                        (click)="toggleAktivtiasAssignMateriCreate(activity)">
+                                                                        <span class="flex items-center">
+                                                                            <span>Tugas</span>
+                                                                        </span>
+                                                                    </button>
+                                                                </mat-menu>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="flex flex-col p-4 border-b">
+                                                        <div class="flex items-center">
+                                                            <div class="grid grid-cols-12 gap-x-1 w-full">
+                                                                <ng-container
+                                                                    *ngFor="let activityDetail of activity.activityDetails">
+                                                                    <ng-container
+                                                                        *ngIf="activityDetail.activityType === 'ASSIGNMENT'">
+                                                                        <div class="col-span-2 font-medium">
+                                                                            {{activityDetail.orderNo}}.
+                                                                            {{activityDetail.activityType | titlecase}}
+                                                                        </div>
+                                                                        <div class="col-span-8">
+                                                                            <div class="flex flex-col w-full">
+                                                                                <div class="flex items-center">
+                                                                                    <mat-icon class="icon-size-5"
+                                                                                        [svgIcon]="'heroicons_solid:paper-clip'"></mat-icon>
+                                                                                    <div class="ml-2 font-semibold">
+                                                                                        {{activityDetail?.documents?.courseDocumentPayloads.length}}
+                                                                                        Lampiran | Deadline
+                                                                                        <strong>{{activityDetail.dueDateCompletion
+                                                                                            | date:'hh:mm'}}
+                                                                                            WIB</strong>
+                                                                                    </div>
+                                                                                </div>
+                                                                                <div class="flex flex-wrap -m-3 my-2">
+                                                                                    <ng-container
+                                                                                        *ngFor="let attachment of activityDetail?.documents?.courseDocumentPayloads">
+                                                                                        <app-widget-lampiran-dokumen [item]="attachment"></app-widget-lampiran-dokumen>
+                                                                                    </ng-container>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-span-2 text-right">
+                                                                            <button class="ml-auto px-5" mat-icon-button
+                                                                                [matMenuTriggerFor]="menuActivityDetail">
+                                                                                <mat-icon class="icon-size-5"
+                                                                                    [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                                                                            </button>
+                                                                            <mat-menu #menuActivityDetail="matMenu">
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleEdit(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Ubah</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleDeleteActivityDetail(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Hapus</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </mat-menu>
+                                                                        </div>
+                                                                    </ng-container>
+                                                                    <ng-container
+                                                                        *ngIf="activityDetail.activityType === 'ATTENDANCE'">
+                                                                        <div class="col-span-2 font-medium">
+                                                                            {{activityDetail.orderNo}}.
+                                                                            {{activityDetail.activityType | titlecase}}
+                                                                        </div>
+                                                                        <div class="col-span-8">Batas Waktu Absen
+                                                                            <strong>{{activityDetail.dueDateCompletion |
+                                                                                date:'hh:mm'}} WIB</strong>
+                                                                        </div>
+                                                                        <div class="col-span-2 text-right">
+                                                                            <button class="ml-auto px-5" mat-icon-button
+                                                                                [matMenuTriggerFor]="menuActivityDetail">
+                                                                                <mat-icon class="icon-size-5"
+                                                                                    [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                                                                            </button>
+                                                                            <mat-menu #menuActivityDetail="matMenu">
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleEdit(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Ubah</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleDeleteActivityDetail(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Hapus</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </mat-menu>
+                                                                        </div>
+                                                                    </ng-container>
+                                                                    <ng-container
+                                                                        *ngIf="activityDetail.activityType === 'URL'">
+                                                                        <div class="col-span-2 font-medium">
+                                                                            {{activityDetail.orderNo}}.
+                                                                            {{activityDetail.activityType | titlecase}}
+                                                                        </div>
+                                                                        <div class="col-span-8">
+                                                                            <div class="flex flex-col w-full">
+                                                                                <div class="flex items-center">
+                                                                                    <mat-icon class="icon-size-5"
+                                                                                        [svgIcon]="'heroicons_solid:external-link'"></mat-icon>
+                                                                                    <div class="ml-2 font-semibold">
+                                                                                        {{activityDetail.link}}</div>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="col-span-2 text-right">
+                                                                            <button class="ml-auto px-5" mat-icon-button
+                                                                                [matMenuTriggerFor]="menuActivityDetail">
+                                                                                <mat-icon class="icon-size-5"
+                                                                                    [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                                                                            </button>
+                                                                            <mat-menu #menuActivityDetail="matMenu">
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleEdit(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Ubah</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleDeleteActivityDetail(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Hapus</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </mat-menu>
+                                                                        </div>
+                                                                    </ng-container>
+                                                                    <ng-container *ngIf="activityDetail.activityType === 'MATERIAL'">
+                                                                        <div class="col-span-2 font-medium">
+                                                                            {{activityDetail.orderNo}}.
+                                                                            {{activityDetail.activityType | titlecase}}
+                                                                        </div>
+                                                                        <div class="col-span-8">
+                                                                            <ng-container *ngIf="activityDetail.materiType === 'YOUTUBE'">
+                                                                                <app-widget-lampiran-youtube [item]="activityDetail"></app-widget-lampiran-youtube>
+                                                                            </ng-container>
+                                                                            <ng-container *ngIf="activityDetail.materiType === 'VIDEO'">
+
+                                                                            </ng-container>
+
+                                                                            <ng-container *ngIf="activityDetail.materiType === 'DOCUMENT'">
+                                                                                <div class="flex flex-col w-full">
+                                                                                    <div class="flex flex-wrap">
+                                                                                        <app-widget-lampiran-dokumen [item]="activityDetail.document"></app-widget-lampiran-dokumen>
+                                                                                    </div>
+                                                                                </div>
+                                                                            </ng-container>
+                                                                        </div>
+                                                                        <div class="col-span-2 text-right">
+                                                                            <button class="ml-auto px-5" mat-icon-button
+                                                                                [matMenuTriggerFor]="menuActivityDetail">
+                                                                                <mat-icon class="icon-size-5"
+                                                                                    [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                                                                            </button>
+                                                                            <mat-menu #menuActivityDetail="matMenu">
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleEdit(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Ubah</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                                <button mat-menu-item
+                                                                                    (click)="toggleDeleteActivityDetail(activityDetail)">
+                                                                                    <span class="flex items-center">
+                                                                                        <span>Hapus</span>
+                                                                                    </span>
+                                                                                </button>
+                                                                            </mat-menu>
+                                                                        </div>
+                                                                    </ng-container>
+                                                                    <div class="col-span-12 mb-4 border-b"></div>
+                                                                </ng-container>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-template #noActivities>
+                                                <div
+                                                    class="flex flex-auto flex-col items-center justify-center dark:bg-transparent">
+                                                    <mat-icon class="icon-size-24"
+                                                        [svgIcon]="'heroicons_outline:document-search'"></mat-icon>
+                                                    <div
+                                                        class="mt-6 text-2xl font-semibold tracking-tight text-secondary">
+                                                        Detail Aktivitas belum dibuat!</div>
+                                                </div>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </ng-container>
+                            <ng-template #noSesi>
+                                <div class="flex flex-auto flex-col items-center justify-center dark:bg-transparent">
+                                    <mat-icon class="icon-size-24"
+                                        [svgIcon]="'heroicons_outline:document-search'"></mat-icon>
+                                    <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">Sesi belum
+                                        dibuat!</div>
+                                </div>
+                            </ng-template>
+                        </mat-tab>
+                        <mat-tab label="Pre Test">
+                            <ng-container *ngIf="(course.preTest); else noPretestSet">
+                                <app-widget-pre-post-test [item]="course.preTest"></app-widget-pre-post-test>
+                                <div class="flex flex-auto flex-col items-center justify-center dark:bg-transparent">
+                                    <button class="my-5" mat-flat-button [color]="'primary'"
+                                        (click)="toggleTestSet(course, 'PRETEST')">
+                                        <mat-icon [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                        <span class="ml-2 mr-1">Set Ulang Soal Pre Test</span>
+                                    </button>
+                                </div>
+                            </ng-container>
+                            <ng-template #noPretestSet>
+                                <div class="flex flex-auto flex-col items-center justify-center dark:bg-transparent">
+                                    <button class="my-5" mat-flat-button [color]="'primary'"
+                                        (click)="toggleTestSet(course, 'PRETEST')">
+                                        <mat-icon [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                        <span class="ml-2 mr-1">Set Soal Pre Test</span>
+                                    </button>
+                                    <mat-icon class="icon-size-24"
+                                        [svgIcon]="'heroicons_outline:document-search'"></mat-icon>
+                                    <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">Soal Pre Test
+                                        belum diset!</div>
+                                </div>
+                            </ng-template>
+                        </mat-tab>
+                        <mat-tab label="Post Test">
+                            <ng-container *ngIf="(course.postTest); else noPostestSet">
+                                <app-widget-pre-post-test [item]="course.postTest"></app-widget-pre-post-test>
+                                <div class="flex flex-auto flex-col items-center justify-center dark:bg-transparent">
+                                    <button class="my-5" mat-flat-button [color]="'primary'"
+                                        (click)="toggleTestSet(course, 'POSTTEST')">
+                                        <mat-icon [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                        <span class="ml-2 mr-1">Set Ulang Soal Post Test</span>
+                                    </button>
+                                </div>
+                            </ng-container>
+                            <ng-template #noPostestSet>
+                                <div class="flex flex-auto flex-col items-center justify-center dark:bg-transparent">
+                                    <button class="my-5" mat-flat-button [color]="'primary'"
+                                        (click)="toggleTestSet(course, 'POSTTEST')">
+                                        <mat-icon [svgIcon]="'heroicons_outline:check'"></mat-icon>
+                                        <span class="ml-2 mr-1">Set Soal Post Test</span>
+                                    </button>
+                                    <mat-icon class="icon-size-24"
+                                        [svgIcon]="'heroicons_outline:document-search'"></mat-icon>
+                                    <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">Soal Post Test
+                                        belum diset!</div>
+                                </div>
+                            </ng-template>
+                        </mat-tab>
+                    </mat-tab-group>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

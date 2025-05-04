@@ -1,0 +1,60 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Tambah Agenda</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Tipe Agenda</mat-label>
+                    <mat-select [formControlName]="'type'">
+                        <mat-option *ngFor="let item of tipeAgendaList" [value]="item.id">{{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Jenis Kegiatan</mat-label>
+                    <mat-select [formControlName]="'jenisKegiatan'">
+                        <mat-option *ngFor="let item of jenisKegiatanList" [value]="item.id">{{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Nama Agenda</mat-label>
+                    <input matInput [formControlName]="'eventName'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                    <mat-label>Tanggal Kegiatan</mat-label>
+                    <input matInput [matDatepicker]="_tglKegiatan" [formControlName]="'eventDate'" (focus)="_tglKegiatan.open()">
+                    <mat-datepicker-toggle matSuffix [for]="_tglKegiatan">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #_tglKegiatan></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript min-w-10 pl-2">
+                    <mat-label>Jam</mat-label>
+                    <input matInput [formControlName]="'eventTime'" [showMaskTyped]="true" [mask]="'Hh:m0'" [leadZeroDateTime]="true">
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="create()">
+            Submit
+        </button>
+    </div>
+</div>

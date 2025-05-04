@@ -1,0 +1,31 @@
+<div class="mt-4 flex items-center">
+    <div class="bg-gray-50 dark:bg-transparent px-5 py-5 w-full">
+        <div class="flex items-center">
+            <div class="grid grid-cols-12 gap-x-1 w-full">
+                <div class="col-span-2">Soal</div>
+                <div class="col-span-10 font-medium">{{ item.name }}</div>
+                <div class="col-span-12 my-2 border-b"></div>
+                <div class="col-span-2">Jenis</div>
+                <div class="col-span-10 font-medium">
+                    {{ item.questionType }}
+                </div>
+                <div class="col-span-12 my-2 border-b"></div>
+                <div class="col-span-2">Durasi</div>
+                <div class="col-span-10 font-medium">
+                    {{ item.durationInMinutes }} menit
+                </div>
+                <div class="col-span-12 my-2 border-b"></div>
+                <div class="col-span-2">Kelompok</div>
+                <div class="col-span-10 font-medium">
+                    {{ item.courseGroup.jenisKegiatan | titlecase }} |
+                    {{ item.courseGroup.nama }}
+                </div>
+                <div class="col-span-12 my-2 border-b"></div>
+                <div class="col-span-2">Topik</div>
+                <!-- <div class="col-span-10 font-medium">
+                    {{ item.courseTopic.nama | titlecase }}
+                </div> -->
+            </div>
+        </div>
+    </div>
+</div>

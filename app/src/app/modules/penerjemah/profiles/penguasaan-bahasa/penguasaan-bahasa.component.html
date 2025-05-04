@@ -1,0 +1,146 @@
+<div class="flex flex-col w-full">
+    <div class="relative flex flex-col flex-auto items-center p-6">
+        <div class="w-full max-w-3xl">
+            <ng-container *ngIf="!insertMode">
+                <div class="flex flex-auto items-end">
+                    <div class="flex items-center ml-auto mb-4">
+                        <button mat-stroked-button (click)="toggleInsertMode(true)">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'">
+                            </mat-icon>
+                            <span class="ml-2">Data Baru</span>
+                        </button>
+                    </div>
+                </div>
+
+                <ng-container *ngFor="let item of rwPenguasaanBahasa; trackBy: trackByFn">
+                    <div class="grid grid-cols-12 gap-x-1">
+                        <!-- Item -->
+                        <div class="col-span-11 text-md font-medium">
+                            <div class="flex flex-col">
+                                <div class="flex flex-col sm:flex-row sm:items-center mt-4 text-md leading-5">
+                                    <div>{{item.bahasa.nama}}</div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-span-1 self-center text-right">
+                            <button class="min-w-10 min-h-10 h-10 px-2 leading-6" mat-stroked-button (click)="toggleDetails(item.id)">
+                                <mat-icon class="icon-size-5"
+                                    [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                </mat-icon>
+                            </button>
+                        </div>
+
+                        <div class="col-span-12 my-4 border-b"></div>
+                    </div>
+                    <ng-container *ngIf="selected?.id === item.id">
+                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                        </ng-container>
+                    </ng-container>
+                </ng-container>
+                <ng-container *ngIf="!rwPenguasaanBahasa.length">
+                    <fuse-alert [type]="'info'">
+                        <span fuseAlertTitle>Belum ada data penguasaan bahasa</span>
+                    </fuse-alert>
+                </ng-container>
+            </ng-container>
+
+            <!-- INSERT NEW DATA -->
+            <ng-container *ngIf="insertMode">
+                <div class="relative flex flex-col flex-auto items-center p-6">
+                    <div class="w-full max-w-3xl">
+                        <form [formGroup]="form">
+                            <div class="flex flex-auto items-end">
+                                <div class="flex items-center justify-end w-full max-w-3xl mx-auto">
+                                    <button class="ml-auto" mat-button [matTooltip]="'Batalkan Penambahan Data Baru'" (click)="toggleInsertMode(false)">
+                                        Batal
+                                    </button>
+                                    <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Submit Usulan Penambahan Data'" (click)="insert()">
+                                        Submit Usulan
+                                    </button>
+                                </div>
+                            </div>
+                            <input type="hidden" formControlName="newBahasaId">
+                            <div class="mt-4">
+                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                    <mat-label>Riwayat Kemahiran Berbahasa</mat-label>
+                                    <mat-select [formControlName]="'bahasaId'">
+                                        <mat-option *ngFor="let item of jenisBahasa$ | async" [value]="item.id">{{item.nama}}
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>
+
+<ng-template #rowDetailsTemplate let-item>
+    <div class="grid grid-cols-12 gap-x-1">
+        <div class="col-span-12 shadow-lg overflow-hidden mb-4">
+            <div class="flex border-b">
+                <div class="flex flex-col w-full">
+                    <ng-container *ngIf="!editMode">
+                        <div class="relative flex flex-col flex-auto items-center p-6 pt-0">
+                            <div class="w-full max-w-3xl">
+                                <div class="flex flex-auto items-end">
+                                    <div class="flex items-center ml-auto mb-4">
+                                        <button mat-button [color]="'warn'" [matTooltip]="'Hapus Data'" class="mr-5" (click)="delete()">
+                                            Hapus
+                                        </button>
+                                        <button mat-stroked-button (click)="toggleEditMode(true)">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'">
+                                            </mat-icon>
+                                            <span class="ml-2">Ubah</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="selected">
+                                    <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Riwayat Kemahiran Berbahasa</div>
+                                            <div>{{selected.bahasa.nama ?? '-'}}</div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="editMode">
+                        <div class="relative flex flex-col flex-auto items-center p-6">
+                            <div class="w-full max-w-3xl">
+                                <form [formGroup]="form">
+                                    <div class="flex flex-auto items-end">
+                                        <div class="flex items-center justify-end w-full max-w-3xl mx-auto">
+                                            <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'" (click)="toggleEditMode(false)">
+                                                Batal
+                                            </button>
+                                            <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Submit Usulan Perubahan Data'" (click)="update()">
+                                                Submit Usulan
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="selected">
+                                        <input type="hidden" formControlName="beforeBahasaId">
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Riwayat Kemahiran Berbahasa</mat-label>
+                                                <mat-select [formControlName]="'bahasaId'">
+                                                    <mat-option *ngFor="let item of jenisBahasa$ | async" [value]="item.id">{{item.nama}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                    </ng-container>
+                                </form>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

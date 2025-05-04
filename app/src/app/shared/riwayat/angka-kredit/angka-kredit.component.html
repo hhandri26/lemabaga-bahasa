@@ -1,0 +1,661 @@
+<mat-tab-group class="sm:px-2" [animationDuration]="'0'" class="ml-0 pl-0 mt-5">
+    <mat-tab label="Data Disetujui">
+        <ng-template matTabContent>
+            <div class="flex flex-col w-full">
+                <div class="relative flex flex-col flex-auto items-center p-6">
+                    <div class="w-full">
+                        <ng-container *ngIf="!insertAHK && !insertAAK && !insertPAK">
+                            <div class="flex flex-auto items-end">
+                                <div class="flex items-center ml-auto mb-4">
+                                    <button mat-stroked-button (click)="toggleInsertAHK(true)">
+                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'">
+                                        </mat-icon>
+                                        <span class="ml-2">Konversi Angka Kredit</span>
+                                    </button>
+                                    <button mat-stroked-button (click)="toggleInsertAAK(true)" class="ml-3">
+                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'">
+                                        </mat-icon>
+                                        <span class="ml-2">Akumulasi Angka Kredit</span>
+                                    </button>
+                                    <button mat-stroked-button (click)="toggleInsertPAK(true)" class="ml-3">
+                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'">
+                                        </mat-icon>
+                                        <span class="ml-2">Penetapan Angka Kredit </span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <ng-container *ngFor="let item of rwAngkaKreditKonversi; trackBy: trackByFn">
+                                <h2 class="text-lg font-bold mb-2">Konversi Angka Kredit</h2>
+                                <div class="grid grid-cols-12 gap-x-1">
+                                    
+                                    <!-- Item -->
+                                    <div class="col-span-11 text-md font-medium">
+                                        <div class="flex flex-col">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div [matTooltip]="'Tahun'">Tahun {{item.tahun}}</div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div [matTooltip]="'Nilai AK Konversi '"> Nilai AK Konversi {{item.nilaiAkKonversi}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        <button class="min-w-10 min-h-10 h-10 px-2 leading-6" mat-stroked-button (click)="toggleDetailsAHK(item.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+
+                                    <div class="col-span-12 my-4 border-b"></div>
+                                </div>
+                                <ng-container *ngIf="selected?.id === item.id">
+                                    <ng-container *ngTemplateOutlet="rowDetailsTemplateAHK; context: {$implicit: item}">
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="!rwAngkaKreditKonversi.length">
+                                <fuse-alert [type]="'info'">
+                                    <span fuseAlertTitle>Belum ada data riwayat Konversi Angka Kredit</span>
+                                </fuse-alert>
+                            </ng-container>
+                        </ng-container>
+
+                        
+                        <ng-container *ngIf="!insertAHK && !insertAAK && !insertPAK">
+                            
+                            <ng-container *ngFor="let item of rwAngkaKreditAkumulasi; trackBy: trackByFn">
+                                <h2 class="text-lg font-bold mb-2">Akumulasi Angka Kredit</h2>
+                                <div class="grid grid-cols-12 gap-x-1">
+                        
+                                    <!-- Item -->
+                                    <div class="col-span-11 text-md font-medium">
+                                        <div class="flex flex-col">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div [matTooltip]="'Tahun'">Tahun {{item.tahun}}</div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div [matTooltip]="'Nilai AK Akumulasi '"> Nilai AK Akumulasi {{item.nilaiAkAkumulasi}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        <button class="min-w-10 min-h-10 h-10 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetailsAAK(item.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+                        
+                                    <div class="col-span-12 my-4 border-b"></div>
+                                </div>
+                                <ng-container *ngIf="selected?.id === item.id">
+                                    <ng-container *ngTemplateOutlet="rowDetailsTemplateAAK; context: {$implicit: item}">
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="!rwAngkaKreditAkumulasi.length">
+                                <fuse-alert [type]="'info'">
+                                    <span fuseAlertTitle>Belum ada data riwayat Akumulasi angka kredit </span>
+                                </fuse-alert>
+                            </ng-container>
+                        </ng-container>
+
+                        <ng-container *ngIf="!insertAHK && !insertAAK && !insertPAK">
+                        
+                            <ng-container *ngFor="let item of rwAngkaKreditPenetapan; trackBy: trackByFn">
+                                <h2 class="text-lg font-bold mb-2">Penetapan Angka Kredit </h2>
+                                <div class="grid grid-cols-12 gap-x-1">
+                        
+                                    <!-- Item -->
+                                    <div class="col-span-11 text-md font-medium">
+                                        <div class="flex flex-col">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div [matTooltip]="'Tahun'">Tahun {{item.tahun}}</div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div [matTooltip]="'Nilai Penetapan AK '"> Nilai Penetapan Angka Kredit {{item.nilaiAkPenetapan}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        <button class="min-w-10 min-h-10 h-10 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetailsPAK(item.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+                        
+                                    <div class="col-span-12 my-4 border-b"></div>
+                                </div>
+                                <ng-container *ngIf="selected?.id === item.id">
+                                    <ng-container *ngTemplateOutlet="rowDetailsTemplatePAK; context: {$implicit: item}">
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="!rwAngkaKreditPenetapan.length">
+                                <fuse-alert [type]="'info'">
+                                    <span fuseAlertTitle>Belum ada data riwayat angka kredit Penetapan</span>
+                                </fuse-alert>
+                            </ng-container>
+                        </ng-container>
+
+                        <!-- INSERT NEW DATA -->
+                        <ng-container *ngIf="insertAHK">
+                            <div class="relative flex flex-col flex-auto items-center p-6">
+                                <div class="w-full">
+                                    <form [formGroup]="formAHK">
+                                        <div class="flex flex-auto items-end">
+                                            <div class="flex items-center justify-end w-full mx-auto">
+                                                <button class="ml-auto" mat-button [matTooltip]="'Batalkan Penambahan Data Baru'" (click)="toggleInsertAHK(false)">
+                                                    Batal
+                                                </button>
+                                                <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="formAHK.invalid" [matTooltip]="'Submit Usulan Penambahan Data'" (click)="_insertAHK()">
+                                                    Submit Usulan
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai AK hasil konversi</mat-label>
+                                                <input matInput [formControlName]="'nilaiAkKonversi'">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Formulir Scan KAK(Ditandatangani pimpinan) <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event, 'fileDokumen', 'file')" style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full mx-auto">
+                                                        <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false, 'fileDokumen', 'file')">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="insertAAK">
+                            <div class="relative flex flex-col flex-auto items-center p-6">
+                                <div class="w-full">
+                                    <form [formGroup]="formAAK">
+                                        <div class="flex flex-auto items-end">
+                                            <div class="flex items-center justify-end w-full mx-auto">
+                                                <button class="ml-auto" mat-button [matTooltip]="'Batalkan Penambahan Data Baru'" (click)="toggleInsertAAK(false)">
+                                                    Batal
+                                                </button>
+                                                <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="formAAK.invalid" [matTooltip]="'Submit Usulan Penambahan Data AAK'" (click)="_insertAAK()">
+                                                    Submit Usulan Akumulasi Angka Kredit
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai Akumulasi Angka Kredit</mat-label>
+                                                <input matInput [formControlName]="'nilaiAkAkumulasi'">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Dokumen Formulir Akumulasi Angka Kredit <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileDokumen type="file" (click)="fileDokumen.value = null" accept="application/pdf" (change)="onFileInput2($event, 'fileDokumen', 'file')" style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full mx-auto">
+                                                        <button *ngIf="!onFileInputed2" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileDokumen.click()">Unggah
+                                                            Dokumen Formulir Akumulasi Angka Kredit</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed2" [matTooltip]="'Clear'" (click)="toggleOnFileInputed2(false, 'fileDokumen', 'file')">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </ng-container>
+
+
+                        <ng-container *ngIf="insertPAK">
+                            <div class="relative flex flex-col flex-auto items-center p-6">
+                                <div class="w-full">
+                                    <form [formGroup]="formPAK">
+                                        <div class="flex flex-auto items-end">
+                                            <div class="flex items-center justify-end w-full mx-auto">
+                                                <button class="ml-auto" mat-button [matTooltip]="'Batalkan Penambahan Data Baru'"
+                                                    (click)="toggleInsertPAK(false)">
+                                                    Batal
+                                                </button>
+                                                <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="formPAK.invalid"
+                                                    [matTooltip]="'Submit Usulan Penambahan Data PAK'" (click)="_insertPAK()">
+                                                    Submit Usulan Penenetapan Angka Kredit
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai Penetapan Angka Kredit</mat-label>
+                                                <input matInput [formControlName]="'nilaiAkPenetapan'"
+                                                    >
+                                            </mat-form-field>
+                                        </div>
+                                    <div class="mt-4">
+                                        <div class="fuse-mat-no-subscript w-full">
+                                            <mat-label>Formulir Penetapan Angka Kredit <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                            <input #fileDokumen type="file" (click)="fileDokumen.value = null" accept="application/pdf"
+                                                (change)="onFileInput3($event, 'fileDokumen', 'file')" style="display:none;" />
+                                            <div class="flex flex-auto items-start">
+                                                <div class="flex items-center justify-start w-full mx-auto">
+                                                    <button *ngIf="!onFileInputed3" class="mr-2" mat-flat-button [color]="'accent'"
+                                                        (click)="fileDokumen.click()">Unggah
+                                                        Formulir Penetapan Angka Kredit</button>
+                                                    <button mat-icon-button class="mr-2" *ngIf="onFileInputed3" [matTooltip]="'Clear'"
+                                                        (click)="toggleOnFileInputed3(false, 'fileDokumen', 'file')">
+                                                        <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                    </button>
+                                                    <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Usulan Angka Kredit Hasil Konversi">
+        <ng-template matTabContent>
+            <app-usulan [items]="rwUsuls"></app-usulan>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Usulan Angka Kredit Akumulasi">
+        <ng-template matTabContent>
+            <app-usulan [items]="rwUsulAAK"></app-usulan>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Usulan Angka Kredit Penetapan">
+        <ng-template matTabContent>
+            <app-usulan [items]="rwUsulPAK"></app-usulan>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>
+
+<ng-template #rowDetailsTemplateAHK let-item>
+    <div class="grid grid-cols-12 gap-x-1">
+        <div class="col-span-12 shadow-lg overflow-hidden mb-4">
+            <div class="flex border-b">
+                <div class="flex flex-col w-full">
+                    <ng-container *ngIf="!editAHK">
+                        <div class="relative flex flex-col flex-auto items-center p-6 pt-0">
+                            <div class="w-full">
+                                <div class="flex flex-auto items-end">
+                                    <div class="flex items-center ml-auto mb-4">
+                                        <button mat-button [color]="'warn'" [matTooltip]="'Hapus Data'" class="mr-5" (click)="delete()">
+                                            Hapus
+                                        </button>
+                                        <button mat-stroked-button (click)="toggleEditAHK(true)">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'">
+                                            </mat-icon>
+                                            <span class="ml-2">Ubah</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="selected">
+                                    <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Tahun</div>
+                                            <div>{{selected.tahun}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Nilai AK Konversi</div>
+                                            <div>{{selected.nilaiAkKonversi ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Dokumen AK Yang Sudah Ditandatanggani Pemimpin</div>
+                                            <button *ngIf="selected.dokumenId" class="px-3" mat-button (click)="togglePrint(selected.dokumenId)">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
+                                                </mat-icon>
+                                                <span>Unduh</span>
+                                            </button>
+                                            <div *ngIf="!selected.dokumenId">-</div>
+                                        </div>
+                                       
+                                                                          </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="editAHK">
+                        <div class="relative flex flex-col flex-auto items-center p-6">
+                            <div class="w-full">
+                                <form [formGroup]="formAHK">
+                                    <div class="flex flex-auto items-end">
+                                        <div class="flex items-center justify-end w-full mx-auto">
+                                            <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'" (click)="toggleEditAHK(false)">
+                                                Batal
+                                            </button>
+                                            <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="formAHK.invalid" [matTooltip]="'Submit Usulan Perubahan Data'" (click)="updateAHK()">
+                                                Submit Usulan
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="selected">
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai Konversi AK</mat-label>
+                                                <input matInput [formControlName]="'nilaiAkKonversi'" >
+                                            </mat-form-field>
+                                        </div>
+                                        
+                                        <div class="mt-4">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Dokumen  <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event, 'fileDokumen', 'file')" style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full mx-auto">
+                                                        <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false, 'fileDokumen', 'file')">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </form>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                   
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<ng-template #rowDetailsTemplateAAK let-item>
+    <div class="grid grid-cols-12 gap-x-1">
+        <div class="col-span-12 shadow-lg overflow-hidden mb-4">
+            <div class="flex border-b">
+                <div class="flex flex-col w-full">
+                    <ng-container *ngIf="!editAAK">
+                        <div class="relative flex flex-col flex-auto items-center p-6 pt-0">
+                            <div class="w-full">
+                                <div class="flex flex-auto items-end">
+                                    <div class="flex items-center ml-auto mb-4">
+                                        <button mat-button [color]="'warn'" [matTooltip]="'Hapus Data'" class="mr-5"
+                                            (click)="deleteAAK()">
+                                            Hapus
+                                        </button>
+                                        <button mat-stroked-button (click)="toggleEditAAK(true)">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'">
+                                            </mat-icon>
+                                            <span class="ml-2">Ubah</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="selected">
+                                    <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Tahun</div>
+                                            <div>{{selected.tahun}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Nilai AK Akumulasi</div>
+                                            <div>{{selected.nilaiAkAkumulasi ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Dokumen AK Yang Sudah Ditandatanggani Pemimpin
+                                            </div>
+                                            <button *ngIf="selected.dokumenId" class="px-3" mat-button
+                                                (click)="togglePrint(selected.dokumenId)">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
+                                                </mat-icon>
+                                                <span>Unduh</span>
+                                            </button>
+                                            <div *ngIf="!selected.dokumenId">-</div>
+                                        </div>
+
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="editAAK">
+                        <div class="relative flex flex-col flex-auto items-center p-6">
+                            <div class="w-full">
+                                <form [formGroup]="formAAK">
+                                    <div class="flex flex-auto items-end">
+                                        <div class="flex items-center justify-end w-full mx-auto">
+                                            <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'"
+                                                (click)="toggleEditAAK(false)">
+                                                Batal
+                                            </button>
+                                            <button class="ml-2" mat-flat-button [color]="'primary'"
+                                                [disabled]="formAAK.invalid" [matTooltip]="'Submit Usulan Perubahan Data'"
+                                                (click)="updateAAK()">
+                                                Submit Usulan
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="selected">
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                       
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai Akumulasi AK</mat-label>
+                                                <input matInput [formControlName]="'nilaiAkAkumulasi'"
+                                                    >
+                                            </mat-form-field>
+                                        </div>
+                                
+                                        <div class="mt-4">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Dokumen formulir Akumulasi Angka Kredit <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file"
+                                                    (click)="fileEditDocument.value = null" accept="application/pdf"
+                                                    (change)="onFileInput2($event, 'fileDokumen', 'file')"
+                                                    style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full mx-auto">
+                                                        <button *ngIf="!onFileInputed2" class="mr-2" mat-flat-button
+                                                            [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed2"
+                                                            [matTooltip]="'Clear'"
+                                                            (click)="toggleOnFileInputed2(false, 'fileDokumen', 'file')">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </form>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #rowDetailsTemplatePAK let-item>
+    <div class="grid grid-cols-12 gap-x-1">
+        <div class="col-span-12 shadow-lg overflow-hidden mb-4">
+            <div class="flex border-b">
+                <div class="flex flex-col w-full">
+                    <ng-container *ngIf="!editPAK">
+                        <div class="relative flex flex-col flex-auto items-center p-6 pt-0">
+                            <div class="w-full">
+                                <div class="flex flex-auto items-end">
+                                    <div class="flex items-center ml-auto mb-4">
+                                        <button mat-button [color]="'warn'" [matTooltip]="'Hapus Data'" class="mr-5"
+                                            (click)="deletePAK()">
+                                            Hapus
+                                        </button>
+                                        <button mat-stroked-button (click)="toggleEditPAK(true)">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'">
+                                            </mat-icon>
+                                            <span class="ml-2">Ubah</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="selected">
+                                    <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Tahun</div>
+                                            <div>{{selected.tahun}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Nilai Penetapan AK </div>
+                                            <div>{{selected.nilaiAkPenetapan ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Dokumen AK Yang Sudah Ditandatanggani Pemimpin
+                                            </div>
+                                            <button *ngIf="selected.dokumenId" class="px-3" mat-button
+                                                (click)="togglePrint(selected.dokumenId)">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
+                                                </mat-icon>
+                                                <span>Unduh</span>
+                                            </button>
+                                            <div *ngIf="!selected.dokumenId">-</div>
+                                        </div>
+
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="editPAK">
+                        <div class="relative flex flex-col flex-auto items-center p-6">
+                            <div class="w-full">
+                                <form [formGroup]="formPAK">
+                                    <div class="flex flex-auto items-end">
+                                        <div class="flex items-center justify-end w-full mx-auto">
+                                            <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'"
+                                                (click)="toggleEditPAK(false)">
+                                                Batal
+                                            </button>
+                                            <button class="ml-2" mat-flat-button [color]="'primary'"
+                                                [disabled]="formPAK.invalid" [matTooltip]="'Submit Usulan Perubahan Data'"
+                                                (click)="update()">
+                                                Submit Usulan
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="selected">
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                       
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai Penetapan AK</mat-label>
+                                                <input matInput [formControlName]="'nilaiAkPenetapan'"
+                                                   >
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Dokumen PAK <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file"
+                                                    (click)="fileEditDocument.value = null" accept="application/pdf"
+                                                    (change)="onFileInput($event, 'fileDokumen', 'file')"
+                                                    style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full mx-auto">
+                                                        <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button
+                                                            [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed"
+                                                            [matTooltip]="'Clear'"
+                                                            (click)="toggleOnFileInputed(false, 'fileDokumen', 'file')">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </form>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

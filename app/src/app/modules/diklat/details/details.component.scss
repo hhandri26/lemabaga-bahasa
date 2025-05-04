@@ -1,0 +1,39 @@
+::ng-deep .modal-fullscreen {
+    max-width: none !important;
+    // height: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
+    margin: 0 !important;
+}
+
+::ng-deep .mat-expansion-panel-header-title,
+.mat-expansion-panel-header-description {
+    font-size: 1rem;
+    color: #000 !important;
+    font-weight: 600;
+}
+
+::ng-deep .mat-accordion {
+    width: 100%;
+}
+
+::ng-deep .mat-expansion-panel-header {
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+::ng-deep .mat-card-header-text {
+    flex-grow: 1 !important;
+}
+
+::ng-deep .mat-expansion-panel-body {
+    padding: 0px !important;
+}
+
+.right-aligned-header > .mat-content {
+    justify-content: space-between;
+}
+
+.mat-content > mat-panel-title, .mat-content > mat-panel-description {
+  flex: 0 0 auto;
+}

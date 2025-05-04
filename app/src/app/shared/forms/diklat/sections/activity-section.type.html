@@ -1,0 +1,38 @@
+<div class="kt-portlet__body">
+    <div class="kt-widget1">
+        <ng-container *ngFor="let field of field.fieldGroup; let i = index;">
+            <div class="kt-widget1__item">
+                <div class="kt-widget1__info">
+                    <formly-field [field]="field"></formly-field>
+                </div>
+                <div class="kt-widget1__number">
+                    <button mat-button (click)="remove(i)" color="warn">
+						<mat-icon>close</mat-icon>
+					</button>
+                </div>
+            </div>
+        </ng-container>
+    </div>
+
+
+    <!-- </mat-toolbar> -->
+
+    <!-- <div *ngFor="let field of field.fieldGroup; let i = index;" class="row">
+		<formly-field class="col-md-11" [field]="field"></formly-field>
+		<div class="col-md-1 text-right">
+			<button class="kt-mt-20" mat-button (click)="remove(i)" color="warn">
+				<mat-icon>close</mat-icon>
+			</button>
+		</div>
+	</div> -->
+</div>
+<div class="kt-portlet__foot">
+    <div class="row align-items-center kt-margin-20">
+        <div class="col-md-12 kt-align-right">
+            <button class="kt-mr-10" mat-raised-button (click)="add()">
+				ROW
+			</button>
+            <button [hidden]="!field.fieldGroup.length" [disabled]="!formControl.valid" mat-raised-button color="warn" (click)="submit()">SIMPAN</button>
+        </div>
+    </div>
+</div>

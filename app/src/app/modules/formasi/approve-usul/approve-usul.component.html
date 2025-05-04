@@ -1,0 +1,39 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Menyetujui Usulan Formasi</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="mt-4 mb-4">
+                <div class="fuse-mat-no-subscript w-full">
+                    <mat-label>Lampiran Dokumen Rekomendasi <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                    <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event)" style="display:none;" />
+                    <div class="flex flex-auto items-start mt-2">
+                        <div class="flex items-center justify-start w-full mx-auto">
+                            <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                Dokumen Rekomendasi</button>
+                            <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false)">
+                                <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                            </button>
+                            <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="approved()">
+            Submit
+        </button>
+    </div>
+</div>

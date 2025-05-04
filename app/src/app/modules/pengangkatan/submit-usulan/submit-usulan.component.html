@@ -1,0 +1,162 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Submit Usulan Pengangkatan PFP</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="grid grid-flow-col lg:grid-flow-row min-w-max lg:min-w-0 divide-x lg:divide-x-0 lg:divide-y">
+                <div class="hidden lg:block p-2 col-span-full bg-gray-100 dark:bg-transparent">
+                    <div class="text-md font-semibold">PROFIL</div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Instansi</div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        {{_item.instansiNama | titlecase}}
+                    </div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Unit Kerja</div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        {{_item.formasiDetail.unitKerjaNama}}
+                    </div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Jabatan</div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        {{_item.formasiDetail.jabatanNama}}
+                    </div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">NIP</div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        {{_item.pnsNip}}
+                    </div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Nama</div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        {{_item.pnsNama}}
+                    </div>
+                </div>
+
+                <div class="hidden lg:block p-2 col-span-full bg-gray-100 dark:bg-transparent">
+                    <div class="text-md font-semibold">KELENGKAPAN BERKAS</div>
+                </div>
+                <fuse-alert [type]="'info'" class="mt-2">
+                    <span fuseAlertTitle>Berkas harus PDF dan maksimal ukuran 1 MB</span>
+                </fuse-alert>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">
+                        <div class="flex flex-col">
+                            <div>Surat Usulan</div>
+                            <div class="flex items-center text-md mt-2">
+                                <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                <button class="ml-1.5 text-sm underline">Contoh Surat Usulan</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        <div class="fuse-mat-no-subscript w-full">
+                            <input #dokumenUsulan type="file" (click)="dokumenUsulan.value = null" accept="application/pdf" (change)="onFileInput('dokumenUsulan', $event)" style="display:none;" />
+                            <div class="flex flex-auto items-start mt-2">
+                                <div class="flex items-center justify-start w-full mx-auto">
+                                    <button *ngIf="!form.get('dokumenUsulan').value" class="mr-2" mat-flat-button [color]="'accent'" (click)="dokumenUsulan.click()">Unggah
+                                            Surat Usulan</button>
+                                    <button mat-icon-button class="mr-2" *ngIf="form.get('dokumenUsulan').value" [matTooltip]="'Clear'" (click)="toggleOnFileInputed('dokumenUsulan', false)">
+                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                        </button>
+                                    <span class="ml-auto ml-2" [id]="'dokumenUsulan'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">
+                        <div class="flex flex-col">
+                            <div>Dokumen Pernyataan</div>
+                            <div class="flex items-center text-md mt-2">
+                                <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                <button class="ml-1.5 text-sm underline">Contoh Dokumen Pernyataan</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        <div class="fuse-mat-no-subscript w-full">
+                            <input #dokumenPernyataan type="file" (click)="dokumenPernyataan.value = null" accept="application/pdf" (change)="onFileInput('dokumenPernyataan', $event)" style="display:none;" />
+                            <div class="flex flex-auto items-start mt-2">
+                                <div class="flex items-center justify-start w-full mx-auto">
+                                    <button *ngIf="!form.get('dokumenPernyataan').value" class="mr-2" mat-flat-button [color]="'accent'" (click)="dokumenPernyataan.click()">Unggah
+                                            Dokumen Pernyataan</button>
+                                    <button mat-icon-button class="mr-2" *ngIf="form.get('dokumenPernyataan').value" [matTooltip]="'Clear'" (click)="toggleOnFileInputed('dokumenPernyataan', false)">
+                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                        </button>
+                                    <span class="ml-auto ml-2" [id]="'dokumenPernyataan'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">
+                        <div class="flex flex-col">
+                            <div>Dokumen Biodata</div>
+                            <div class="flex items-center text-md mt-2">
+                                <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                <button class="ml-1.5 text-sm underline">Contoh Dokumen Biodata</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        <div class="fuse-mat-no-subscript w-full">
+                            <input #dokumenBiodata type="file" (click)="dokumenBiodata.value = null" accept="application/pdf" (change)="onFileInput('dokumenBiodata', $event)" style="display:none;" />
+                            <div class="flex flex-auto items-start mt-2">
+                                <div class="flex items-center justify-start w-full mx-auto">
+                                    <button *ngIf="!form.get('dokumenBiodata').value" class="mr-2" mat-flat-button [color]="'accent'" (click)="dokumenBiodata.click()">Unggah
+                                            Dokumen Biodata</button>
+                                    <button mat-icon-button class="mr-2" *ngIf="form.get('dokumenBiodata').value" [matTooltip]="'Clear'" (click)="toggleOnFileInputed('dokumenBiodata', false)">
+                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                        </button>
+                                    <span class="ml-auto ml-2" [id]="'dokumenBiodata'"></span>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                    <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">SK Pangkat Terakhir</div>
+                    <div class="flex items-center justify-center lg:justify-start p-2">
+                        <div class="fuse-mat-no-subscript w-full">
+                            <input #dokumenSkPangkatTerakhir type="file" (click)="dokumenSkPangkatTerakhir.value = null" accept="application/pdf" (change)="onFileInput('dokumenSkPangkatTerakhir', $event)" style="display:none;" />
+                            <div class="flex flex-auto items-start mt-2">
+                                <div class="flex items-center justify-start w-full mx-auto">
+                                    <button *ngIf="!form.get('dokumenSkPangkatTerakhir').value" class="mr-2" mat-flat-button [color]="'accent'" (click)="dokumenSkPangkatTerakhir.click()">Unggah
+                                            SK Pangkat Terakhir</button>
+                                    <button mat-icon-button class="mr-2" *ngIf="form.get('dokumenSkPangkatTerakhir').value" [matTooltip]="'Clear'" (click)="toggleOnFileInputed('dokumenSkPangkatTerakhir', false)">
+                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                        </button>
+                                    <span class="ml-auto ml-2" [id]="'dokumenSkPangkatTerakhir'"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="approved()">
+            Submit
+        </button>
+    </div>
+</div>

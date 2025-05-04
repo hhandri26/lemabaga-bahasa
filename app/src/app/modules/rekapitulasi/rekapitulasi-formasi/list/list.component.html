@@ -1,0 +1,96 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div>
+            <div class="text-2xl font-extrabold tracking-tight leading-none">Formasi</div>
+            <div class="ml-0.5 font-medium text-secondary">
+                <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;Formasi
+                </ng-container>
+            </div>
+        </div>
+        <!-- <form [formGroup]="form">
+            <div class="flex items-center mt-4 sm:mt-0 md:mt-4"> -->
+
+        <!-- <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50">
+                <mat-icon matPrefix [svgIcon]="'heroicons_outline:search'"></mat-icon>
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'Cari Judul'">
+                </mat-form-field> -->
+        <!-- <div class="flex-auto">
+                    <mat-form-field class="min-w-50 fuse-mat-dense fuse-mat-no-subscript w-full">
+                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                        <input matInput #keyword [autocomplete]="'off'" [placeholder]="'Cari instansi'" />
+                    </mat-form-field>
+                </div> -->
+        <!-- </div>
+        </form> -->
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(items$ | async) as items">
+                <ng-container *ngIf="items.length > 0; else noItems">
+                    <div class="grid">
+                        <!-- Header -->
+                        <div class="item-grid z-10 sticky top-0 grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 gap-3 py-3 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <!-- <div class="hidden md:block">#</div> -->
+                            <div class="md:block col-span-4">Instansi Jabatan</div>
+                            <div class="md:block col-span-3">Jabatan</div>
+                            <div class="md:block col-span-1">Jumlah Usulan kementerian</div>
+                            <div class="md:block col-span-1">Jumlah Existing</div>
+                            <div class="md:block col-span-1">Jumlah Rekomendasi Instansi</div>
+                            <div class="md:block col-span-1">Jumlah Disetujui</div>
+                            <div class="md:block col-span-1">Jumlah Formasi Tersedia (sisa)</div>
+                            <!-- <div class="md:block col-span-1">Jumlah Usulan Selesai</div> -->
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(items$ | async) as items">
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 items-center gap-2 py-3 px-6 border-b">
+                                    <div class="hidden md:block col-span-4">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">{{item.instansiNama}}</div>
+                                    </div>
+                                    <div class="md:block col-span-3">
+                                        {{item.jabatanNama}}
+                                    </div>
+                                    <div class="md:block col-span-1">
+                                        {{item.jumlahFormasiExists}}
+                                    </div>
+                                    <div class="md:block col-span-1">
+                                        <button class="px-3 mr-1" mat-button [disabled]="+item.jumlahFormasiExists === 0" (click)="toggleRiil(item)"><span>{{item.jumlahFormasiExists}}&nbsp;</span><mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:external-link'"></mat-icon></button>
+                                    </div>
+                                    <div class="md:block col-span-1">
+                                        <button class="px-3 mr-1" mat-button [disabled]="+item.jumlahFormasiProcess === 0" (click)="toggleUsulan(item)"><span>{{item.jumlahFormasiProcess}}&nbsp;</span><mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:external-link'"></mat-icon></button>
+                                    </div>
+                                    <div class="md:block col-span-1">
+                                        <button class="px-3 mr-1" mat-button [disabled]="+item.jumlahFormasiApproved === 0" (click)="toggleApproved(item)"><span>{{item.jumlahFormasiApproved}}&nbsp;</span><mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:external-link'"></mat-icon></button>
+                                    </div>
+                                    <!-- <div class="md:block col-span-1">
+                                        {{item.jumlahUsulanProcess}}
+                                    </div> -->
+                                    <div class="md:block col-span-1">
+                                        {{item.jumlahUsulanCompleted}}
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)" [pageSize]="pagination.perPage"
+                        [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <ng-template #noItems>
+                <fuse-alert [type]="'info'">
+                    <span fuseAlertTitle>Data Rekapitulasi Formasi tidak ditemukan!</span>
+                </fuse-alert>
+            </ng-template>
+        </div>
+    </div>
+</div>

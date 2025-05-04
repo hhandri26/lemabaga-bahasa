@@ -1,0 +1,107 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Pengangkatan PFP Baru</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="mt-4 flex items-center">
+                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                    <mat-label>Tipe Pengangkatan</mat-label>
+                    <mat-select [formControlName]="'tipePengangkatan'">
+                        <mat-option *ngFor="let item of jenisPengangkatanList" [value]="item.id">{{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                    <mat-label>NIP</mat-label>
+                    <input matInput [formControlName]="'nip'" [spellcheck]="false">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full pr-8">
+                    <mat-label>Email</mat-label>
+                    <input matInput [formControlName]="'email'" [spellcheck]="false">
+                </mat-form-field>
+            </div>
+            <div class="mt-4 flex items-center">
+                <mat-form-field class="fuse-mat-no-subscript w-full pr-8">
+                    <mat-label>Nama Lengkap</mat-label>
+                    <input matInput [formControlName]="'nama'" [spellcheck]="false">
+                </mat-form-field>
+
+                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                    <mat-label>Jenis Kelamin</mat-label>
+                    <mat-select [formControlName]="'jenisKelamin'">
+                        <mat-option *ngFor="let item of genders" [value]="item.id">{{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+
+            <div class="mt-4 flex items-center">
+                <div class="min-w-60 pr-8 w-full">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Tempat Lahir</mat-label>
+                        <input matInput [formControlName]="'tempatLahirId'" [matAutocomplete]="matAutocomplete" [placeholder]="'Cari nama Kab/Kota...'" #barSearchInput>
+                        <button *ngIf="form.get('tempatLahirId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('tempatLahirId').setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                    </mat-form-field>
+                    <mat-autocomplete #matAutocomplete="matAutocomplete" [displayWith]="displayFn" [disableRipple]="true">
+                        <!-- <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option> -->
+                        <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultTempatLahir && !resultTempatLahir.length">
+                            Kab/Kota tidak ditemukan!
+                        </mat-option>
+                        <mat-option *ngFor="let item of resultTempatLahir; trackBy: trackByFn" [value]="item">
+                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}}</span>
+                        </mat-option>
+                    </mat-autocomplete>
+                    <mat-error *ngIf="form.controls['tempatLahirId'].hasError('incorrect')">
+                        Anda harus memilih pilihan Kab/Kota dari hasil pencarian
+                    </mat-error>
+                </div>
+                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                    <mat-label>Tanggal Lahir</mat-label>
+                    <input matInput (click)="_tglLahir.open()" (keydown.keydown)="$event.preventDefault()" readonly="readonly" [matDatepicker]="_tglLahir" [formControlName]="'tglLahir'" [max]="this._helperService.maxDate()">
+                    <mat-datepicker-toggle matSuffix [for]="_tglLahir">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #_tglLahir startView="year" [startAt]="this._helperService.startDate()"></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="mt-4 flex items-center">
+                <mat-form-field class="fuse-mat-no-subscript w-full pr-8 ">
+                    <mat-label>Pangkat / Golongan</mat-label>
+                    <mat-select [formControlName]="'golonganId'">
+                        <mat-option *ngFor="let item of jenisGolongan$ | async" [value]="item.id">{{item.namaPangkat}} - {{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                    <mat-label>TMT-Golongan</mat-label>
+                    <input matInput [matDatepicker]="_tmtGolongan" [formControlName]="'tmtGolongan'" (focus)="_tmtGolongan.open()" [max]="this._helperService.maxDate()">
+                    <mat-datepicker-toggle matSuffix [for]="_tmtGolongan">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #_tmtGolongan></mat-datepicker>
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-stroked-button class="ml-4 bg-card hover:bg-hover" [color]="'primary'" (click)="create(true)">
+            Simpan sebagai draft
+        </button>
+        <!-- <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="create(false)">
+            Submit
+        </button> -->
+    </div>
+</div>

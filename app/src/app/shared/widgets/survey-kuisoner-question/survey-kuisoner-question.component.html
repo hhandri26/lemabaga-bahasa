@@ -1,0 +1,81 @@
+<ng-container *ngIf="questions; else noQuestion">
+    <ng-container *ngFor="let question of questions; let i = index; trackBy: trackByFn">
+        <div
+            class="flex flex-col items-start mb-3 p-5 space-y-3 shadow rounded-lg overflow-hidden bg-card cursor-pointer">
+            <div class="text-lg font-medium leading-5 w-full">
+                <span>{{i+1}}).</span> {{question.question.questionText}}
+            </div>
+            <!-- Tambahkan kuisoner_tipe di bawah teks pertanyaan -->
+            <!-- <div class="text-sm text-gray-500 w-full">
+                Tipe Kuisoner: {{question.question.questionTipe}}
+            </div> -->
+            <div class="w-full">
+                <!-- Bagian untuk tipe PG (Pilihan Ganda) -->
+                <ng-container *ngIf="question.question.questionTipe === 'PG'">
+                    <ng-container *ngIf="question.question.isOption">
+                        <div class="space-y-1.5">
+                            <mat-radio-group>
+                                <ng-container *ngFor="let choice of question.question.options">
+                                    <mat-radio-button [value]="choice.id" class="flex my-1" [checked]="choice.isAnswer"
+                                        (change)="save($event, question.question.questionId)">{{choice.label}}</mat-radio-button>
+                                </ng-container>
+                            </mat-radio-group>
+                        </div>
+                    </ng-container>
+                </ng-container>
+
+<ng-container *ngIf="question.question.questionTipe === 'LIKECHART'">
+    <div class="space-y-1.5">
+        <ng-container *ngFor="let choice of question.question.options; trackBy: trackByFn">
+            <div class="flex items-center py-1">
+                <!-- Ketika pilihan tidak dipilih -->
+                <ng-container *ngIf="!choice.isAnswer">
+                    <div class="flex items-center justify-center w-5 h-5">
+                        <div class="w-4 h-4 border-2" (click)="toggleAnswer(choice, question)">
+                        </div>
+                    </div>
+                </ng-container>
+
+                <!-- Ketika pilihan dipilih -->
+                <ng-container *ngIf="choice.isAnswer">
+                    <mat-icon class="text-hint icon-size-5 text-green-600" [svgIcon]="'heroicons_solid:check-circle'"
+                        (click)="toggleAnswer(choice, question)">
+                    </mat-icon>
+                </ng-container>
+
+                <div class="ml-1.5 leading-5">{{choice.label}}</div>
+            </div>
+        </ng-container>
+    </div>
+</ng-container>
+
+
+
+
+
+<!-- Untuk pertanyaan tipe ISIAN -->
+<ng-container *ngIf="question?.question?.questionTipe === 'ISIAN'">
+    <textarea class="w-full p-3 border rounded-lg mt-3" placeholder="Masukkan jawaban..."
+        [(ngModel)]="question.isianAnswer"
+        (ngModelChange)="saveIsian(question.isianAnswer, question.question.questionId, question.isianAnswer)"
+        rows="4"></textarea>
+</ng-container>
+
+
+            </div>
+        </div>
+    </ng-container>
+    <button class="sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'" (click)="end()">
+        <span class="ml-2 mr-1">Selesai</span>
+    </button>
+</ng-container>
+
+<ng-template #noQuestion>
+    <div class="grid grid-cols-1 gap-3">
+        <div class="w-full">
+            <fuse-alert [type]="'info'" class="mb-5">
+                <div class="text-md">Pertanyaan survey tidak ditemukan</div>
+            </fuse-alert>
+        </div>
+    </div>
+</ng-template>

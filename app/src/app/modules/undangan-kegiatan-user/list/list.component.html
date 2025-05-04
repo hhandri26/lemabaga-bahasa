@@ -1,0 +1,130 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div>
+            <div class="text-2xl font-extrabold tracking-tight leading-none">Undangan&nbsp;Kegiatan</div>
+            <div class="ml-0.5 font-medium text-secondary">
+                <ng-container *ngIf="pagination?.recordsTotal > 0">{{pagination?.recordsTotal | number}}&nbsp;Kegiatan
+                </ng-container>
+            </div>
+        </div>
+        <form [formGroup]="form">
+            <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
+
+                <!-- <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50">
+                <mat-icon matPrefix [svgIcon]="'heroicons_outline:search'"></mat-icon>
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'Cari Judul'">
+                </mat-form-field> -->
+                <div class="flex-auto ml-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full min-w-50">
+                        <!-- <mat-label>Status Kegiatan</mat-label> -->
+                        <mat-select [formControlName]="'byStatus'">
+                            <mat-option value="">-- Semua Status --</mat-option>
+                            <ng-container *ngFor="let item of statusKegiatanList; trackBy: trackByFn">
+                                <mat-option [value]="item.id">
+                                    {{item.name}}
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <button class="ml-4 bg-card hover:bg-hover" mat-stroked-button (click)="toggleSearch()">
+                    <span class="ml-2 mr-1">Cari</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(kegiatanItems$ | async) as items">
+                <ng-container *ngIf="items.length > 0; else noItems">
+                    <div class="grid">
+                        <!-- Header -->
+                        <div class="item-grid z-10 sticky top-0 grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 gap-3 py-3 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <!-- <div class="hidden md:block">#</div> -->
+                            <div class="md:block col-span-6">Nama kegiatan</div>
+                            <div class="hidden md:block col-span-3">Jadwal</div>
+                            <div class="hidden md:block col-span-2">Status</div>
+                            <div class="hidden md:block col-span-1"></div>
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(kegiatanItems$ | async) as items">
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 items-center gap-2 py-3 px-6 border-b">
+                                    <div class="md:block col-span-6">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">
+                                            {{item.kegiatanSimpleDto.judul | titlecase}}</div>
+                                        <div class="text-secondary font-medium">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                                                    <span class="leading-relaxed whitespace-nowrap text-sm">{{item.kegiatanSimpleDto.jenisKegiatan
+                                                        | replace:'_':' ' | titlecase}}</span>
+                                                </div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div class="flex items-center">
+                                                    <mat-icon class="icon-size-5 text-hint" svgIcon="heroicons_outline:location-marker"></mat-icon>
+                                                    {{item.kegiatanSimpleDto.lokasi | titlecase}}
+                                                </div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div class="flex items-center">
+                                                    <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                                    <button (click)="toggleOpenFile(item.kegiatanSimpleDto.fileUndanganUrl)" class="ml-1.5 text-sm underline">Undangan</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-3">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">
+                                            {{item.kegiatanSimpleDto.tglMulai}} - {{item.kegiatanSimpleDto.tglAkhir}}
+                                        </div>
+                                        <div class="text-secondary font-medium text-sm">Batas Konfirmasi : {{item.kegiatanSimpleDto.deadlineKonfirmasi}}
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-2">
+                                        <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide" [ngClass]="{
+                                            'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.statusKonfirmasiUndangan === 'MENUNGGU_KONFIRMASI',
+                                            'bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-50': item.statusKonfirmasiUndangan === 'KONFIRMASI_TIDAK_HADIR',
+                                            'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.statusKonfirmasiUndangan === 'KONFIRMASI_AKAN_HADIR',
+                                            'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.statusKonfirmasiUndangan === 'KONFIRMASI_DISETUJUI',
+                                            'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.statusKonfirmasiUndangan === 'KONFIRMASI_DITOLAK',
+                                            'bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-50': item.statusKonfirmasiUndangan === 'TIDAK_PERLU_KONFIRMASI'}">
+                                            <span
+                                                class="leading-relaxed whitespace-nowrap text-sm">{{item.statusKonfirmasiUndangan
+                                                | replace:'_':' ' | titlecase}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="hidden md:block col-span-1">
+                                            <ng-container *ngIf="item.statusKonfirmasiUndangan === 'MENUNGGU_KONFIRMASI'">
+                                                <button mat-stroked-button [color]="'warn'" (click)="toggleConfirm(item)">
+                                                    <span class="ml-1 mr-1">Konfirmasi</span>
+                                                </button>
+                                            </ng-container>
+
+                                        <!-- <button mat-button [color]="'warn'" [disabled]="!item.isConfirmed" (click)="togglePrint(item.id)">Cetak</button> -->
+                                    </div>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator class="sticky sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)"
+                        [pageSize]="pagination.perPage" [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <!-- DETAIL -->
+            <ng-template #noItems>
+                <fuse-alert [type]="'info'">
+                    <span fuseAlertTitle>Undangan kegiatan tidak ditemukan!</span>
+                </fuse-alert>
+            </ng-template>
+        </div>
+    </div>
+</div>

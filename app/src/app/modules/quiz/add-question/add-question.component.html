@@ -1,0 +1,80 @@
+<div class="p-3 pt-0" [class.h-13]="!formVisible">
+    <div class="relative flex w-full h-full rounded-lg">
+        <button class="absolute inset-0 justify-start w-full rounded-lg"
+            [ngClass]="{'opacity-0 pointer-events-none': formVisible}" mat-button (click)="toggleFormVisibility()"
+            disableRipple>
+            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_outline:plus-circle'"></mat-icon>
+            <span class="ml-2 text-secondary">{{buttonTitle}}</span>
+        </button>
+        <form class="flex flex-col items-start w-full" [ngClass]="{'opacity-0': !formVisible}" [formGroup]="form">
+            <div class="flex flex-col w-full p-5 rounded-lg shadow bg-card">
+                <div class="w-full">
+                    <div class="flex flex-wrap gap-6 w-full mt-2">
+                        <mat-radio-group class="invisible absolute w-0 h-0 pointer-events-none"
+                            [formControlName]="'level'" #levelRadioGroup="matRadioGroup">
+                            <ng-container *ngFor="let level of levels; trackBy: trackByFn">
+                                <mat-radio-button [value]="level.value"></mat-radio-button>
+                            </ng-container>
+                        </mat-radio-group>
+                        <ng-container *ngFor="let level of levels; trackBy: trackByFn">
+                            <div class="relative flex flex-col items-start justify-start p-4 rounded-md shadow cursor-pointer bg-card"
+                                [ngClass]="{'ring ring-inset ring-primary': levelRadioGroup.value === level.value}"
+                                (click)="levelRadioGroup.value = level.value; form.get('level').setValue(levelRadioGroup.value)">
+                                <ng-container *ngIf="levelRadioGroup.value === level.value">
+                                    <mat-icon class="absolute top-0 right-0 mt-1 mr-1 icon-size-4 text-green-600"
+                                        [svgIcon]="'heroicons_solid:check-circle'"></mat-icon>
+                                </ng-container>
+                                <div class="font-medium">{{level.label}}</div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+                <div class="flex items-center mt-5">
+                    <!-- <div class="cursor-pointer mr-3">
+                        <div class="leading-6 font-medium">Isian / Essay</div>
+                    </div> -->
+                    <mat-slide-toggle class="ml-2" [color]="'primary'" [formControlName]="'quizType'">
+                    </mat-slide-toggle>
+                    <div class="cursor-pointer ml-3">
+                        <div class="leading-6 font-medium">Pilihan ganda</div>
+                    </div>
+                </div>
+                <textarea class="w-full text-lg font-medium leading-5 mt-5" [spellcheck]="'off'"
+                    [formControlName]="'question'" [placeholder]="'Pertanyaan...'" (keydown.enter)="save()"
+                    cdkTextareaAutosize #questionInput #questionAutosize="cdkTextareaAutosize">
+                </textarea>
+                <ng-container *ngIf="form.get('quizType').value">
+                    <div class="w-full mx-2 mt-4 space-y-1.5">
+                        <ng-container *ngFor="let choice of choices; let i = index; trackBy: trackByFn">
+                            <div class="group flex items-center">
+                                <!-- <mat-checkbox class="flex items-center" [color]="'primary'" [checked]="choice.isAnswer"
+                                (change)="updatePilihan(choice)"></mat-checkbox> -->
+                                <mat-radio-button [checked]="choice.isAnswer" [color]="'primary'"
+                                    (change)="updatePilihan(i, true, 'option')"></mat-radio-button>
+                                <input class="w-full px-1 py-0.5" [placeholder]="'Pilihan'" [value]="choice.label"
+                                    (input)="updatePilihan(i, $event.target.value, 'label')">
+                                <mat-icon class="hidden group-hover:flex ml-auto icon-size-5 cursor-pointer"
+                                    [svgIcon]="'heroicons_solid:x'" (click)="removePilihan(i)"></mat-icon>
+                            </div>
+                        </ng-container>
+                        <div class="flex items-center">
+                            <mat-icon class="-ml-0.5 icon-size-5 text-hint"
+                                [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                            <input class="w-full ml-1.5 px-1 py-0.5" [placeholder]="'Tambah pilihan & enter'"
+                                (keydown.enter)="addPilihan(newLabelInput.value); newLabelInput.value = ''"
+                                #newLabelInput>
+                        </div>
+                    </div>
+                </ng-container>
+            </div>
+            <div class="flex items-center mt-2">
+                <button mat-flat-button [color]="'primary'" [type]="'button'" (click)="save()" [disabled]="!form.valid">
+                    Tambah pertanyaan
+                </button>
+                <button class="ml-1 w-8 h-8 min-h-8" mat-icon-button [type]="'button'" (click)="toggleFormVisibility()">
+                    <mat-icon class="icon-size-4" [svgIcon]="'heroicons_solid:x'"></mat-icon>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

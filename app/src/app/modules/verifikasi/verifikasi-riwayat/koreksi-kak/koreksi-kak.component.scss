@@ -1,0 +1,72 @@
+.readonly-wrapper {
+    cursor: not-allowed;
+}
+
+.readonly-wrapper .readonly-block {
+    pointer-events: none;
+}
+
+.numbering {
+    background-color: darkgrey;
+    font-size: .7rem;
+    height: 10px !important;
+    text-align: center;
+}
+
+.tbl_header {
+    text-align: center;
+    vertical-align: middle;
+    font-size: 1rem;
+    font-weight: bold;
+}
+
+.table-bordered th,
+.table-bordered td {
+    vertical-align: middle !important;
+    border: 1px solid #000000 !important;
+}
+
+.zero-padding {
+    padding: 0 !important;
+}
+
+.rejected {
+    border-left: 10px solid red !important
+}
+
+.waiting-approval {
+    border-left: 10px solid yellow !important
+}
+
+.draft {
+    border-left: 10px solid grey !important
+}
+
+.table-success-OK,
+.table-success-OK>td,
+.table-success-OK>th {
+    background-color: #baecdd !important;
+}
+
+.table-success-NOK,
+.table-success-NOK>td,
+.table-success-NOK>th {
+    background-color: #fec8da !important;
+}
+
+.table-success-DRAFT,
+.table-success-DRAFT>td,
+.table-success-DRAFT>th {
+    background-color: #d0d4f5 !important;
+}
+
+.table-success-CORRECTION,
+.table-success-CORRECTION>td,
+.table-success-CORRECTION>th {
+    background-color: #ffebc1 !important;
+}
+
+.table th,
+.table td {
+    padding: 0.25rem !important;
+}

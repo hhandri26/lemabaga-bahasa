@@ -1,0 +1,20 @@
+<ng-container *ngIf="!item.track?.isChecked">
+    <div class="flex justify-center">
+        <div>
+            <button class="sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'" (click)="checked()">
+                <span class="ml-2 mr-1">Lihat Materi</span>
+            </button>
+        </div>
+    </div>
+</ng-container>
+
+<ng-container *ngIf="item.track?.isChecked">
+    <div class="flex flex-col w-full">
+        <div class="text-lg font-medium">
+            Silahkan unduh materi berikut :
+        </div>
+        <div class="flex flex-wrap my-2">
+            <app-widget-lampiran-dokumen class="m-2" [item]="item.document"></app-widget-lampiran-dokumen>
+        </div>
+    </div>
+</ng-container>

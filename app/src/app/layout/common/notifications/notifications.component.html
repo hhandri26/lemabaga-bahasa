@@ -1,0 +1,41 @@
+<!-- Notifications toggle -->
+<button mat-icon-button (click)="openPanel()" #notificationsOrigin>
+    <ng-container *ngIf="unreadCount > 0">
+        <span class="absolute top-0 right-0 flex items-center justify-center h-3">
+            <span
+                class="flex items-center justify-center shrink-0 min-w-4 h-4 px-1 ml-4 mt-2.5 rounded-full bg-teal-600 text-white text-xs font-medium">
+                {{ unreadCount }}
+            </span>
+        </span>
+    </ng-container>
+    <mat-icon [svgIcon]="'heroicons_outline:bell'"></mat-icon>
+</button>
+
+<!-- Notifications panel -->
+<ng-template #notificationsPanel>
+    <div class="rounded-lg shadow-lg p-4 bg-white dark:bg-gray-800"
+        style="width: 320px; max-height: 400px; overflow-y: auto;">
+        <div *ngIf="notifications.length > 0; else noNotifications">
+            <ng-container *ngFor="let notification of notifications; trackBy: trackByFn">
+                <div class="flex items-start p-2 border-b">
+                    <mat-icon class="mr-2 text-gray-500">{{ notification.icon }}</mat-icon>
+                    <div class="flex-1">
+                        <div class="font-bold">{{ notification.title }}</div>
+                        <div class="text-sm text-gray-600">{{ notification.description }}</div>
+                        <div class="text-xs text-gray-400">{{ notification.time }}</div>
+                    </div>
+                    <!-- Tombol mark as read -->
+                    <button mat-icon-button (click)="markAsRead(notification)">
+                        <mat-icon>mark_email_read</mat-icon>
+                    </button>
+                </div>
+            </ng-container>
+        </div>
+        <ng-template #noNotifications>
+            <div class="text-center py-4 text-gray-500">
+                <mat-icon>notifications_off</mat-icon>
+                <p>No notifications available.</p>
+            </div>
+        </ng-template>
+    </div>
+</ng-template>

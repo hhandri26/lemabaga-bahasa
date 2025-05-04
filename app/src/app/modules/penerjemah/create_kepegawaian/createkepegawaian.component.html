@@ -1,0 +1,190 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Tambah Kepegawaian</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript" style="min-width: 30rem !important;">
+                    <mat-label>Nama Lengkap</mat-label>
+                    <input matInput [formControlName]="'nama'" [placeholder]="'Nama Lengkap'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>NIP / NIK (digunakan sebagai username login)</mat-label>
+                    <input matInput [formControlName]="'nip'" [dropSpecialCharacters]="true" [allowNegativeNumbers]="false" mask="999999999999999999">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Email</mat-label>
+                    <input matInput [formControlName]="'email'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Nomor Ponsel</mat-label>
+                    <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:phone'"></mat-icon>
+                    <input matInput [formControlName]="'noHp'" [placeholder]="'0812345678'" [spellcheck]="false">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>NPWP</mat-label>
+                    <input matInput [formControlName]="'npwp'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Kepakaran</mat-label>
+                    <input matInput [formControlName]="'kepakaran'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Nomor Rekening</mat-label>
+                    <input matInput [formControlName]="'nomorRekening'">
+                </mat-form-field>
+            </div>
+            <input type="hidden" formControlName="newBahasaId">
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Penguasaan Bahasa</mat-label>
+                    <mat-select [formControlName]="'bahasaId'">
+                        <mat-option *ngFor="let item of jenisBahasa$ | async" [value]="item.id">{{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Tempat Lahir</mat-label>
+                    <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:location-marker'"></mat-icon>
+                    <input matInput [formControlName]="'tempatLahirId'" [matAutocomplete]="matAutocomplete" [placeholder]="'Cari nama Kab/Kota...'" #barSearchInput>
+                    <button *ngIf="form.get('tempatLahirId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('tempatLahirId').setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-autocomplete #matAutocomplete="matAutocomplete" [displayWith]="displayFn" [disableRipple]="true">
+                    <!-- <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option> -->
+                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultTempatLahir && !resultTempatLahir.length">
+                        Kab/Kota tidak ditemukan!
+                    </mat-option>
+                    <mat-option *ngFor="let item of resultTempatLahir; trackBy: trackByFn" [value]="item">
+                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}}</span>
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.controls['tempatLahirId'].hasError('incorrect')">
+                    Anda harus memilih pilihan Kab/Kota dari hasil pencarian
+                </mat-error>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Tanggal Lahir</mat-label>
+                    <input matInput (click)="_tglLahir.open()" (keydown.keydown)="$event.preventDefault()" readonly="readonly" [matDatepicker]="_tglLahir" [formControlName]="'tglLahir'" [max]="this._helperService.maxDate()">
+                    <mat-datepicker-toggle matSuffix [for]="_tglLahir">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #_tglLahir startView="year" [startAt]="this._helperService.startDate()"></mat-datepicker>
+                </mat-form-field>
+            </div>
+
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Jenis Kelamin</mat-label>
+                    <mat-select [formControlName]="'jenisKelamin'">
+                        <mat-option *ngFor="let item of jenisKelaminList" [value]="item.id">{{item.name}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Instansi</mat-label>
+                    <!-- <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:location-marker'"></mat-icon> -->
+                    <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocomplete2" [placeholder]="'Cari nama Unit Kerja...'" #barSearchInput>
+                    <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('instansiId').setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
+                </mat-form-field>
+                <mat-autocomplete #matAutocomplete2="matAutocomplete" [displayWith]="displayFn" [disableRipple]="true">
+                    <!-- <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option> -->
+                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultInstansi && !resultInstansi.length">
+                        Instansi tidak ditemukan!
+                    </mat-option>
+                    <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
+                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama}}</span>
+                    </mat-option>
+                </mat-autocomplete>
+                <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
+                    Anda harus memilih pilihan unit kerja dari hasil pencarian
+                </mat-error>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Unit Kerja</mat-label>
+                    <input matInput [formControlName]="'unitKerjaNama'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Satuan Organisasi</mat-label>
+                    <input matInput [formControlName]="'satuanOrganisasi'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Pangkat / Golongan</mat-label>
+                    <mat-select [formControlName]="'golonganId'">
+                        <mat-option *ngFor="let item of jenisGolongan$ | async" [value]="item.id">{{item.namaPangkat}} - {{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>TMT-Golongan</mat-label>
+                    <input matInput [matDatepicker]="_tmtGolongan" [formControlName]="'tmtGolongan'" (focus)="_tmtGolongan.open()" [max]="this._helperService.maxDate()">
+                    <mat-datepicker-toggle matSuffix [for]="_tmtGolongan">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #_tmtGolongan></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Jenis Jabatan</mat-label>
+                    <mat-select [formControlName]="'jabatanId'">
+                        <mat-option *ngFor="let item of jenisJabatan$ | async" [value]="item.id">{{item.jenjang}} - {{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>TMT-Jabatan</mat-label>
+                    <input matInput [matDatepicker]="_tmtJabatan" [formControlName]="'tmtJabatan'" (focus)="_tmtJabatan.open()" [max]="this._helperService.maxDate()">
+                    <mat-datepicker-toggle matSuffix [for]="_tmtJabatan">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #_tmtJabatan></mat-datepicker>
+                </mat-form-field>
+            </div>
+            <fuse-alert [type]="'info'" class="mt-8">
+                <span fuseAlertTitle>Password akan dikirimkan via email</span>
+            </fuse-alert>
+        </div>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="create()">
+            Submit
+        </button>
+    </div>
+</div>

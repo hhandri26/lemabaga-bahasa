@@ -1,0 +1,23 @@
+<div class="grid justify-items-start mb-5 border-b">
+    <button mat-flat-button (click)="add()" [color]="'accent'" class="mb-5">
+        <mat-icon svgIcon="heroicons_outline:plus"></mat-icon>Formasi
+    </button>
+</div>
+<ng-container *ngFor="let field of field.fieldGroup; let i = index;">
+    <div class="p-2 flex items-center justify-between bg-gray-100 mb-4">
+        <span class="text-xl font-medium text-center ">Formasi #{{i+1}}:</span>
+        <ul class="flex flex-wrap items-center mt-3 text-sm sm:mt-0">
+            <li>
+                <button mat-button (click)="remove(i)">
+                    <mat-icon svgIcon="heroicons_outline:trash"></mat-icon> Hapus Formasi
+                </button>
+            </li>
+        </ul>
+    </div>
+    <formly-group [model]="model[i]" [field]="field" [options]="options" [form]="formControl"></formly-group>
+</ng-container>
+<ng-container *ngIf="!field.fieldGroup.length">
+    <fuse-alert [type]="'info'">
+        <span fuseAlertTitle>Formasi baru belum ditambahkan</span>
+    </fuse-alert>
+</ng-container>

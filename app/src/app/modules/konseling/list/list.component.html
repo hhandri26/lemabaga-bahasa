@@ -1,0 +1,167 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div>
+            <div class="text-2xl font-extrabold tracking-tight leading-none">Konseling</div>
+            <div class="ml-0.5 font-medium text-secondary">
+                <!-- <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;Konseling
+                </ng-container> -->
+            </div>
+        </div>
+        <form [formGroup]="form">
+            <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
+
+                <!-- <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript min-w-50">
+                <mat-icon matPrefix [svgIcon]="'heroicons_outline:search'"></mat-icon>
+                <input matInput [formControl]="searchInputControl" [autocomplete]="'off'" [placeholder]="'Cari Judul'">
+                </mat-form-field> -->
+                <div class="flex-auto ml-4 mr-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full min-w-50">
+                        <!-- <mat-label>Jenis Usulan</mat-label> -->
+                        <mat-select [formControlName]="'byJenisUsul'">
+                            <mat-option value="">-- Semua Status --</mat-option>
+                            <ng-container *ngFor="let item of statusKonseling; trackBy: trackByFn">
+                                <mat-option [value]="item.id">
+                                    {{item.name}}
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                <button class="mt-8 ml-5 sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'" (click)="toggleCreate()">
+                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                    <span class="ml-2 mr-1">Jadwal Konseling</span>
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(items$ | async) as items">
+                <ng-container *ngIf="items.length > 0; else noItems">
+                    <div class="grid">
+                        <!-- Header -->
+                        <div class="item-grid z-10 sticky top-0 grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 gap-3 py-3 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <!-- <div class="hidden md:block">#</div> -->
+                            <div class="md:block col-span-5">Judul</div>
+                            <div class="hidden md:block col-span-2">Peserta</div>
+                            <div class="hidden md:block col-span-2">Tanggal</div>
+                            <div class="hidden md:block col-span-1">Dibuat pada</div>
+                            <div class="hidden md:block col-span-1"></div>
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(items$ | async) as items">
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 items-center gap-2 py-3 px-6 border-b">
+                                    <div class="hidden md:block col-span-5">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">{{item.judul}}</div>
+                                        <div class="text-secondary font-medium">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">{{item.deskripsi}}</div>
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-2">
+                                        <div class="flex items-center">
+                                            <ng-container *ngFor="let peserta of item.peserta; let i=index">
+                                                <img class="w-6 h-6 m-0.5 rounded-full text-card ring-2 ring-white" [ngClass]="{'-ml-3': i > 0}" [src]="baseUrl + peserta.pnsPict">
+                                            </ng-container>
+                                            <div class="text-md tracking-tight ml-3">{{item.peserta.length}} Peserta</div>
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block truncate text-sm col-span-2">
+                                        <div class="font-medium tracking-tight leading-6 truncate text-md">{{item.tanggal | date:'d/M/yyyy h:mm'}}</div>
+                                        <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-blue-200 text-blue-800 dark:bg-blue-600 dark:text-blue-50">
+                                            <span
+                                                class="leading-relaxed whitespace-nowrap">{{item.status}}</span>
+                                        </span>
+                                    </div>
+                                    <div class="hidden md:block truncate text-sm col-span-1">
+                                        {{item.createdAt | date:'d/M/yyyy h:mm'}}
+                                    </div>
+                                    <div class="hidden md:block col-span-1">
+                                        <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button (click)="toggleDetails(item.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selected?.id === item.id">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator class="sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)" [pageSize]="pagination.perPage"
+                        [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <!-- DETAIL -->
+            <ng-template #rowDetailsTemplate let-item>
+                <ng-container *ngIf="selected">
+                    <div class="shadow-lg overflow-hidden">
+                        <div class="flex">
+                            <div class="flex flex-col w-full">
+                                <div class="flex flex-auto flex-wrap px-2">
+                                    <div class="flex flex-col w-full lg:w-1/4">
+                                        <div class="grid grid-cols-12 gap-x-1 py-5 px-4">
+                                            <div class="col-span-4 text-sm font-semibold">Peserta</div>
+                                            <div class="col-span-12 my-2 border-b"></div>
+                                            <ng-container *ngFor="let element of selected?.peserta">
+                                                <div class="col-span-4 text-sm">{{element.pnsNama}}<br />{{element.pnsNip}}</div>
+                                                <div class="col-span-12 my-2 border-b"></div>
+                                            </ng-container>
+                                        </div>
+                                    </div>
+                                    <div class="flex flex-col w-full lg:w-1/2"></div>
+                                    <div class="flex flex-col w-full lg:w-1/4">
+                                        <div class="my-3">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Lampiran Bukti Penyelesaian Konseling <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event)" style="display:none;" />
+                                                <div class="flex flex-auto items-start mt-2">
+                                                    <div class="flex items-center justify-start w-full mx-auto">
+                                                        <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false)">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <mat-form-field class="fuse-mat-no-subscript w-full mt-4">
+                                                <mat-label>Catatan hasil konseling</mat-label>
+                                                <textarea matInput [(ngModel)]="message" [autocomplete]="'off'"></textarea>
+                                            </mat-form-field>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-end w-full border-t px-8 py-4">
+                            <button mat-button [color]="'warn'" (click)="toggleDelete(selected.id)" class="mr-4">Hapus</button>
+                            <button mat-flat-button [color]="'primary'" (click)="openConfirmationDialog(selected.id)">Selesai</button>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-template>
+            <ng-template #noItems>
+                <fuse-alert [type]="'info'">
+                    <span fuseAlertTitle>Konseling tidak ditemukan!</span>
+                </fuse-alert>
+            </ng-template>
+        </div>
+    </div>
+</div>

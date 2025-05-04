@@ -1,0 +1,161 @@
+<div class="flex flex-col w-full">
+    <ng-container *ngIf="!editMode">
+        <div class="relative flex flex-col flex-auto items-center p-6">
+            <div class="w-full">
+                <div class="flex flex-auto items-end">
+                    <div class="flex items-center ml-auto mb-4">
+                        <ng-container *ngIf="role === 'ROLE_ADMIN'">
+                            <button mat-stroked-button (click)="toggleDeleteMode(item.id)" class="mr-3">
+                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                <span class="ml-2">Hapus</span>
+                            </button>
+                        </ng-container>
+                        <button mat-stroked-button (click)="toggleEditMode(true)">
+                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
+                            <span class="ml-2">Ubah</span>
+                        </button>
+                    </div>
+                </div>
+                <ng-container *ngIf="item">
+                    <div class="flex flex-col pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:identification'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.nip ?? '-'}}</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:cake'"></mat-icon>
+                            <div class="ml-6 leading-6">{{(item.tempatLahir.nama | titlecase) ?? '-'}}, {{item.tglLahir ?? '-'}}</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:user'"></mat-icon>
+                            <div class="ml-6 leading-6">{{ (item.jenisKelamin | findReference:'id':genders) }}</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:phone'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.noHp ?? '-'}}</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:at-symbol'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.email ?? '-'}}</div>
+                        </div>
+                    </div>
+                    <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:home'"></mat-icon>
+                          <div class="ml-6 leading-6">{{item.alamatDomisiliDeskripsi ?? '-'}}</div>
+                        </div>
+                    </div>
+                    <!-- <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <svg xmlns='http://www.w3.org/2000/svg' width='24' height='24' fill='currentColor' viewBox='0 0 24 24'>
+                                <path
+                                    d='M12 2l10 7v13a1 1 0 01-1 1H3a1 1 0 01-1-1V9l10-7zm0 2.15L5 9v11h14V9l-7-4.85zm-1 6.85v5h2v-5h-2zm0-4v2h2V7h-2z' />
+                            </svg>
+                            <div class="ml-6 leading-6">{{item.instansiNama ?? '-'}}</div>
+                        </div>
+                    </div> -->
+                    <!-- <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:home'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.unitkerja ?? '-'}}</div>
+                        </div>
+                    </div> -->
+                    <!-- <div class="flex flex-col mt-4 pt-4 border-t space-y-8">
+                        <div class="flex sm:items-center">
+                            <mat-icon [svgIcon]="'heroicons_outline:home'"></mat-icon>
+                            <div class="ml-6 leading-6">{{item.satuanorganisasi ?? '-'}}</div>
+                        </div>
+                    </div> -->
+                </ng-container>
+            </div>
+        </div>
+    </ng-container>
+
+    <ng-container *ngIf="editMode">
+        <div class="relative flex flex-col flex-auto items-center p-6">
+            <div class="w-full">
+                <form [formGroup]="form">
+                    <div class="flex flex-auto items-end">
+                        <div class="flex items-center justify-end w-full mx-auto">
+                            <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'" (click)="toggleEditMode(false)">
+                                Batal
+                            </button>
+                            <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Simpan Perubahan Data'" (click)="update()">
+                                Simpan
+                            </button>
+                        </div>
+                    </div>
+                    <ng-container *ngIf="item">
+                        <div class="mt-4">
+                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                <mat-label>Nama Lengkap</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:identification'"></mat-icon>
+                                <input matInput [formControlName]="'nama'" [spellcheck]="false">
+                            </mat-form-field>
+                        </div>
+                        <div class="mt-4">
+                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                <mat-label>Tempat Lahir</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:location-marker'"></mat-icon>
+                                <input matInput [formControlName]="'tempatLahirId'" [matAutocomplete]="matAutocomplete" [placeholder]="'Cari nama Kab/Kota...'" #barSearchInput>
+                                <button *ngIf="form.get('tempatLahirId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('tempatLahirId').setValue('')">
+                                    <mat-icon>close</mat-icon>
+                                </button>
+                            </mat-form-field>
+                            <mat-autocomplete #matAutocomplete="matAutocomplete" [displayWith]="displayFn" [disableRipple]="true">
+                                <!-- <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option> -->
+                                <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultTempatLahir && !resultTempatLahir.length">
+                                    Kab/Kota tidak ditemukan!
+                                </mat-option>
+                                <mat-option *ngFor="let item of resultTempatLahir; trackBy: trackByFn" [value]="item">
+                                    <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}}</span>
+                                </mat-option>
+                            </mat-autocomplete>
+                            <mat-error *ngIf="form.controls['tempatLahirId'].hasError('incorrect')">
+                                Anda harus memilih pilihan Kab/Kota dari hasil pencarian
+                            </mat-error>
+                        </div>
+                        <div class="mt-4">
+                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                <mat-label>Tanggal Lahir</mat-label>
+                                <input matInput (click)="_tglLahir.open()" (keydown.keydown)="$event.preventDefault()" readonly="readonly" [matDatepicker]="_tglLahir" [formControlName]="'_tglLahir'" [max]="this._helperService.maxDate()">
+                                <mat-datepicker-toggle matSuffix [for]="_tglLahir">
+                                </mat-datepicker-toggle>
+                                <mat-datepicker #_tglLahir startView="year" [startAt]="this._helperService.startDate()"></mat-datepicker>
+                            </mat-form-field>
+                        </div>
+                        <div class="mt-4">
+                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                <mat-label>Nomor Ponsel</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:phone'"></mat-icon>
+                                <input matInput [formControlName]="'noHp'" [placeholder]="'0812345678'" [spellcheck]="false">
+                            </mat-form-field>
+                        </div>
+                        <div class="mt-4">
+                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                <mat-label>Email</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:at-symbol'"></mat-icon>
+                                <input matInput [formControlName]="'email'" [placeholder]="'email@domain'" [spellcheck]="false">
+                            </mat-form-field>
+                        </div>
+                        <div class="mt-4">
+                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                <mat-label>Alamat</mat-label>
+                                <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:home'"></mat-icon>
+                                <input matInput [formControlName]="'alamatDomisiliDeskripsi'" [placeholder]="'Alamat'" [spellcheck]="false">
+                            </mat-form-field>
+                        </div>
+                    </ng-container>
+                </form>
+            </div>
+        </div>
+    </ng-container>
+</div>

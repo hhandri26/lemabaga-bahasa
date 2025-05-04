@@ -1,0 +1,34 @@
+<ng-container *ngIf="questions;else noQuestion">
+    <ng-container *ngFor="let question of questions; let i = index; trackBy: trackByFn">
+        <div
+            class="flex flex-col items-start mb-3 p-5 space-y-3 shadow rounded-lg overflow-hidden bg-card cursor-pointer">
+            <div class="text-lg font-medium leading-5 w-full"><span>{{i+1}}).</span> {{question.question.questionText}}</div>
+            <div class="w-full">
+                <ng-container *ngIf="question.question.isOption">
+                    <div class="space-y-1.5">
+                        <mat-radio-group>
+                            <ng-container *ngFor="let choice of question.question.options">
+                                <mat-radio-button [value]="choice.id" class="flex my-1" [checked]="choice.isAnswer"
+                                    (change)="save($event, question.question.questionId)">{{choice.label}}</mat-radio-button>
+                            </ng-container>
+                        </mat-radio-group>
+                    </div>
+                </ng-container>
+            </div>
+        </div>
+    </ng-container>
+    <button class="sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'" (click)="end()">
+        <span class="ml-2 mr-1">Selesai</span>
+    </button>
+</ng-container>
+
+<ng-template #noQuestion>
+    <div class="grid grid-cols-1 gap-3">
+        <div class="w-full">
+            <fuse-alert [type]="'info'" class="mb-5">
+                <div class="text-md">Pertanyaan survey tidak ditemukan</div>
+            </fuse-alert>
+        </div>
+    </div>
+
+</ng-template>

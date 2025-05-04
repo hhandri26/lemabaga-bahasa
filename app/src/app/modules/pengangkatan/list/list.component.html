@@ -1,0 +1,308 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div>
+            <div class="text-2xl font-extrabold tracking-tight leading-none">Pengangkatan PFP</div>
+            <div class="ml-0.5 font-medium text-secondary">
+                <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;Pengangkatan
+                </ng-container>
+            </div>
+        </div>
+        <form [formGroup]="form">
+            <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
+                <!-- <div class="flex-auto ml-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full" style="width: 18em !important;">
+                        <mat-select [formControlName]="'byJabatanId'">
+                            <mat-option value="">-- Semua Jenis Jabatan --</mat-option>
+                            <ng-container *ngFor="let item of jenisJabatan$ | async; trackBy: trackByFn">
+                                <mat-option [value]="item.id">
+                                    {{item.nama}}
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div> -->
+                <!-- <button class="ml-4 bg-card hover:bg-hover" mat-stroked-button (click)="toggleSearch()">
+                    <span class="ml-2 mr-1">Cari</span>
+                </button> -->
+                <!-- <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI'">
+                    <button class="ml-4 " mat-flat-button [color]="'primary'" (click)="create()">
+                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                        <span class="ml-2 mr-1">Formasi</span>
+                    </button>
+                </ng-container> -->
+            </div>
+        </form>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(items$ | async) as items">
+                <ng-container *ngIf="items.length > 0; else noItems">
+                    <div class="grid">
+                        <!-- Header -->
+                        <div class="item-grid z-10 sticky top-0 grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 gap-3 py-3 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <div class="md:block col-span-3">Unit Kerja</div>
+                            <div class="hidden md:block col-span-2">Jabatan</div>
+                            <div class="hidden md:block col-span-2">Usulan PFP</div>
+                            <div class="hidden md:block col-span-2">PFP yang telah diusulkan</div>
+                            <div class="hidden md:block col-span-2">PFP yang telah diangkat</div>
+                            <div class="hidden md:block col-span-1"></div>
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(items$ | async) as items">
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 items-center gap-2 py-3 px-6 border-b">
+                                    <div class="md:block col-span-3">
+                                        <div class="font-medium leading-5 truncate">
+                                            {{ item.unitKerjaNama | titlecase }}
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-2">
+                                        <div class="font-medium leading-5 truncate text-md">
+                                            {{ item.jabatanNama | titlecase }}
+                                        </div>
+                                    </div>
+                                    <div class="md:block col-span-2">
+                                        <div class="font-medium leading-5 truncate">
+                                            {{ item.jumlahFormasi }}
+                                        </div>
+                                    </div>
+                                    <div class="md:block col-span-2">
+                                        <div class="font-medium leading-5 truncate">
+                                            {{ item.jumlahFormasiDalamUsulPengangkatan }}
+                                        </div>
+                                    </div>
+                                    <div class="md:block col-span-2">
+                                        <div class="font-medium leading-5 truncate">
+                                            {{ item.jumlahFormasiPengangkatanSelesai }}
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-1">
+                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                            <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button (click)="toggleDetails(item.id)">
+                                                <mat-icon class="icon-size-5"
+                                                    [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                                </mat-icon>
+                                            </button>
+                                            <button class="ml-4 min-w-10 min-h-7 h-7 px-2 leading-6" mat-button (click)="toggleCreate(item.id)">
+                                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                                <span class="ml-1 mr-1">PFP</span>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selected?.id === item.id">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator class="sticky sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)"
+                        [pageSize]="pagination.perPage" [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <!-- DETAIL -->
+            <ng-template #rowDetailsTemplate let-item>
+                <ng-container *ngIf="selected">
+                    <div class="shadow-lg overflow-hidden">
+                        <div class="flex">
+                            <div class="flex flex-auto flex-wrap py-5">
+                                <div class="flex flex-col w-full sm:pl-8">
+                                    <ng-container *ngIf="selected.content.length">
+                                        <div class="mt-1.5 text-md text-secondary">Detail usulan pengangkatan PFP:</div>
+                                        <div class="flex items-center">
+                                            <div class="flex-auto">
+                                                <div class="grid grid-flow-col lg:grid-flow-row min-w-max lg:min-w-0 divide-x lg:divide-x-0 lg:divide-y">
+                                                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x">
+                                                        <div class="flex items-center p-2 text-secondary">NIP</div>
+                                                        <div class="flex items-center p-2 text-secondary">Nama</div>
+                                                        <div class="flex items-center p-2 text-secondary">Jabatan</div>
+                                                        <div class="flex items-center p-2 text-secondary ">Unit Kerja
+                                                        </div>
+                                                        <div class="flex items-center p-2 text-secondary">Status</div>
+                                                        <div class="flex items-center p-2 text-secondary max-w-16">
+                                                        </div>
+                                                    </div>
+                                                    <ng-container *ngFor="let item of selected.content">
+                                                        <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x">
+                                                            <div class="flex items-center p-2">{{item.pnsNip}}</div>
+                                                            <div class="flex items-center p-2">{{item.pnsNama}}</div>
+                                                            <div class="flex items-center p-2">
+                                                                {{item.formasiDetail.jabatanNama}}</div>
+                                                            <div class="flex items-center p-2">
+                                                                {{item.formasiDetail.unitKerjaNama}}</div>
+                                                            <div class="flex items-center p-2">
+                                                                <!-- DRAFT, SUBMITTED, RETURNED, FIX_BERKAS, RECOMMENDATION_SENT, SK_SENT, COMPLETED -->
+                                                                <ng-container *ngIf="item.status === 'DRAFT'">
+                                                                    <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-50">
+                                                                        <button
+                                                                            class="leading-relaxed whitespace-nowrap text-sm"
+                                                                            matTooltip="Data profil PFP telah disimpan, selanjutnya dapat melakukan submit usulan untuk persetujuan">Draft</button>
+                                                                    </span>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'SUBMITTED'">
+                                                                    <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50">
+                                                                        <button
+                                                                            class="leading-relaxed whitespace-nowrap text-sm"
+                                                                            matTooltip="PFP telah diusulkan, selanjutnya menunggu persetujuan pembina">Menunggu
+                                                                            Persetujuan</button>
+                                                                    </span>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'RETURNED'">
+                                                                    <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50">
+                                                                        <button
+                                                                            class="leading-relaxed whitespace-nowrap text-sm"
+                                                                            matTooltip="Usulan PFP ditolak">Usulan
+                                                                            ditolak</button>
+                                                                    </span>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'FIX_BERKAS'">
+                                                                    <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50">
+                                                                        <button
+                                                                            class="leading-relaxed whitespace-nowrap text-sm"
+                                                                            matTooltip="Usulan berkas PFP ditolak, dapat dilakukan perbaikan berkas">Perbaikan
+                                                                            Berkas</button>
+                                                                    </span>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'RECOMMENDATION_SENT'">
+                                                                    <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50">
+                                                                        <button
+                                                                            class="leading-relaxed whitespace-nowrap text-sm"
+                                                                            matTooltip="Surat rekomendasi telah dikirimkan, selanjutnya menunggu surat SK">Surat
+                                                                            Rekomendasi terkirim</button>
+                                                                    </span>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'SK_SENT'">
+                                                                    <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50">
+                                                                        <button
+                                                                            class="leading-relaxed whitespace-nowrap text-sm"
+                                                                            matTooltip="SK PFP telah dikirimkan, selanjutnya menunggu persetujuan pihak pembina">SK
+                                                                            terkirim</button>
+                                                                    </span>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'COMPLETED'">
+                                                                    <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50">
+                                                                        <button
+                                                                            class="leading-relaxed whitespace-nowrap text-sm"
+                                                                            matTooltip="Usulan PFP selesai dan telah diangkat">Selesai</button>
+                                                                    </span>
+                                                                </ng-container>
+                                                            </div>
+                                                            <div class="flex items-center p-2 max-w-16">
+                                                                <button class="ml-auto -mr-4" mat-icon-button [matMenuTriggerFor]="action">
+                                                                    <mat-icon class="icon-size-5"
+                                                                        [svgIcon]="'heroicons_solid:dots-vertical'"></mat-icon>
+                                                                </button>
+                                                                <mat-menu #action="matMenu">
+                                                                    <button mat-menu-item (click)="toggleDetailUsulan(item.id)">
+                                                                        <span class="flex items-center">
+                                                                            <span>Detail</span>
+                                                                        </span>
+                                                                    </button>
+
+                                                                    <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI'">
+                                                                        <ng-container *ngIf="item.status === 'DRAFT' || item.status === 'RETURNED'">
+                                                                            <button mat-menu-item (click)="toggleRevisiUsulan(item.id)">
+                                                                                <span class="flex items-center">
+                                                                                    <span>Ubah Profil</span>
+                                                                                </span>
+                                                                            </button>
+                                                                            <button mat-menu-item (click)="toggleSubmitUsulan(item)">
+                                                                                <span class="flex items-center">
+                                                                                    <span>Submit usulan</span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </ng-container>
+                                                                        <ng-container *ngIf="item.status === 'RECOMMENDATION_SENT'">
+                                                                            <button mat-menu-item (click)="toggleSubmitSk(item.id)">
+                                                                                <span class="flex items-center">
+                                                                                    <span>Submit SK Pengangkatan</span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </ng-container>
+                                                                    </ng-container>
+
+                                                                    <ng-container *ngIf="role === 'ROLE_ADMIN'">
+                                                                        <ng-container *ngIf="item.status === 'SUBMITTED' || item.status === 'FIX_BERKAS'">
+                                                                            <button mat-menu-item (click)="toggleSubmitUsulanApproved(item.id)">
+                                                                                <span class="flex items-center">
+                                                                                    <span>Setuju</span>
+                                                                                </span>
+                                                                            </button>
+                                                                            <button mat-menu-item [color]="'warn'" (click)="returnUsul(item)">
+                                                                                <span class="flex items-center">
+                                                                                    <span>Tolak</span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </ng-container>
+                                                                        <ng-container *ngIf="item.status === 'SK_SENT'">
+                                                                            <button mat-menu-item (click)="toggleComplete(item)">
+                                                                                <span class="flex items-center">
+                                                                                    <span>Finalisasi Pengangkatan</span>
+                                                                                </span>
+                                                                            </button>
+                                                                        </ng-container>
+                                                                    </ng-container>
+                                                                </mat-menu>
+
+                                                                <!-- <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' && item.status === 'DRAFT'">
+                                                                    <button mat-button (click)="toggleSubmitUsulan(item)" class="ml-1.5 text-sm underline">Submit
+                                                                        usulan</button>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="role === 'ROLE_ADMIN' && item.status === 'SUBMITTED'">
+                                                                    <button mat-button [color]="'accent'" (click)="toggleSubmitUsulanApproved(item.id)" class="ml-1.5 text-sm underline">Setuju</button>
+                                                                    <button mat-button [color]="'warn'" (click)="returnUsul(item)" class="ml-1.5 text-sm underline">Tolak</button>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' && item.status === 'RETURNED'">
+                                                                    <button mat-button (click)="toggleRevisiUsulan(item.id)" class="ml-1.5 text-sm underline">Ubah</button>
+                                                                </ng-container> -->
+                                                                <!-- <ng-container *ngIf="item.status === 'FIX_BERKAS'">
+                                                                    <button mat-button (click)="toggleSubmitUsulan(item.id)" class="ml-1.5 text-sm underline">Submit
+                                                                        usulan</button>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'RECOMMENDATION_SENT'">
+                                                                    <button mat-button (click)="toggleSubmitUsulan(item.id)" class="ml-1.5 text-sm underline">Submit
+                                                                        usulan</button>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item.status === 'SK_SENT'">
+                                                                    <button mat-button (click)="toggleSubmitUsulan(item.id)" class="ml-1.5 text-sm underline">Submit
+                                                                        usulan</button>
+                                                                </ng-container> -->
+                                                            </div>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="!selected.content.length">
+                                        <fuse-alert [type]="'info'">
+                                            <span fuseAlertTitle>Belum ada Usulan pengangkatan PFP!</span>
+                                        </fuse-alert>
+                                    </ng-container>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-template>
+            <ng-template #noItems>
+                <fuse-alert [type]="'info'">
+                    <span fuseAlertTitle>Usulan pengangkatan tidak ditemukan!</span>
+                </fuse-alert>
+            </ng-template>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,108 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto">
+    <div class="flex flex-auto p-6 sm:p-10">
+        <div class="flex flex-col w-full max-w-screen-xl mx-auto">
+            <ng-container *ngIf="item$ | async as item">
+                <div class="flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between dark:bg-transparent">
+                    <div class="flex-1 min-w-0">
+                        <!-- Breadcrumbs -->
+                        <div class="flex flex-wrap items-center font-medium">
+                            <div>
+                                <a class="inline-flex items-center leading-6 text-primary hover:underline"
+                                    [routerLink]="['/quiz']">
+                                    <span class="inline-flex items-center">
+                                        <mat-icon class="icon-size-5 text-current"
+                                            [svgIcon]="'heroicons_solid:arrow-sm-left'"></mat-icon>
+                                        <span class="ml-1.5 font-medium leading-5">Soal</span>
+                                    </span>
+                                </a>
+                            </div>
+                        </div>
+                        <!-- Title -->
+                        <!-- <div class="mt-2">
+                            <h2 class="text-2xl font-extrabold tracking-tight leading-7 sm:leading-10 truncate">
+                                {{item.title}}
+                            </h2>
+                        </div> -->
+                    </div>
+                </div>
+
+                <div class="flex flex-col min-w-0 overflow-hidden">
+                    <div class="flex-auto p-6 sm:p-8 sm:pt-4">
+                        <div class="flex">
+                            <div class="flex-0 w-full p-2 rounded-2xl bg-default">
+                                <div class="flex items-center justify-between">
+                                    <div
+                                        class="flex items-center py-2 px-3 rounded-md cursor-text border border-transparent focus-within:bg-white focus-within:shadow-sm focus-within:border-primary dark:focus-within:bg-gray-900">
+                                        {{item.name}}
+                                    </div>
+                                    <div class="flex items-center ml-4 text-sm leading-6">
+                                        <ng-container *ngIf="item.type === 'SURVEY'">
+                                            {{item.surveyType}}
+                                        </ng-container>
+                                        <ng-container *ngIf="item.type === 'DIKLAT'">
+                                            {{item.courseGroup.nama}}
+                                        </ng-container>
+
+                                    </div>
+                                </div>
+                                <div class="mt-2 rounded-xl bg-gray-400 bg-opacity-12 dark:bg-transparent dark:border">
+                                    <div class="p-3 pb-0">
+                                        <ng-container *ngFor="let question of item.questions; let i = index; trackBy: trackByFn">
+                                            <div
+                                                class="flex flex-col items-start mb-3 p-5 space-y-3 shadow rounded-lg overflow-hidden bg-card cursor-pointer">
+                                                <div class="text-lg font-medium leading-5 w-full"
+                                                    (click)="editQuestion(item, question)"><span>{{i+1}}).</span> {{question.question}}</div>
+                                                <div class="w-full" (click)="editQuestion(item, question)">
+                                                    <ng-container *ngIf="item.questionType === 'PG'">
+                                                        <div class="space-y-1.5">
+                                                            <ng-container
+                                                                *ngFor="let choice of question.choiceList; trackBy: trackByFn">
+                                                                <div class="flex items-center py-1">
+                                                                    <ng-container *ngIf="!choice.isAnswer">
+                                                                        <div
+                                                                            class="flex items-center justify-center w-5 h-5">
+                                                                            <div class="w-4 h-4 rounded-full border-2">
+                                                                            </div>
+                                                                        </div>
+                                                                    </ng-container>
+                                                                    <ng-container *ngIf="choice.isAnswer">
+                                                                        <mat-icon
+                                                                            class="text-hint icon-size-5 text-green-600"
+                                                                            [svgIcon]="'heroicons_solid:check-circle'"></mat-icon>
+                                                                    </ng-container>
+                                                                    <div class="ml-1.5 leading-5">{{choice.label}}
+                                                                    </div>
+                                                                </div>
+                                                            </ng-container>
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                                <div class="flex flex-wrap items-center -m-1">
+                                                    <!-- <div
+                                                        class="m-1 py-0.5 px-3 rounded-full text-sm font-medium text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                                                        {{question.quizType | titlecase}}
+                                                    </div> -->
+                                                    <div
+                                                        class="m-1 py-0.5 px-3 rounded-full text-sm font-medium text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
+                                                        {{question.level | titlecase}}
+                                                    </div>
+                                                    <button [disabled]="item.status === 'PUBLISHED'" class="text-right" mat-icon-button
+                                                        (click)="deleteQuestion(i, question.id, item.id)">
+                                                        <mat-icon [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </ng-container>
+                                    </div>
+                                    <quiz-add-question (saved)="addQuestion(item, $event)"
+                                        [buttonTitle]="'Tambah Pertanyaan'" [questionType]="item.questionType">
+                                    </quiz-add-question>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+</div>

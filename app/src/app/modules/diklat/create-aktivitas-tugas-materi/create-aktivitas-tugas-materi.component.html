@@ -1,0 +1,106 @@
+<fuse-card class="flex flex-col flex-auto max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">{{_data.activity?.id ? 'Ubah' : 'Tambah'}} Tugas</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <fuse-card class="flex flex-col w-full py-4" #expandable="fuseCard" style="--tw-shadow: none !important;">
+            <ng-container *ngIf="attachments && attachments.length > 0">
+                <div class="flex flex-col w-full">
+                    <div class="flex items-center">
+                        <mat-icon
+                            class="icon-size-5"
+                            [svgIcon]="'heroicons_solid:paper-clip'"></mat-icon>
+                        <div class="ml-2 font-semibold">{{attachments.length}} Lampiran</div>
+                    </div>
+
+                    <div class="flex flex-wrap -m-3 mt-3">
+                        <ng-container *ngFor="let attachment of attachments">
+                            <div class="flex items-center m-3">
+                                <img
+                                    class="w-10 h-10 rounded-md overflow-hidden"
+                                    *ngIf="attachment.mimeType.startsWith('image/')"
+                                    [src]="attachment.path">
+                                <div
+                                    class="flex items-center justify-center w-10 h-10 rounded-md overflow-hidden bg-primary-100"
+                                    *ngIf="attachment.mimeType.startsWith('application/')">
+                                    <div class="flex items-center justify-center text-sm font-semibold text-primary-500-800">
+                                        {{attachment.mimeType.split('/')[1].trim().toUpperCase()}}
+                                    </div>
+                                </div>
+                                <div class="ml-3">
+                                    <div
+                                        class="text-md font-medium truncate"
+                                        [title]="attachment.title">
+                                        {{attachment.title}}
+                                    </div>
+                                    <div
+                                        class="text-sm font-medium truncate text-secondary"
+                                        [title]="attachment.size">
+                                        {{attachment.size / 1000 | number:'1.0-2'}} KB
+                                    </div>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </ng-container>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript min-w-60">
+                    <mat-label>Batas waktu mengumpulkan</mat-label>
+                    <input matInput [matDatepicker]="_dueDateCompletion" [formControlName]="'dueDateCompletion'"
+                        (focus)="_dueDateCompletion.open()">
+                    <mat-datepicker-toggle matSuffix [for]="_dueDateCompletion">
+                    </mat-datepicker-toggle>
+                    <mat-datepicker #_dueDateCompletion></mat-datepicker>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript min-w-10 pl-2">
+                    <mat-label>Jam</mat-label>
+                    <input matInput [formControlName]="'dueTimeCompletion'" [showMaskTyped]="true" [mask]="'Hh:m0'"
+                        [leadZeroDateTime]="true">
+                </mat-form-field>
+                <button class="px-3 ml-5" mat-button [color]="'primary'"
+                    (click)="expandable.expanded = !expandable.expanded">
+                    <span class="mr-1">Lampirkan tugas</span>
+                    <mat-icon class="icon-size-5 transition-transform ease-in-out duration-150 rotate-0"
+                        [ngClass]="{'rotate-180': expandable.expanded}"
+                        [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
+                </button>
+            </div>
+            <ng-container fuseCardExpansion>
+                <div class="bg-gray-50 dark:bg-transparent px-5 py-5 mt-5">
+                    <div class="flex flex-col w-full">
+                        <div class="flex items-center">
+                            <mat-form-field class="fuse-mat-no-subscript w-full mr-5">
+                                <mat-label>Judul Lampiran</mat-label>
+                                <input matInput [formControlName]="'title'" [spellcheck]="false">
+                            </mat-form-field>
+                            <div class="fuse-mat-no-subscript w-full">
+                                <mat-label><i>PDF, Maksimal ukuran file 2 MB</i></mat-label>
+                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event)" style="display:none;" />
+                                <div class="flex flex-auto items-start mt-2">
+                                    <div class="flex items-center justify-start w-full mx-auto">
+                                        <button [disabled]="!form.get('title').value" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </fuse-card>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="create()">
+            Submit
+        </button>
+    </div>
+</fuse-card>

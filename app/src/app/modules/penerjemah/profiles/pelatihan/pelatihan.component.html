@@ -1,0 +1,222 @@
+<mat-tab-group class="sm:px-2" [animationDuration]="'0'" class="ml-0 pl-0 mt-5">
+    <mat-tab label="Data Disetujui">
+        <ng-template matTabContent>
+            <div class="flex flex-col w-full">
+                <div class="relative flex flex-col flex-auto items-center p-6">
+                    <div class="w-full">
+                        <ng-container *ngIf="!insertMode">
+                            <div class="flex flex-auto items-end">
+                                <div class="flex items-center ml-auto mb-4">
+                                    <button mat-stroked-button (click)="toggleInsertMode(true)">
+                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'">
+                                        </mat-icon>
+                                        <span class="ml-2">Data Baru</span>
+                                    </button>
+                                </div>
+                            </div>
+
+                            <ng-container *ngFor="let item of rwPelatihan; trackBy: trackByFn">
+                                <div class="grid grid-cols-12 gap-x-1">
+                                    <!-- Item -->
+                                    <div class="col-span-11 text-md font-medium">
+                                        <div class="flex flex-col">
+
+                                            <div
+                                                class="flex flex-col sm:flex-row sm:items-center -ml-0.5 mt-2 sm:mt-1 space-y-1 sm:space-y-0 sm:space-x-3">
+
+                                                <ng-container *ngIf="item.noSk">
+                                                    <div class="hidden sm:block">&bull;</div>
+                                                    <div class="flex items-center" [matTooltip]="'Nama'">
+                                                        <button class="ml-4    text-sm underline">{{item.nama}}</button>
+                                                    </div>
+                                                </ng-container>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        <button class="min-w-10 min-h-10 h-10 px-2 leading-6" mat-stroked-button
+                                            (click)="toggleDetails(item.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+                                    <div class="col-span-12 my-4 border-b"></div>
+                                </div>
+                                <ng-container *ngIf="selected?.id === item.id">
+                                    <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="!rwPelatihan.length">
+                                <fuse-alert [type]="'info'">
+                                    <span fuseAlertTitle>Belum ada data riwayat pelatihan</span>
+                                </fuse-alert>
+                            </ng-container>
+                        </ng-container>
+
+                        <!-- INSERT NEW DATA -->
+                        <ng-container *ngIf="insertMode">
+                            <div class="relative flex flex-col flex-auto items-center p-6">
+                                <div class="w-full">
+                                    <form [formGroup]="form">
+                                        <div class="flex flex-auto items-end">
+                                            <div class="flex items-center justify-end w-full mx-auto">
+                                                <button class="ml-auto" mat-button
+                                                    [matTooltip]="'Batalkan Penambahan Data Baru'"
+                                                    (click)="toggleInsertMode(false)">
+                                                    Batal
+                                                </button>
+                                                <button class="ml-2" mat-flat-button [color]="'primary'"
+                                                    [disabled]="form.invalid"
+                                                    [matTooltip]="'Submit Usulan Penambahan Data'" (click)="insert()">
+                                                    Submit Usulan
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Pelatihan</mat-label>
+                                                <mat-select [formControlName]="'pelatihanid'"
+                                                    placeholder="Pilih nama pelatihan...">
+                                                    <mat-option *ngFor="let item of resultPelatihan; trackBy: trackByFn"
+                                                        [value]="item">
+                                                        <span
+                                                            class="text-sm font-semibold tracking-wider text-secondary">{{item.nama
+                                                            | titlecase}}</span>
+                                                    </mat-option>
+                                                    <mat-option *ngIf="resultPelatihan && !resultPelatihan.length"
+                                                        disabled>
+                                                        Pelatihan tidak ditemukan!
+                                                    </mat-option>
+                                                </mat-select>
+                                                <mat-error *ngIf="form.controls['pelatihanid'].hasError('incorrect')">
+                                                    Anda harus memilih pilihan pelatihan dari daftar
+                                                </mat-error>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai</mat-label>
+                                                <input matInput [formControlName]="'nilai'" [spellcheck]="false">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Predikat</mat-label>
+                                                <input matInput [formControlName]="'predikat'" [spellcheck]="false">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Peringkat</mat-label>
+                                                <input matInput [formControlName]="'peringkat'" [spellcheck]="false">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>JP</mat-label>
+                                                <input matInput [formControlName]="'jp'" [spellcheck]="false">
+                                            </mat-form-field>
+                                        </div>
+
+                                    </form>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </mat-tab>
+    <mat-tab label="Riwayat Usulan">
+        <ng-template matTabContent>
+            <app-usulan [items]="rwUsuls"></app-usulan>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>
+
+<ng-template #rowDetailsTemplate let-item>
+    <div class="grid grid-cols-12 gap-x-1">
+        <div class="col-span-12 shadow-lg overflow-hidden mb-4">
+            <div class="flex border-b">
+                <div class="flex flex-col w-full">
+                    <ng-container *ngIf="!editMode">
+                        <div class="relative flex flex-col flex-auto items-center p-6 pt-0">
+                            <div class="w-full">
+                                <div class="flex flex-auto items-end">
+                                    <div class="flex items-center ml-auto mb-4">
+                                        <button mat-button [color]="'warn'" [matTooltip]="'Hapus Data'" class="mr-5"
+                                            (click)="delete()">
+                                            Hapus
+                                        </button>
+                                        <button mat-stroked-button (click)="toggleEditMode(true)">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'">
+                                            </mat-icon>
+                                            <span class="ml-2">Ubah</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="selected">
+                                    <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Nilai</div>
+                                            <div>{{selected.nilai ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Predikat</div>
+                                            <div>{{selected.predikat ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Peringkat</div>
+                                            <div>{{selected.peringkat ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">JP</div>
+                                            <div>{{selected.jp ?? '-'}}</div>
+                                        </div>
+
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="editMode">
+                        <div class="relative flex flex-col flex-auto items-center p-6">
+                            <div class="w-full">
+                                <form [formGroup]="form">
+                                    <div class="flex flex-auto items-end">
+                                        <div class="flex items-center justify-end w-full mx-auto">
+                                            <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'"
+                                                (click)="toggleEditMode(false)">
+                                                Batal
+                                            </button>
+                                            <button class="ml-2" mat-flat-button [color]="'primary'"
+                                                [disabled]="form.invalid" [matTooltip]="'Submit Usulan Perubahan Data'"
+                                                (click)="update()">
+                                                Submit Usulan
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="selected">
+
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>JP</mat-label>
+                                                <input matInput [formControlName]="'JP'" [spellcheck]="false">
+                                            </mat-form-field>
+                                        </div>
+
+                                    </ng-container>
+                                </form>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>

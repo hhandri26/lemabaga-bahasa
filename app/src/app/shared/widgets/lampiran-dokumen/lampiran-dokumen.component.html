@@ -1,0 +1,18 @@
+<ng-container *ngIf="item?.id">
+    <div class="flex items-center">
+        <img class="w-10 h-10 rounded-md overflow-hidden" *ngIf="item.mimeType.startsWith('image/')" [src]="item.path">
+        <div class="flex items-center justify-center w-10 h-10 rounded-md overflow-hidden bg-primary-100"
+            *ngIf="item.mimeType.startsWith('application/')">
+            <div class="flex items-center justify-center text-sm font-semibold text-primary-500-800">
+                {{item.originalFilename.split('.')[1].trim().toUpperCase()}}</div>
+        </div>
+        <div class="ml-3">
+            <div class="text-md font-medium truncate" [title]="item.originalFilename">
+                <button (click)="download(item.id)" class="underline">{{item.originalFilename}}</button>
+            </div>
+            <div class="text-sm font-medium truncate text-secondary" [title]="item.size">
+                {{item.size / 1000 | number:'1.0-2'}} KB
+            </div>
+        </div>
+    </div>
+</ng-container>

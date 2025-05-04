@@ -1,0 +1,180 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+
+    <div class="flex flex-auto p-6 sm:p-10">
+
+        <div class="flex flex-col flex-auto w-full mx-auto">
+            <!-- Filters -->
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-xs sm:max-w-none">
+                <div class="text-2xl font-extrabold tracking-tight leading-none mr-10">Kuisoner</div>
+                <!-- <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72">
+                    <mat-select [value]="''" (selectionChange)="filterByGroup($event)">
+                        <mat-option [value]="''">-- Semua Jenis DIKLAT --</mat-option>
+                        <ng-container *ngFor="let item of groupDiklatList | async; trackBy: trackByFn">
+                            <mat-option [value]="item.id">{{item.nama}}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 sm:ml-4">
+                    <mat-select [value]="''" (selectionChange)="filterByTopic($event)">
+                        <mat-option [value]="''">-- Semua Topik DIKLAT --</mat-option>
+                        <ng-container *ngFor="let item of topicDiklatList | async; trackBy: trackByFn">
+                            <mat-option [value]="item.id">{{item.nama}}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 sm:ml-4">
+                    <mat-select [value]="''" (selectionChange)="filterByType($event)">
+                        <mat-option [value]="''">-- Semua Tipe --</mat-option>
+                        <mat-option [value]="'DIKLAT'">DIKLAT</mat-option>
+                        <mat-option [value]="'SURVEY'">SURVEY</mat-option>
+                    </mat-select>
+                </mat-form-field> -->
+                <!-- <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 mt-4 sm:mt-0 sm:ml-4"
+                    [floatLabel]="'always'">
+                    <mat-icon matPrefix class="icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                    <input (input)="filterByQuery(query.value)" placeholder="Cari judul" matInput #query>
+                </mat-form-field> -->
+                <ng-container *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_INSTRUKTUR'">
+                    <button class="mt-8 sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'"
+                        (click)="toggleCreate()">
+                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                        <span class="ml-2 mr-1">Tambah Template Kuisoner</span>
+                    </button>
+                </ng-container>
+            </div>
+            <!-- items -->
+            <ng-container *ngIf="items$ | async as items">
+                <ng-container *ngIf="items.length; else noitems">
+                    <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 sm:mt-10">
+                        <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                            <fuse-card class="flex flex-col shadow rounded-2xl overflow-hidden bg-card">
+                                <div class="flex items-center mx-3 sm:mx-5 m-6">
+                                    <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide"
+                                        [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.type === 'SURVEY',
+                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.type === 'DIKLAT'}">
+                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.type | titlecase
+                                            }}</span>
+                                    </div>
+                                    <!-- <div
+                                        class="inline-flex items-end font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700 ml-3">
+                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.type
+                                            | titlecase}}</span>
+                                    </div> -->
+                                </div>
+                                <div class="flex items-center mb-4">
+                                    <ng-container *ngIf="item.type === 'SURVEY'">
+                                        <div
+                                            class="inline-flex items-end text-xs px-2.5 py-0.5 tracking-wide text-gray-500 dark:text-gray-300 dark:bg-gray-700 ml-3">
+                                            <span class="leading-relaxed whitespace-wrap text-sm">{{item.surveyType |
+                                                titlecase}}</span>
+                                        </div>
+                                    </ng-container>
+                                    <ng-container *ngIf="item.type === 'DIKLAT'">
+                                        <div
+                                            class="inline-flex items-end text-xs px-2.5 py-0.5 tracking-wide text-gray-500 dark:text-gray-300 dark:bg-gray-700 ml-3">
+                                            <span
+                                                class="leading-relaxed whitespace-wrap text-sm">{{item.courseGroup?.nama
+                                                | titlecase}}</span>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="sm:mx-5 mb-4">
+                                    <div class="text-1xl font-semibold leading-tight">{{item.name}}</div>
+                                </div>
+                                <div class="flex items-center mx-3 sm:mx-5">
+                                    <div class="flex items-center leading-5 text-md text-secondary">
+                                        <mat-icon class="icon-size-5 text-hint"
+                                            [svgIcon]="'heroicons_solid:clock'"></mat-icon>
+                                        <div class="ml-1.5">{{item.durationInMinutes}} menit</div>
+                                    </div>
+                                    <div
+                                        class="inline-flex items-end font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700 ml-3">
+                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.questionType
+                                            }}</span>
+                                    </div>
+                                    <mat-slide-toggle class="mt-8 sm:mt-0 sm:ml-auto" [color]="'primary'"
+                                        [checked]="item.status === 'PUBLISHED'"
+                                        (change)="toggleCompleted($event, item)">
+                                        Publish
+                                    </mat-slide-toggle>
+                                </div>
+                                <ng-container *ngIf="item.usedBy[0]">
+                                    <hr class="my-2" />
+                                    <div class="sm:mx-5 mb-2">
+                                        <div class="text-md text-secondary">Digunakan pada Diklat :</div>
+                                    </div>
+                                    <div class="flex items-center sm:mx-5 mb-2">
+                                        <div
+                                            class="inline-flex items-end font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700 mr-3">
+                                            <span
+                                                class="leading-relaxed whitespace-nowrap text-sm">{{item.usedBy[0].jenis}}</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center leading-5 ext-1xl font-semibold leading-tight truncate">
+                                            {{item.usedBy[0].name}}
+                                        </div>
+                                    </div>
+                                </ng-container>
+                                <!-- Footer -->
+                                <div class="flex flex-col w-full mt-auto">
+                                    <ng-container *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_INSTRUKTUR'">
+                                        <div class="px-6 py-4 text-right bg-gray-50 dark:bg-transparent">
+                                            <button class="px-6 py-4" mat-button [matMenuTriggerFor]="postCardMenu01">
+                                                <mat-icon class="icon-size-5"
+                                                    [svgIcon]="'heroicons_solid:dots-horizontal'"></mat-icon>
+                                            </button>
+                                            <!-- <button mat-stroked-button [routerLink]="[course.id]"> -->
+                                            <button mat-stroked-button [routerLink]="['./' + item.id]">
+                                                <span class="inline-flex items-center">
+                                                    <span>Detail Soal</span>
+                                                </span>
+                                            </button>
+                                            <mat-menu #postCardMenu01="matMenu">
+                                                <button [disabled]="item.status === 'PUBLISHED'" mat-menu-item
+                                                    (click)="toggleEdit(item)">
+                                                    <span class="flex items-center">
+                                                        <mat-icon class="icon-size-5 mr-3"
+                                                            [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
+                                                        <span>Ubah</span>
+                                                    </span>
+                                                </button>
+                                                <button mat-menu-item (click)="toggleClone(item)">
+                                                    <span class="flex items-center">
+                                                        <mat-icon class="icon-size-5 mr-3"
+                                                            [svgIcon]="'heroicons_solid:clipboard-copy'"></mat-icon>
+                                                        <span>Replikasi Soal</span>
+                                                    </span>
+                                                </button>
+                                                <button [disabled]="item.status === 'PUBLISHED'" mat-menu-item
+                                                    (click)="toggleDelete(item.id)">
+                                                    <span class="flex items-center">
+                                                        <mat-icon class="icon-size-5 mr-3"
+                                                            [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                                        <span>Hapus</span>
+                                                    </span>
+                                                </button>
+                                            </mat-menu>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                            </fuse-card>
+                        </ng-container>
+                    </div>
+                </ng-container>
+
+            </ng-container>
+
+            <!-- No items -->
+            <ng-template #noitems>
+                <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                    <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:document-search'"></mat-icon>
+                    <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">Soal tidak
+                        ditemukan!
+                    </div>
+                </div>
+            </ng-template>
+        </div>
+
+    </div>
+
+</div>

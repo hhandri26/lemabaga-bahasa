@@ -1,0 +1,184 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Detail Pengangkatan PFP</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <div class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto">
+        <div class="flex flex-col w-full">
+            <ng-container *ngIf="item">
+                <div class="grid grid-flow-col lg:grid-flow-row min-w-max lg:min-w-0 divide-x lg:divide-x-0 lg:divide-y">
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Diusulkan pada</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.createdAt | date:'d/M/yyyy h:mm'}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Diusulkan oleh</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.createdByNama}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Instansi</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.formasiDetail.instansiNama}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Unit Kerja</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.formasiDetail.unitKerjaNama}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Status</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50">
+                                {{item.status}}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Catatan</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.notes ?? '-'}}
+                        </div>
+                    </div>
+
+                    <div class="hidden lg:block p-2 col-span-full bg-gray-100 dark:bg-transparent">
+                        <div class="text-md font-semibold">PROFIL</div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">NIP</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.pnsBiodata.nip}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Nama</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.pnsBiodata.nama | titlecase}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Jenis Kelamin</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{(item.pnsBiodata.jenisKelamin | findReference:'id':genders)}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Email</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.pnsBiodata.email ?? '-'}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Tlp Kantor</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.pnsBiodata.telpKantor}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">TMT-Golongan</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.pnsBiodata.tmtGolongan}}
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Alamat Kantor</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            {{item.pnsBiodata.alamatKantorDeskripsi}}
+                        </div>
+                    </div>
+
+                    <div class="hidden lg:block p-2 col-span-full bg-gray-100 dark:bg-transparent">
+                        <div class="text-md font-semibold">BERKAS</div>
+                    </div>
+                    <!-- <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Surat Usulan</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            <ng-container *ngIf="item.dokumenBiodataId">
+                                <div class="flex items-center text-md">
+                                    <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                    <button class="ml-1.5 text-sm underline">Unduh</button>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!item.dokumenBiodataId">-</ng-container>
+                        </div>
+                    </div> -->
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Dokumen Pernyataan</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            <ng-container *ngIf="item.dokumenPernyataanId">
+                                <div class="flex items-center text-md">
+                                    <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                    <button (click)="togglePrint(item.dokumenPernyataanId)" class="ml-1.5 text-sm underline">Unduh</button>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!item.dokumenPernyataanId">-</ng-container>
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Dokumen Biodata</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            <ng-container *ngIf="item.dokumenBiodataId">
+                                <div class="flex items-center text-md">
+                                    <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                    <button (click)="togglePrint(item.dokumenBiodataId)" class="ml-1.5 text-sm underline">Unduh</button>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!item.dokumenBiodataId">-</ng-container>
+                        </div>
+                    </div>
+                    <!-- <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">SK Pangkat</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            <ng-container *ngIf="item.dokumenPernyataanId">
+                                <div class="flex items-center text-md">
+                                    <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                    <button class="ml-1.5 text-sm underline">Unduh</button>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!item.dokumenPernyataanId">-</ng-container>
+                        </div>
+                    </div> -->
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">Surat Rekomendasi</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            <ng-container *ngIf="item.dokumenRekomendasiId">
+                                <div class="flex items-center text-md">
+                                    <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                    <button (click)="togglePrint(item.dokumenRekomendasiId)" class="ml-1.5 text-sm underline">Unduh</button>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!item.dokumenRekomendasiId">-</ng-container>
+                        </div>
+                    </div>
+                    <div class="grid grid-flow-row auto-rows-fr lg:grid-flow-col lg:auto-cols-fr divide-y lg:divide-y-0 lg:divide-x text-sm">
+                        <div class="flex items-center lg:items-start max-w-32 lg:max-w-none p-2 font-medium lg:font-normal text-center lg:text-left font-semibold">SK Pengangkatan</div>
+                        <div class="flex items-center justify-center lg:justify-start p-2">
+                            <ng-container *ngIf="item.dokumenSkPengangkatanId">
+                                <div class="flex items-center text-md">
+                                    <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                    <button (click)="togglePrint(item.dokumenSkPengangkatanId)" class="ml-1.5 text-sm underline">Unduh</button>
+                                </div>
+                            </ng-container>
+                            <ng-container *ngIf="!item.dokumenSkPengangkatanId">-</ng-container>
+                        </div>
+                    </div>
+                </div>
+            </ng-container>
+        </div>
+    </div>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Tutup
+        </button>
+    </div>
+</div>

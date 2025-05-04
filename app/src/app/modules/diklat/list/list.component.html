@@ -1,0 +1,201 @@
+<div class="absolute inset-0 flex flex-col min-w-0 overflow-y-auto" cdkScrollable>
+
+    <div class="flex flex-auto p-6 sm:p-10">
+
+        <div class="flex flex-col flex-auto w-full mx-auto">
+            <!-- Filters -->
+            <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-xs sm:max-w-none">
+                <div class="text-2xl font-extrabold tracking-tight leading-none mr-10">Diklat & Kursus</div>
+                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72">
+                    <mat-select [value]="'all'" (selectionChange)="filterByCategory($event)">
+                        <mat-option [value]="'all'">-- Semua Jenis --</mat-option>
+                        <ng-container *ngFor="let category of categories; trackBy: trackByFn">
+                            <mat-option [value]="category.id">{{category.name}}</mat-option>
+                        </ng-container>
+                    </mat-select>
+                </mat-form-field>
+                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 mt-4 sm:mt-0 sm:ml-4" [floatLabel]="'always'">
+                    <mat-icon matPrefix class="icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                    <input (input)="filterByQuery(query.value)" placeholder="Cari judul" matInput #query>
+                </mat-form-field>
+                <mat-slide-toggle class="mt-8 sm:mt-0 ml-3" [color]="'primary'" (change)="toggleCompleted($event)">
+                    Sembunyikan selesai
+                </mat-slide-toggle>
+                <ng-container *ngIf="role === 'ROLE_ADMIN'">
+                    <button class="mt-8 sm:mt-0 sm:ml-auto" mat-flat-button [color]="'primary'" (click)="toggleCreate()">
+                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                    <span class="ml-2 mr-1">Diklat & Kursus</span>
+                </button>
+                </ng-container>
+            </div>
+            <!-- Courses -->
+            <ng-container *ngIf="this.filteredCourses.length; else noCourses">
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mt-8 sm:mt-10">
+                    <ng-container *ngFor="let course of filteredCourses; trackBy: trackByFn">
+                        <!-- Course -->
+                        <div class="flex flex-col shadow rounded-2xl overflow-hidden bg-card">
+                            <div class="flex flex-col p-6">
+                                <div class="flex items-center justify-between">
+                                    <!-- Course category -->
+                                    <ng-container *ngIf="(course.courseGroup.jenisKegiatan | fuseFindByKey:'id':categories) as category">
+                                        <div class="py-0.5 px-3 rounded-full text-sm font-semibold" [ngClass]="{'text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500': category.id === 'DIKLAT_TEKNIS',
+                                                        'text-green-800 bg-green-100 dark:text-green-50 dark:bg-green-500': category.id === 'DIKLAT_FUNGSIONAL',
+                                                        'text-pink-800 bg-pink-100 dark:text-pink-50 dark:bg-pink-500': category.id === 'cloud',
+                                                        'text-amber-800 bg-amber-100 dark:text-amber-50 dark:bg-amber-500': category.id === 'firebase'}">
+                                            {{category.name}}
+                                        </div>
+                                    </ng-container>
+                                    <!-- Completed at least once -->
+                                    <ng-container *ngIf="role === 'ROLE_USER'">
+                                        <div class="flex items-center">
+                                            <ng-container *ngIf="+course.progress === 100.00">
+                                                <mat-icon class="icon-size-5 text-green-600" [svgIcon]="'heroicons_solid:badge-check'" [matTooltip]="'Anda telah menyelesaikan Dikla / Kursus ini'"></mat-icon>
+                                            </ng-container>
+                                        </div>
+                                    </ng-container>
+                                </div>
+                                <div class="mt-4 text-lg font-medium">
+                                    <img [src]="getFilePath(course.coverImagePath)" class="h-full">
+                                </div>
+                                <!-- Course title & description -->
+                                <div class="mt-4 text-lg font-medium">{{course.title}}</div>
+                                <div class="line-clamp-2 text-secondary mt-5">{{course.description}}</div>
+                                <div class="w-12 h-1 my-6 border-t-2"></div>
+                                <!-- Course time -->
+                                <div class="flex items-center leading-5 text-md text-secondary">
+                                    <mat-icon class="icon-size-5 text-hint" [svgIcon]="'heroicons_solid:calendar'"></mat-icon>
+                                    <div class="ml-1.5">{{course.startDate}} - {{course.endDate}}</div>
+                                </div>
+                                <ng-container *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_INSTRUKTUR'">
+                                    <div class="flex items-center leading-5 text-md text-secondary mt-5">
+                                        <mat-icon class="icon-size-5 text-hint" [svgIcon]="'heroicons_solid:users'"></mat-icon>
+                                        <div class="ml-1.5">{{course.participantCount}} Peserta</div>
+                                    </div>
+                                    <ng-container *ngIf="course?.instructureTestName">
+                                        <div class="flex items-center leading-5 text-md text-secondary mt-5">
+                                            <mat-icon class="icon-size-5 text-hint" [svgIcon]="'heroicons_solid:user-circle'"></mat-icon>
+                                            <div class="ml-1.5">{{course.instructureTestName}}</div>
+                                        </div>
+                                    </ng-container>
+                                </ng-container>
+
+                            </div>
+                            <!-- Footer -->
+                            <div class="flex flex-col w-full mt-auto">
+                                <!-- Course progress -->
+                                <ng-container *ngIf="role !== 'ROLE_ADMIN' || role !== 'ROLE_INSTRUKTUR'">
+                                    <div class="relative h-0.5">
+                                        <div class="z-10 absolute inset-x-0 h-6 -mt-3" [matTooltip]="course.progress | percent" [matTooltipPosition]="'above'" [matTooltipClass]="'-mb-0.5'"></div>
+                                        <mat-progress-bar class="h-0.5" [value]="+course.progress"></mat-progress-bar>
+                                    </div>
+                                </ng-container>
+                                <!-- Course launch button -->
+                                <ng-container *ngIf="role === 'ROLE_ADMIN'">
+                                    <div class="px-6 py-4 text-right bg-gray-50 dark:bg-transparent">
+                                        <button class="px-6 py-4" mat-button [matMenuTriggerFor]="postCardMenu01">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="'heroicons_solid:dots-horizontal'"></mat-icon>
+                                        </button>
+                                        <!-- <button mat-stroked-button [routerLink]="[course.id]"> -->
+                                        <a mat-stroked-button [routerLink]="['kelola/' + course.id]">
+                                            <span class="inline-flex items-center">
+                                                <span>Kelola</span>
+                                            </span>
+                                        </a>
+                                        <mat-menu #postCardMenu01="matMenu">
+                                            <button mat-menu-item (click)="toggleInstruktur(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:user-add'"></mat-icon>
+                                                    <span>Assign Instruktur Test</span>
+                                                </span>
+                                            </button>
+                                            <button mat-menu-item (click)="togglePeserta(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:user-add'"></mat-icon>
+                                                    <span>Kelola Peserta</span>
+                                                </span>
+                                            </button>
+                                            <button mat-menu-item (click)="toggleBobot(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:badge-check'"></mat-icon>
+                                                    <span>Set Bobot Penilaian</span>
+                                                </span>
+                                            </button>
+                                            <button mat-menu-item (click)="toggleTemplateSertifikat(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:academic-cap'"></mat-icon>
+                                                    <span>Set Template Sertifikat</span>
+                                                </span>
+                                            </button>
+                                            <hr class="border-b my-1">
+                                            <button mat-menu-item (click)="toggleKehadiran(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:clipboard-check'"></mat-icon>
+                                                    <span>Daftar Hadir</span>
+                                                </span>
+                                            </button>
+                                            <button mat-menu-item (click)="togglePenilaian(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:badge-check'"></mat-icon>
+                                                    <span>Penilaian</span>
+                                                </span>
+                                            </button>
+                                            <button mat-menu-item (click)="toggleSertifikat(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:academic-cap'"></mat-icon>
+                                                    <span>Menerbitkan Sertifikat</span>
+                                                </span>
+                                            </button>
+                                            <hr class="border-b my-1">
+                                            <button mat-menu-item (click)="toggleEdit(course)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:pencil-alt'"></mat-icon>
+                                                    <span>Ubah</span>
+                                                </span>
+                                            </button>
+                                            <button mat-menu-item (click)="toggleDelete(course.id)">
+                                                <span class="flex items-center">
+                                                    <mat-icon class="icon-size-5 mr-3"
+                                                        [svgIcon]="'heroicons_solid:trash'"></mat-icon>
+                                                    <span>Hapus</span>
+                                                </span>
+                                            </button>
+                                        </mat-menu>
+                                    </div>
+                                </ng-container>
+                                <ng-container *ngIf="role === 'ROLE_USER' || role === 'ROLE_INSTRUKTUR'">
+                                    <div class="px-6 py-4 text-right bg-gray-50 dark:bg-transparent">
+                                        <a mat-stroked-button [routerLink]="['play/' + course.id]">
+                                            <span class="inline-flex items-center">
+                                                <span>Mulai</span>
+                                            <mat-icon class="ml-1.5 icon-size-5" [svgIcon]="'heroicons_solid:arrow-sm-right'"></mat-icon>
+                                            </span>
+                                        </a>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </ng-container>
+
+            <!-- No courses -->
+            <ng-template #noCourses>
+                <div class="flex flex-auto flex-col items-center justify-center bg-gray-100 dark:bg-transparent">
+                    <mat-icon class="icon-size-24" [svgIcon]="'heroicons_outline:document-search'"></mat-icon>
+                    <div class="mt-6 text-2xl font-semibold tracking-tight text-secondary">Diklat & Kursus tidak ditemukan!</div>
+                </div>
+            </ng-template>
+        </div>
+
+    </div>
+
+</div>

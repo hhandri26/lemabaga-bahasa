@@ -1,0 +1,87 @@
+<ng-container *ngIf="profile$ | async as profile">
+    <div class="w-full max-w-3xl">
+
+        <!-- <form [formGroup]="form"> -->
+            <div class="w-full">
+                <fuse-alert class="mt-8" *ngIf="showAlert" [appearance]="'outline'" [showIcon]="false" [type]="alert.type">
+                    {{alert.message}}
+                </fuse-alert>
+                <div class="flex flex-auto items-end mt-10">
+                    <div class="relative flex items-center justify-center w-32 h-32 rounded-full overflow-hidden ring-4 ring-bg-card">
+                        <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+                        <div class="absolute inset-0 flex items-center justify-center z-20">
+                            <div>
+                                <input
+                                    id="avatar-file-input"
+                                    class="absolute h-0 w-0 opacity-0 invisible pointer-events-none"
+                                    type="file"
+                                    [multiple]="false"
+                                    [accept]="'image/jpeg, image/png'"
+                                    (change)="uploadAvatar(profile.pnsId, avatarFileInput.files)"
+                                    #avatarFileInput>
+                                <label
+                                    class="flex items-center justify-center w-10 h-10 rounded-full cursor-pointer hover:bg-hover"
+                                    for="avatar-file-input"
+                                    matRipple>
+                                    <mat-icon
+                                        class="text-white"
+                                        [svgIcon]="'heroicons_outline:camera'"></mat-icon>
+                                </label>
+                            </div>
+                            <div>
+                                <button
+                                    mat-icon-button
+                                    (click)="removeAvatar()">
+                                    <mat-icon
+                                        class="text-white"
+                                        [svgIcon]="'heroicons_outline:trash'"></mat-icon>
+                                </button>
+                            </div>
+                        </div>
+                        <img [id]="'photo'"
+                            class="object-cover w-full h-full"
+                            *ngIf="profile.photoUrl"
+                            [src]="profile.photoUrl">
+                        <div
+                            class="flex items-center justify-center w-full h-full rounded overflow-hidden uppercase text-8xl font-bold leading-none bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200"
+                            *ngIf="!profile.photoUrl">
+                            {{profile.nama.charAt(0)}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="my-10 border-t"></div>
+            <div class="grid sm:grid-cols-8 gap-6 w-full mt-8">
+                <div class="sm:col-span-2">
+                    <div class="w-full">
+                        <div class="text-lg">Username</div>
+                        <div class="text-secondary">{{profile.username}}</div>
+                    </div>
+                </div>
+                <div class="sm:col-span-2">
+                    <div class="w-full">
+                        <div class="text-lg">Nama</div>
+                        <div class="text-secondary">{{profile.nama}}</div>
+                    </div>
+                </div>
+                <div class="sm:col-span-2">
+                    <div class="w-full">
+                        <div class="text-lg">Email</div>
+                        <div class="text-secondary">{{profile.email}}</div>
+                    </div>
+                </div>
+            </div>
+            <!-- <div class="my-10 border-t"></div>
+            <div class="flex items-center justify-end">
+                <button class="ml-4" mat-flat-button type="button" [color]="'primary'" [disabled]="form.disabled || isLoadingSubmit" (click)="save()">
+                    <span *ngIf="!form.disabled">
+                        Simpan
+                    </span>
+                    <mat-progress-spinner *ngIf="form.disabled" [diameter]="24"
+                        [mode]="'indeterminate'"></mat-progress-spinner>
+                </button>
+            </div> -->
+        <!-- </form> -->
+
+    </div>
+</ng-container>

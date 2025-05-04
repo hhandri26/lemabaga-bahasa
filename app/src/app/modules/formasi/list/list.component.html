@@ -1,0 +1,444 @@
+<!-- eslint-disable @angular-eslint/template/eqeqeq -->
+<div class="flex flex-col flex-auto min-w-0 sm:overflow-hidden bg-card dark:bg-transparent">
+    <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
+        <div class="absolute inset-x-0 bottom-0" *ngIf="isLoading">
+            <mat-progress-bar [mode]="'indeterminate'"></mat-progress-bar>
+        </div>
+        <div>
+            <div class="text-2xl font-extrabold tracking-tight leading-none">Usulan Formasi Baru</div>
+            <div class="ml-0.5 font-medium text-secondary">
+                <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;Formasi
+                </ng-container>
+            </div>
+        </div>
+        <form [formGroup]="form">
+            <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
+                <!-- <div class="flex-auto ml-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full" style="width: 18em !important;">
+                        <mat-select [formControlName]="'byJabatanId'">
+                            <mat-option value="">-- Semua Jenis Jabatan --</mat-option>
+                            <ng-container *ngFor="let item of jenisJabatan$ | async; trackBy: trackByFn">
+                                <mat-option [value]="item.id">
+                                    {{item.nama}}
+                                </mat-option>
+                            </ng-container>
+                        </mat-select>
+                    </mat-form-field>
+                </div> -->
+                <!-- <button class="ml-4 bg-card hover:bg-hover" mat-stroked-button (click)="toggleSearch()">
+                    <span class="ml-2 mr-1">Cari</span>
+                </button> -->
+                <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI'">
+                    <button class="ml-4 " mat-flat-button [color]="'primary'" (click)="create()">
+                        <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                        <span class="ml-2 mr-1">Formasi</span>
+                    </button>
+                </ng-container>
+            </div>
+        </form>
+    </div>
+
+    <!-- Main -->
+    <div class="flex flex-auto overflow-hidden">
+
+        <div class="flex flex-col flex-auto sm:mb-18 overflow-hidden sm:overflow-y-auto">
+            <ng-container *ngIf="(items$ | async) as items">
+                <ng-container *ngIf="items.length > 0; else noItems">
+                    <div class="grid">
+                        <!-- Header -->
+                        <div class="item-grid z-10 sticky top-0 grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 gap-3 py-3 px-6 shadow text-md font-semibold text-secondary bg-gray-50 dark:bg-black dark:bg-opacity-5">
+                            <div class="md:block col-span-6">Instansi</div>
+                            <div class="hidden md:block col-span-2">Jumlah Rekomendasi Instansi</div>
+                            <div class="hidden md:block col-span-2">Status</div>
+                            <div class="hidden md:block col-span-1">Diusulkan pada</div>
+                            <div class="hidden md:block col-span-1"></div>
+                        </div>
+                        <!-- Rows -->
+                        <ng-container *ngIf="(items$ | async) as items">
+                            <ng-container *ngFor="let item of items; trackBy: trackByFn">
+                                <div class="item-grid grid grid-flow-col auto-cols-max md:auto-cols-min grid-cols-12 items-center gap-2 py-3 px-6 border-b">
+                                    <div class="md:block col-span-6">
+                                        <div class="font-medium leading-5 truncate">
+                                            {{ item.instansiNama | titlecase }}<br /> {{ item.satuanOrganisasnNama | titlecase }}
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-2">
+                                        <div class="font-medium leading-5 truncate text-md">
+                                            {{ item.sumOfWorkerNeeds }} PFP
+                                        </div>
+                                    </div>
+                                    <div class="hidden md:block col-span-2">
+                                        <ng-container *ngIf="item.status === 'CREATED'">
+                                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-50">
+                                                <button class="leading-relaxed whitespace-nowrap text-sm" matTooltip="Draft usulan formasi baru telah dibuat oleh Kepegawaian">Draft Usulan</button>
+                                            </span>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.status === 'SUBMITED'">
+                                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-50">
+                                                <button class="leading-relaxed whitespace-nowrap text-sm" matTooltip="Usulan formasi baru telah disubmit oleh Kepegawaian, selanjutnya menunggu proses persetujuan oleh Pembina">Usulan Disubmit</button>
+                                            </span>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.status === 'RETURN'">
+                                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50">
+                                                <button class="leading-relaxed whitespace-nowrap text-sm" matTooltip="Usulan formasi baru ditolak oleh Pembina">Usulan Ditolak</button>
+                                            </span>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.status === 'REKOMENDASI_SENT'">
+                                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50">
+                                                <button class="leading-relaxed whitespace-nowrap text-sm" matTooltip="Selanjutnya menunggu unit Kepegawaian menginput hasil rekomendasi dari KEMENPAN">Usulan Disetujui</button>
+                                            </span>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.status === 'MENPAN_APPROVED'">
+                                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50">
+                                                <button class="leading-relaxed whitespace-nowrap text-sm" matTooltip="Unit Kepegawaian telah input hasil rekomendasi dari KEMENPAN, selanjutnya menunggu persetujuan dari Pembina">Disetujui KEMENPAN</button>
+                                            </span>
+                                        </ng-container>
+                                        <ng-container *ngIf="item.status === 'COMPLETED'">
+                                            <span class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50">
+                                                <button class="leading-relaxed whitespace-nowrap text-sm" matTooltip="Proses usulan telah selesai, Unit Kepegawaian dapat melakukan input PFP pada menu pengangkatan PFP">Usulan Selesai</button>
+                                            </span>
+                                        </ng-container>
+                                    </div>
+                                    <div class="hidden md:block truncate text-sm col-span-1">
+                                        {{item.createdAt | date:'d/M/yyyy h:mm'}}
+                                    </div>
+                                    <div class="hidden md:block col-span-1">
+                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                            <button class="min-w-10 min-h-7 h-7 px-2 leading-6" mat-stroked-button (click)="toggleDetails(item.id)">
+                                                <mat-icon class="icon-size-5"
+                                                    [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                                </mat-icon>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="grid">
+                                    <ng-container *ngIf="selected?.id === item.id">
+                                        <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                                        </ng-container>
+                                    </ng-container>
+                                </div>
+                            </ng-container>
+                        </ng-container>
+                    </div>
+
+                    <mat-paginator class="sticky sm:absolute sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)"
+                        [pageSize]="pagination.perPage" [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)"></mat-paginator>
+
+                </ng-container>
+            </ng-container>
+
+            <!-- DETAIL -->
+            <ng-template #rowDetailsTemplate let-item>
+                <ng-container *ngIf="selected">
+                    <div class="shadow-lg overflow-hidden">
+                        <div class="flex">
+                            <div class="flex flex-auto flex-wrap py-5">
+                                <div class="flex flex-col w-full sm:pl-8">
+                                    <div class="mt-1.5 text-md text-secondary">Detail tahapan usulan:</div>
+                                    <div class="mt-2">
+                                        <ol>
+                                            <ng-container *ngIf="selected?.histories">
+                                                <ng-container *ngFor="let item of selected.histories; let i = index; let first = first; let last = last; trackBy: trackByFn">
+                                                    <ng-container *ngIf="item.eventName === 'CREATED'">
+                                                        <li class="relative flex py-2">
+                                                            <div class="absolute top-7 left-5 w-0.5 h-full -ml-px bg-gray-200 dark:bg-gray-600"></div>
+                                                            <div class="relative flex flex-auto">
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName === 'CREATED'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-red-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName !== 'CREATED'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-green-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <div class="flex flex-col flex-auto items-start">
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                        <div class="font-medium text-md">Usulan formasi baru</div>
+                                                                        <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' && (selected.histories[selected.histories.length-1].eventName === 'CREATED')">
+                                                                            <div class="hidden sm:block">&bull;</div>
+                                                                            <button mat-button [color]="'secondary'" (click)="toggleDelete(selected.id)">Hapus</button>
+                                                                            <div class="flex items-center">
+                                                                                <button mat-button [color]="'secondary'">Ubah</button>
+                                                                            </div>
+                                                                            <div class="flex items-center">
+                                                                                <button mat-button [color]="'warn'" (click)="toggleSubmitUsulan(selected.id)">Submit Usulan</button>
+                                                                            </div>
+                                                                        </ng-container>
+                                                                    </div>
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                        <div class="text-secondary">Dibuat {{item.createdAt}}</div>
+                                                                        <div class="hidden sm:block">&bull;</div>
+                                                                        <div class="flex items-center">
+                                                                            <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                                                            <button (click)="togglePrint(item.payload.dokumenUsulId)" class="ml-1.5 text-sm underline">Lampiran surat usulan</button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' && selected.histories[selected.histories.length-1].eventName === 'CREATED'">
+                                                                        <fuse-alert [type]="'info'" class="py-3">
+                                                                            <span fuseAlertTitle>Usulan Anda sedang diproses oleh pembina, untuk selanjutnya akan diberikan rekomendasi persetujuan formasi</span>
+                                                                        </fuse-alert>
+                                                                    </ng-container>
+                                                                    <div class="text-md py-3">Detail formasi yang diusulkan:</div>
+                                                                    <ng-container *ngFor="let _item of item.payload.formasiDetail;  let no = index;">
+                                                                        <table class="border-collapse text-sm">
+                                                                            <tr>
+                                                                                <td class="border bg-blue-50 px-4 py-2" colspan="4">Formasi #{{no + 1}}:</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td class="border px-4 py-2">Unit&nbsp;kerja</td>
+                                                                                <td class="border px-4 py-2" colspan="3">{{_item.unitKerjaNama}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td class="border px-4 py-2">Jabatan</td>
+                                                                                <td class="border px-4 py-2" colspan="3">{{_item.jabatanNama}}</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <th class="bg-gray-50 border text-left px-4 py-2 text-center">No</th>
+                                                                                <th class="bg-gray-50 border text-left px-4 py-2 text-center" width="100%">Uraian Tugas</th>
+                                                                                <th class="bg-gray-50 border text-left px-4 py-2 text-center">Satuan&nbsp;Hasil (output)</th>
+                                                                                <th class="bg-gray-50 border text-left px-4 py-2 text-center">Waktu&nbsp;Penyelesaian Pekerjaan</th>
+                                                                            </tr>
+                                                                            <ng-container *ngFor="let formula of _item.formula; let _no = index;">
+                                                                                <tr>
+                                                                                    <td class="border px-4 py-2 text-center">{{_no + 1}}</td>
+                                                                                    <td class="border px-4 py-2">{{formula.uraianTugasText}}</td>
+                                                                                    <td class="border px-4 py-2 text-right">{{formula.output}}</td>
+                                                                                    <td class="border px-4 py-2 text-right">{{formula.uraianTugasWorkPerHour * formula.output | number}} jam</td>
+                                                                                </tr>
+                                                                            </ng-container>
+                                                                            <tr>
+                                                                                <td class="border bg-gray-50 px-4 py-2 text-right font-medium" colspan="2">Total</td>
+                                                                                <td class="border bg-gray-50 px-4 py-2 font-medium text-right">{{_item.sumOfOutput}}</td>
+                                                                                <td class="border bg-gray-50 px-4 py-2 font-medium text-right">{{_item.sumOfWorkPerHour}} jam</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td class="border bg-gray-50 px-4 py-2 text-right font-medium" colspan="2">Rata-rata</td>
+                                                                                <td class="border bg-gray-50 px-4 py-2 font-medium text-right">{{_item.avgOfOutput}}</td>
+                                                                                <td class="border bg-gray-50 px-4 py-2 font-medium text-right">{{_item.avgOfWorkPerHour}} jam</td>
+                                                                            </tr>
+                                                                            <tr>
+                                                                                <td class="border bg-gray-50 px-4 py-2 text-right font-medium" colspan="2">Jumlah Formasi Penerjemah Ahli Pertama yang dibutuhkan</td>
+                                                                                <td class="border bg-gray-50 px-4 py-2 font-medium text-center" colspan="2">{{_item.sumOfWorkerNeeds}}</td>
+                                                                            </tr>
+                                                                        </table>
+                                                                    </ng-container>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="item.eventName === 'SUBMITED'">
+                                                        <li class="relative flex py-2">
+                                                            <div class="absolute top-7 left-5 w-0.5 h-full -ml-px bg-gray-200 dark:bg-gray-600"></div>
+                                                            <div class="relative flex flex-auto">
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName === 'SUBMITED'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-red-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName !== 'SUBMITED'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-green-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <div class="flex flex-col flex-auto items-start">
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                        <div class="font-medium text-md">Proses persetujuan oleh pembina</div>
+                                                                    </div>
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                        <div class="text-secondary">Diterima {{item.createdAt}}</div>
+                                                                        <div class="hidden sm:block">&bull;</div>
+                                                                        <div class="flex items-center">
+                                                                            <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                                                            <button (click)="togglePrint(item.payload.dokumenUsulId)" class="ml-1.5 text-sm underline">Lampiran surat usulan</button>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                        <div class="font-medium">Satuan Organisasi {{item.payload.satuanOrganisasiNama}}</div>
+                                                                        <div class="hidden sm:block">&bull;</div>
+                                                                        <div class="font-medium">Kebutuhan {{item.payload.sumOfWorkerNeeds}} PFP</div>
+                                                                    </div>
+                                                                    <ng-container *ngIf="role === 'ROLE_ADMIN' && selected.histories[selected.histories.length-1].eventName === 'SUBMITED'">
+                                                                        <fuse-alert [type]="'info'" class="py-3">
+                                                                            <span fuseAlertTitle>Harap periksa detail formasi usulan dan lampiran surat sebelum menentukan persetujuan</span>
+                                                                        </fuse-alert>
+                                                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                            <button mat-button [color]="'secondary'" (click)="returnUsul(selected.id)">Tolak</button>
+                                                                            <div class="flex items-center">
+                                                                                <button mat-button [color]="'warn'" (click)="approveUsul(selected.id)">Setuju</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </ng-container>
+
+                                                                    <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' && selected.histories[selected.histories.length-1].eventName === 'SUBMITED'">
+                                                                        <fuse-alert [type]="'info'" class="py-3">
+                                                                            <span fuseAlertTitle>Usulan Anda sedang diproses oleh pembina, untuk selanjutnya akan diberikan rekomendasi persetujuan formasi</span>
+                                                                        </fuse-alert>
+                                                                    </ng-container>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="item.eventName === 'RETURN'">
+                                                        <li class="relative flex py-2">
+                                                            <div class="absolute top-7 left-5 w-0.5 h-full -ml-px bg-gray-200 dark:bg-gray-600"></div>
+                                                            <div class="relative flex flex-auto">
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName === 'RETURN'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-red-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName !== 'RETURN'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-green-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <div class="flex flex-col flex-auto items-start">
+                                                                    <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                        <div class="font-medium text-md">Proses persetujuan oleh pembina</div>
+                                                                    </div>
+                                                                    <div class="font-medium text-md">Usulan formasi <strong>ditolak</strong>, dengan alasan:</div>
+                                                                    <fuse-alert [type]="'info'" class="py-3">
+                                                                        <span fuseAlertTitle>{{item.payload.notes}}</span>
+                                                                    </fuse-alert>
+                                                                </div>
+                                                            </div>
+                                                        </li>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="item.eventName === 'REKOMENDASI_SENT' && selected.histories[selected.histories.length-1].eventName === 'REKOMENDASI_SENT'">
+                                                        <li class="relative flex py-2">
+                                                            <div class="absolute top-7 left-5 w-0.5 h-full -ml-px bg-gray-200 dark:bg-gray-600"></div>
+                                                            <div class="relative flex flex-auto">
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName === 'REKOMENDASI_SENT'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-red-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName !== 'REKOMENDASI_SENT'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-green-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="role === 'ROLE_ADMIN' && selected.histories[selected.histories.length-1].eventName === 'REKOMENDASI_SENT'">
+                                                                    <div class="flex flex-col flex-auto items-start">
+                                                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                            <div class="font-medium text-md">Menunggu surat persetujuan dari KEMENPAN oleh Unit Kerja Pengelola Kepegawaian</div>
+                                                                        </div>
+                                                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                            <div class="text-secondary">Disubmit {{item.createdAt}}</div>
+                                                                            <div class="hidden sm:block">&bull;</div>
+                                                                            <div class="flex items-center">
+                                                                                <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                                                                <button (click)="togglePrint(item.payload.dokumenRekomendasiId)" class="ml-1.5 text-sm underline">Lampiran surat rekomendasi</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' && selected.histories[selected.histories.length-1].eventName === 'REKOMENDASI_SENT'">
+                                                                    <div class="flex flex-col flex-auto items-start">
+                                                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                            <div class="font-medium text-md">Upload surat persetujuan dari KEMENPAN dan set formasi yang telah disetujui</div>
+                                                                        </div>
+                                                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                            <div class="text-secondary">Disubmit {{item.createdAt}}</div>
+                                                                            <div class="hidden sm:block">&bull;</div>
+                                                                            <div class="flex items-center">
+                                                                                <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                                                                <button (click)="togglePrint(item.payload.dokumenRekomendasiId)" class="ml-1.5 text-sm underline">Lampiran surat rekomendasi</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="flex items-center">
+                                                                            <button mat-button [color]="'warn'" (click)="toggleApprovedMenpan(selected.id)">Submit Rekomendasi</button>
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-container>
+                                                            </div>
+                                                        </li>
+                                                    </ng-container>
+                                                    <ng-container *ngIf="item.eventName === 'MENPAN_APPROVED'">
+                                                        <li class="relative flex py-2">
+                                                            <div class="absolute top-7 left-5 w-0.5 h-full -ml-px bg-gray-200 dark:bg-gray-600"></div>
+                                                            <div class="relative flex flex-auto">
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName === 'MENPAN_APPROVED'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-red-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="selected.histories[selected.histories.length-1].eventName !== 'MENPAN_APPROVED'">
+                                                                    <div class="flex shrink-0 items-center justify-center w-10 h-10 mr-4 rounded-full bg-green-200">
+                                                                        <mat-icon svgIcon="heroicons_outline:check"></mat-icon>
+                                                                    </div>
+                                                                </ng-container>
+                                                                <ng-container *ngIf="item?.payload">
+                                                                    <div class="flex flex-col flex-auto items-start">
+                                                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                            <div class="font-medium text-md">Formasi telah disetujui oleh KEMENPAN</div>
+                                                                            <ng-container *ngIf="role === 'ROLE_ADMIN' && (selected.histories[selected.histories.length-1].eventName === 'MENPAN_APPROVED')">
+                                                                                <div class="hidden sm:block">&bull;</div>
+                                                                                <div class="flex items-center">
+                                                                                    <button mat-button [color]="'secondary'" (click)="toggleTolakFinal(selected.id)">Tolak</button>
+                                                                                </div>
+                                                                                <div class="flex items-center">
+                                                                                    <button mat-button [color]="'warn'" (click)="toggleSetujuFinal(selected.id)">Setuju</button>
+                                                                                </div>
+                                                                            </ng-container>
+                                                                        </div>
+                                                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                                            <div class="text-secondary">Pada {{item.createdAt}}</div>
+                                                                            <div class="hidden sm:block">&bull;</div>
+                                                                            <div class="flex items-center">
+                                                                                <mat-icon class="icon-size-5 text-hint" svgIcon="attach_file"></mat-icon>
+                                                                                <button (click)="togglePrint(item.payload.dokumenMenpanId)" class="ml-1.5 text-sm underline">Lampiran surat KEMENPAN</button>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="text-md py-3">Detail formasi yang disetujui:</div>
+                                                                        <ng-container *ngFor="let _item of item.payload.formasiDetailApproved;  let no = index;">
+                                                                            <table class="border-collapse text-sm">
+                                                                                <tr>
+                                                                                    <th class="bg-gray-50 border text-left px-4 py-2" style="width: 70px;">No</th>
+                                                                                    <th class="bg-gray-50 border text-left px-4 py-2" style="width: 50%;">Unit Kerja</th>
+                                                                                    <th class="bg-gray-50 border text-left px-4 py-2" style="width: 50%;">Jabatan</th>
+                                                                                    <th class="bg-gray-50 border text-left px-4 py-2" style="width: 100px;">Dibutuhkan</th>
+                                                                                    <th class="bg-gray-50 border text-left px-4 py-2" style="width: 100px;">Disetujui</th>
+                                                                                </tr>
+                                                                                <ng-container *ngFor="let _item of item.payload.formasiDetailApproved;  let no = index;">
+                                                                                    <tr>
+                                                                                        <td class="border px-4 py-2">{{no + 1}}</td>
+                                                                                        <td class="border px-4 py-2">{{_item.unitKerjaNama}}</td>
+                                                                                        <td class="border px-4 py-2">{{_item.jabatanNama}}</td>
+                                                                                        <td class="border px-4 py-2">{{_item.sumOfWorkerNeeds}}</td>
+                                                                                        <td class="border px-4 py-2">{{_item.sumOfWorkerNeedsApproved}}</td>
+                                                                                    </tr>
+                                                                                </ng-container>
+                                                                            </table>
+                                                                        </ng-container>
+                                                                        <ng-container *ngIf="role === 'ROLE_ADMIN_KEPEGAWAIAN_INSTANSI' && (selected.histories[selected.histories.length-1].eventName === 'MENPAN_APPROVED')">
+                                                                            <fuse-alert [type]="'info'" class="py-3">
+                                                                                <span fuseAlertTitle>Menunggu proses persetujuan oleh Pembina</span>
+                                                                            </fuse-alert>
+                                                                        </ng-container>
+                                                                    </div>
+                                                                </ng-container>
+                                                            </div>
+                                                        </li>
+                                                    </ng-container>
+                                                </ng-container>
+                                            </ng-container>
+                                        </ol>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </ng-container>
+            </ng-template>
+            <ng-template #noItems>
+                <fuse-alert [type]="'info'">
+                    <span fuseAlertTitle>Usulan formasi tidak ditemukan!</span>
+                </fuse-alert>
+            </ng-template>
+        </div>
+    </div>
+</div>

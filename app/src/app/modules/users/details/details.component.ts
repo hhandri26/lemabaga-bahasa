@@ -1,4 +1,4 @@
-    /* eslint-disable @typescript-eslint/explicit-function-return-type */
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
     /* eslint-disable @typescript-eslint/naming-convention */
     import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
     import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -56,7 +56,7 @@
                 name: ['', [Validators.required]],
                 nip: ['', [Validators.required]],
                 email: ['', [Validators.required, Validators.email]],
-                instansiId: ['', [Validators.required]],
+                instansiId: [''],
                 namaInstansi:[''],
                 jabatanNama: [''],
                 satuanorganisasi: [],
@@ -69,6 +69,7 @@
             this._userService.items$
                 .pipe(takeUntil(this._unsubscribeAll))
                 .subscribe((items: any[]) => {
+                    console.log('Items fetched:', items); // Added logging
                     this.items = items;
                     this._changeDetectorRef.markForCheck();
                 });
@@ -79,6 +80,7 @@
                     takeUntil(this._unsubscribeAll),
                     tap(() => this.isLoading = true),
                     map((value) => {
+                        console.log('InstansiId value changed:', value); // Added logging
                         if (!value || value.length < 2) {
                             this.resultInstansi = null;
                         }
@@ -89,6 +91,7 @@
                         finalize(() => this.isLoading = false),
                     ))
                 ).subscribe((items: any) => {
+                    console.log('Instansi results:', items); // Added logging
                     this.resultInstansi = items?.content;
                     this._changeDetectorRef.markForCheck();
                 });
@@ -96,11 +99,12 @@
             this._userService.item$
                 .pipe(takeUntil(this._unsubscribeAll))
                 .subscribe((selected: any) => {
+                    console.log('Selected user:', selected); // Added logging
                     this._usersComponent.matDrawer.open();
                     this.selected = selected;
                     this.form.controls['name'].setValue(selected.nama);
                     this.form.controls['roles'].setValue(selected.roles[0]);
-                    this.form.controls['email'].setValue(selected.email);
+                    this.form.controls['email'].setValue(selected.email.trim());
                     this.form.controls['nip'].setValue(selected.nip);
                     this.form.controls['kategori'].setValue(selected.kategori);
                     this.form.controls['satuanorganisasi'].setValue(selected.satuanorganisasi);

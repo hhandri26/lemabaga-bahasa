@@ -29,19 +29,19 @@
 
                    
                 </div>
-                <div class="flex items-center ml-auto mb-1">
+                <!-- <div class="flex items-center ml-auto mb-1">
                     <div class="mt-3 text-3xl font-bold truncate">
                         <select [(ngModel)]="jfpItem.isAktif" (change)="updateStatus()" class="bg-gray-200 p-2 rounded-md">
                             <option [value]="true">Aktif</option>
                             <option [value]="false">Tidak Aktif</option>
                         </select>
                     </div>
-                </div>
+                </div> -->
 
                 
             </div>
         </div>
-        <div class="relative flex self-start pt-2 pb-1 pl-5 pr-4 -mt-9 ml-6 cursor-pointer overflow-hidden rounded-t-xl bg-white"
+        <div class="relative flex self-start pt-2 pb-1 pl-5 pr-4 -mt-4 ml-6 cursor-pointer overflow-hidden rounded-t-xl bg-white"
             matRipple [matMenuTriggerFor]="menu">
             <div class="flex items-center">
                 <div class="overflow-hidden">
@@ -53,14 +53,23 @@
                     <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:chevron-down'"></mat-icon>
                 </div>
             </div>
-            <mat-menu #menu="matMenu" [xPosition]="'before'">
-                <ng-container *ngFor="let menu of menus">
-                    <button mat-menu-item (click)="selectedMenu = menu">
-                        {{ menu.title }}
-                    </button>
-                </ng-container>
-            </mat-menu>
         </div>
+
+        <div class="relative flex self-start pt-2 pb-1 pl-5 pr-4 -mt-[36px] ml-[200px] overflow-hidden rounded-t-xl bg-white">
+            <select [(ngModel)]="jfpItem.isAktif" (change)="updateStatus()" class="bg-gray-200 p-2 rounded-md font-bold truncate">
+                <option [value]="true">Aktif</option>
+                <option [value]="false">Tidak Aktif</option>
+            </select>
+        </div>
+
+        <mat-menu #menu="matMenu" [xPosition]="'before'">
+            <ng-container *ngFor="let menu of menus">
+                <button mat-menu-item (click)="selectedMenu = menu">
+                    {{ menu.title }}
+                </button>
+            </ng-container>
+        </mat-menu>
+
         <ng-container *ngIf="selectedMenu.id === 'pribadi'">
             <app-data-utama></app-data-utama>
         </ng-container>

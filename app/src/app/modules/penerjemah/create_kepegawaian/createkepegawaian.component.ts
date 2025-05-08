@@ -69,13 +69,13 @@ export class CreateComponentKepegawaian implements OnInit, OnDestroy {
             // telpDomisili: new FormControl(''),
             // alamatKantorDeskripsi: new FormControl(''),
             // alamatKantorId: new FormControl('', [this._helperService.requireMatch]),
-            golonganId: new FormControl('', [Validators.required]),
-            jabatanId: new FormControl('', [Validators.required]),
+            // golonganId: new FormControl('', [Validators.required]),
+            // jabatanId: new FormControl('', [Validators.required]),
             unitKerjaNama: new FormControl(''),
             instansiId: new FormControl('', [Validators.required, this._helperService.requireMatch]),
             satuanOrganisasi: new FormControl(''),
-            tmtGolongan: new FormControl('', [Validators.required]),
-            tmtJabatan: new FormControl('', [Validators.required]),
+            // tmtGolongan: new FormControl('', [Validators.required]),
+            // tmtJabatan: new FormControl('', [Validators.required]),
         });
 
         this.form.get('instansiId').valueChanges
@@ -164,13 +164,13 @@ export class CreateComponentKepegawaian implements OnInit, OnDestroy {
         formData.append('tempatLahirId', params.tempatLahirId.id);
         formData.append('tglLahir', moment(params.tglLahir).format('DD-MM-YYYY'));
         formData.append('jenisKelamin', params.jenisKelamin);
-        formData.append('golonganId', params.golonganId);
-        formData.append('jabatanId', params.jabatanId);
+        // formData.append('golonganId', params.golonganId);
+        // formData.append('jabatanId', params.jabatanId);
         formData.append('instansiId', params.instansiId.id);
         formData.append('unitKerjaNama', params.unitKerjaNama);
         formData.append('satuanOrganisasi', params.satuanOrganisasi);
-        formData.append('tmtJabatan', moment(params.tmtJabatan).format('DD-MM-YYYY'));
-        formData.append('tmtGolongan', moment(params.tmtGolongan).format('DD-MM-YYYY'));
+        // formData.append('tmtJabatan', moment(params.tmtJabatan).format('DD-MM-YYYY'));
+        // formData.append('tmtGolongan', moment(params.tmtGolongan).format('DD-MM-YYYY'));
 
         this._penerjemahService.saveDataUtamaKepegawaian(formData).subscribe(
             (result) => {

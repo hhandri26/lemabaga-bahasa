@@ -62,7 +62,7 @@ export class CreateComponentPengajar implements OnInit, OnDestroy {
             nomorRekening: new FormControl(''),
             newBahasaId:new FormControl('' ),
             beforeBahasaId:new FormControl(''),
-            bahasaId:new FormControl('', [ Validators.required]),
+            bahasaId:new FormControl(''),
             // agama: new FormControl(''),
             // alamatDomisiliDeskripsi: new FormControl(''),
             // alamatDomisiliId: new FormControl('', [this._helperService.requireMatch]),
@@ -70,12 +70,12 @@ export class CreateComponentPengajar implements OnInit, OnDestroy {
             // alamatKantorDeskripsi: new FormControl(''),
             // alamatKantorId: new FormControl('', [this._helperService.requireMatch]),
             golonganId: new FormControl('', [Validators.required]),
-            jabatanId: new FormControl('', [Validators.required]),
+            // jabatanId: new FormControl('', [Validators.required]),
             unitKerjaNama: new FormControl(''),
             instansiId: new FormControl('', [Validators.required, this._helperService.requireMatch]),
             satuanOrganisasi: new FormControl(''),
-            tmtGolongan: new FormControl('', [Validators.required]),
-            tmtJabatan: new FormControl('', [Validators.required]),
+            // tmtGolongan: new FormControl('', [Validators.required]),
+            // tmtJabatan: new FormControl('', [Validators.required]),
 
         });
 
@@ -138,6 +138,20 @@ export class CreateComponentPengajar implements OnInit, OnDestroy {
             ).subscribe((items: any) => {
                 this.resultTempatLahir = items;
                 this._changeDetectorRef.markForCheck();
+            });
+
+            this.form.get('instansiId').valueChanges
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((value) => {
+                const golonganControl = this.form.get('golonganId');
+                
+                if (value && value.id === '8ae48288503bd9ee0150606afe0c766e') {
+                    golonganControl.clearValidators();
+                } else {
+                    golonganControl.setValidators([Validators.required]);
+                }
+                
+                golonganControl.updateValueAndValidity();
             });
     }
 

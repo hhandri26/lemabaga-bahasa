@@ -114,7 +114,7 @@
                                                 'bg-yellow-200 text-yellow-800 dark:bg-yellow-600 dark:text-yellow-50': item.kategori === 'inaktif',
                                                 'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.kategori === 'aktif'
                                             }">
-                                                <span class="text-sm font-medium whitespace-nowrap">{{ item.kategori| titlecase |replace: '_' : ' ' }}</span>
+                                                <span class="text-sm font-medium whitespace-nowrap">{{ (item.kategori ?? ' - ')| titlecase |replace: '_' : ' ' }}</span>
                                             </span>
 
                                             </div>

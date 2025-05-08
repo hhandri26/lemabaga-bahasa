@@ -13,6 +13,7 @@ import { ReferensiService } from 'app/services/referensi.service';
 import { MatDialog } from '@angular/material/dialog';
 import { CreateComponent } from '../create/create.component';
 import * as XLSX from 'xlsx';
+import { take } from 'rxjs/operators';
 
 @Component({
     selector: 'users-list',
@@ -147,7 +148,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
     }
 
     exportToExcel() {
-        this.items$.subscribe(users => {
+        this.items$.pipe(take(1)).subscribe(users => {
             console.log(users);
             if (users && users.length) {
                 const data = users.map(user => ({
@@ -157,7 +158,7 @@ export class UsersListComponent implements OnInit, OnDestroy {
                           user.roles[0] === 'ROLE_PEMBINA_JFP' ? 'Role Pengajar' :
                           user.roles[0] === 'ROLE_INSTRUKTUR' ? 'Role Asesor' :
                           user.roles[0].replace('_', ' ').toLowerCase(),
-                    Kategori: user.kategori.charAt(0).toUpperCase() + user.kategori.slice(1).replace('_', ' '),
+                    Kategori: user.kategori ? user.kategori.charAt(0).toUpperCase() + user.kategori.slice(1).replace('_', ' ') : ' - ',
                     Nip: user.nip,
                     Email: user.email,
                     Instansi: user.namaInstansi,

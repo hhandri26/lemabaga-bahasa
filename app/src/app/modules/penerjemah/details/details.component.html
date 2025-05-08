@@ -39,6 +39,55 @@
                 </div> -->
 
                 
+                <!-- User Data Preview Box -->
+                <div class="mt-8 bg-white rounded-lg shadow-md p-6">
+                    <div class="border-b pb-3 mb-4">
+                        <h2 class="text-xl font-semibold text-gray-800">Informasi User Terkini</h2>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column -->
+                        <div class="space-y-4">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500">Angka Kredit</span>
+                                <span class="text-base font-medium">{{jfpItem.nilaiAkkonversi || '-'}}</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500">JP</span>
+                                <span class="text-base font-medium">{{jfpItem.totalJp || '-'}}</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500">Instansi</span>
+                                <span class="text-base font-medium">{{jfpItem.instansiNama || '-'}}</span>
+                            </div>
+                        </div>
+                        <!-- Right Column -->
+                        <div class="space-y-4">
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500">Satuan Organisasi/Unit Kerja</span>
+                                <span class="text-base font-medium">{{jfpItem.unitKerja || '-'}}</span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500">Pangkat/Golongan</span>
+                                <span class="text-base font-medium">
+                                    <ng-container *ngIf="(_penerjemahService.dataUtama$ | async) as dataUtama">
+                                        <ng-container *ngIf="(jenisGolongan$ | async) as golonganList">
+                                            <ng-container *ngFor="let item of golonganList">
+                                                <ng-container *ngIf="item.id === dataUtama?.golonganId">
+                                                    {{item.namaPangkat}} - {{item.nama}}
+                                                </ng-container>
+                                            </ng-container>
+                                        </ng-container>
+                                    </ng-container>
+                                </span>
+                            </div>
+                            <div class="flex flex-col">
+                                <span class="text-sm text-gray-500">Jabatan</span>
+                                <span class="text-base font-medium">{{jfpItem.jabatanNama || '-'}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
         <div class="relative flex self-start pt-2 pb-1 pl-5 pr-4 -mt-4 ml-6 cursor-pointer overflow-hidden rounded-t-xl bg-white"

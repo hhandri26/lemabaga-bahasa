@@ -9,6 +9,8 @@ import { PenerjemahListComponent } from '../list/list.component';
 import { EmployeeMenu, Pegawai } from '../penerjemah.types';
 import { PenerjemahService } from 'app/services/penerjemah.service';
 import { environment } from 'environments/environment';
+import { Observable } from 'rxjs/internal/Observable';
+import { ReferensiService } from 'app/services/referensi.service';
 
 @Component({
     selector: 'contacts-details',
@@ -40,6 +42,7 @@ export class PenerjemahDetailsComponent implements OnInit, OnDestroy, AfterViewI
     ];
     selectedMenu: any = this.menus[0];
     private _tagsPanelOverlayRef: OverlayRef;
+    jenisGolongan$: Observable<any[]> = this._referensiService.golongan();
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     /**
@@ -48,6 +51,7 @@ export class PenerjemahDetailsComponent implements OnInit, OnDestroy, AfterViewI
     constructor(
         private _activatedRoute: ActivatedRoute,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _referensiService: ReferensiService,
         private _penerjemahListComponent: PenerjemahListComponent,
         private _penerjemahService: PenerjemahService,
         private _formBuilder: FormBuilder,

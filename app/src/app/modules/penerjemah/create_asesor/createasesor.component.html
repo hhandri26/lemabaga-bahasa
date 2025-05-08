@@ -67,24 +67,19 @@
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Tempat Lahir</mat-label>
-                    <mat-icon matPrefix class="hidden sm:flex icon-size-5"
-                        [svgIcon]="'heroicons_solid:location-marker'"></mat-icon>
-                    <input matInput [formControlName]="'tempatLahirId'" [matAutocomplete]="matAutocomplete"
-                        [placeholder]="'Cari nama Kab/Kota...'" #barSearchInput>
-                    <button *ngIf="form.get('tempatLahirId').value" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="form.get('tempatLahirId').setValue('')">
+                    <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:location-marker'"></mat-icon>
+                    <input matInput [formControlName]="'tempatLahirId'" [matAutocomplete]="matAutocomplete" [placeholder]="'Cari nama Kab/Kota...'" #barSearchInput>
+                    <button *ngIf="form.get('tempatLahirId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('tempatLahirId').setValue('')">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
                 <mat-autocomplete #matAutocomplete="matAutocomplete" [displayWith]="displayFn" [disableRipple]="true">
                     <!-- <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option> -->
-                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent"
-                        *ngIf="resultTempatLahir && !resultTempatLahir.length">
+                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultTempatLahir && !resultTempatLahir.length">
                         Kab/Kota tidak ditemukan!
                     </mat-option>
                     <mat-option *ngFor="let item of resultTempatLahir; trackBy: trackByFn" [value]="item">
-                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama |
-                            titlecase}}</span>
+                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}}</span>
                     </mat-option>
                 </mat-autocomplete>
                 <mat-error *ngIf="form.controls['tempatLahirId'].hasError('incorrect')">
@@ -160,7 +155,7 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div class="mt-4">
+            <!-- <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>TMT-Golongan</mat-label>
                     <input matInput [matDatepicker]="_tmtGolongan" [formControlName]="'tmtGolongan'"
@@ -169,8 +164,8 @@
                     </mat-datepicker-toggle>
                     <mat-datepicker #_tmtGolongan></mat-datepicker>
                 </mat-form-field>
-            </div>
-            <div class="mt-4">
+            </div> -->
+            <!-- <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Jenis Jabatan</mat-label>
                     <mat-select [formControlName]="'jabatanId'">
@@ -179,8 +174,8 @@
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
-            </div>
-            <div class="mt-4">
+            </div> -->
+            <!-- <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>TMT-Jabatan</mat-label>
                     <input matInput [matDatepicker]="_tmtJabatan" [formControlName]="'tmtJabatan'"
@@ -189,7 +184,7 @@
                     </mat-datepicker-toggle>
                     <mat-datepicker #_tmtJabatan></mat-datepicker>
                 </mat-form-field>
-            </div>
+            </div> -->
             <fuse-alert [type]="'info'" class="mt-8">
                 <span fuseAlertTitle>Password akan dikirimkan via email</span>
             </fuse-alert>

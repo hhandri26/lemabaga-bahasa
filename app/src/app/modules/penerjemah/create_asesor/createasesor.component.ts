@@ -69,6 +69,7 @@ export class CreateComponentAsesor implements OnInit, OnDestroy {
             satuanOrganisasi: new FormControl(''),
             // tmtGolongan: new FormControl('', [Validators.required]),
             // tmtJabatan: new FormControl('', [Validators.required]),
+            isAktif: new FormControl('', [Validators.required]),
         });
 
         this.form.get('instansiId').valueChanges
@@ -178,6 +179,7 @@ export class CreateComponentAsesor implements OnInit, OnDestroy {
         formData.append('satuanOrganisasi', params.satuanOrganisasi);
         formData.append('tmtJabatan', moment(params.tmtJabatan).format('DD-MM-YYYY'));
         formData.append('tmtGolongan', moment(params.tmtGolongan).format('DD-MM-YYYY'));
+        formData.append('isAktif', params.isAktif);
 
         this._penerjemahService.saveDataUtamaAsesor(formData).subscribe(
             (result) => {

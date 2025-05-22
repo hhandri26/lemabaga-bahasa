@@ -14,6 +14,8 @@ import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { UserService } from 'app/services/user.service';
 import { PenerjemahService } from 'app/services/penerjemah.service';
 import moment from 'moment';
+import { CreateComponent } from '../../referensi/bahasa/create/create.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     templateUrl: './createasesor.component.html',
@@ -45,6 +47,7 @@ export class CreateComponentAsesor implements OnInit, OnDestroy {
         private _toastr: ToastrService,
         private _penerjemahService: PenerjemahService,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _dialog: MatDialog,
     ) { }
 
     ngOnInit(): void {
@@ -204,5 +207,19 @@ export class CreateComponentAsesor implements OnInit, OnDestroy {
 
     trackByFn(index: number, item: any): any {
         return item.id || index;
+    }
+
+    tambahBahasa(): void {
+        const dialogRef = this._dialog.open(CreateComponent, {
+            autoFocus: false
+        });
+        
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                // Refresh daftar bahasa
+                this.jenisBahasa$ = this._referensiService.jenisBahasa();
+                this._changeDetectorRef.markForCheck();
+            }
+        });
     }
 }

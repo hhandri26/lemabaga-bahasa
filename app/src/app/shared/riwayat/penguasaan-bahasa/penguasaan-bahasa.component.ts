@@ -12,6 +12,8 @@ import moment from 'moment';
 import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
 import { Observable } from 'rxjs/internal/Observable';
+import { CreateComponent } from 'app/modules/referensi/bahasa/create/create.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-penguasaan-bahasa',
@@ -43,7 +45,8 @@ export class PenguasaanBahasaComponent implements OnInit, OnDestroy {
         private _formBuilder: FormBuilder,
         private _toastr: ToastrService,
         private _authService: AuthService,
-        private _userService: UserService
+        private _userService: UserService,
+        private _dialog: MatDialog,
     ) { }
 
     ngOnInit(): void {
@@ -228,5 +231,19 @@ export class PenguasaanBahasaComponent implements OnInit, OnDestroy {
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);
         this._unsubscribeAll.complete();
+    }
+
+    tambahBahasa(): void {
+        const dialogRef = this._dialog.open(CreateComponent, {
+            autoFocus: false
+        });
+        
+        dialogRef.afterClosed().subscribe((result) => {
+            if (result) {
+                // Refresh daftar bahasa
+                this.jenisBahasa$ = this._referensiService.jenisBahasa();
+                this._changeDetectorRef.markForCheck();
+            }
+        });
     }
 }

@@ -61,6 +61,11 @@
                     <mat-select [formControlName]="'bahasaId'">
                         <mat-option *ngFor="let item of jenisBahasa$ | async" [value]="item.id">{{item.nama}}
                         </mat-option>
+                        <mat-divider></mat-divider>
+                        <mat-option (click)="tambahBahasa()">
+                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                            <span>Tambah Bahasa Baru</span>
+                        </mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>

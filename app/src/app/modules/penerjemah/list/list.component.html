@@ -73,8 +73,8 @@
         <mat-label>Status</mat-label>
         <mat-select [formControlName]="'byIsAktif'" placeholder="Status">
             <mat-option [value]="null">Semua</mat-option> <!-- Menambahkan opsi untuk semua -->
-            <mat-option [value]="true">Aktif</mat-option>
-            <mat-option [value]="false">Tidak Aktif</mat-option>
+            <mat-option [value]="true">Enabled</mat-option>
+            <mat-option [value]="false">Disabled</mat-option>
         </mat-select>
     </mat-form-field>
 </div>
@@ -174,7 +174,7 @@
                                     <th class="px-4 py-2 border-r">Nama</th>
                                     <th class="px-4 py-2 border-r">Instansi</th>
                                     <th class="px-4 py-2 border-r">Jabatan</th>
-                                    <th class="px-4 py-2 border-r">Status</th>
+                                    <th class="px-4 py-2 border-r">Status Akun</th>
                                     <th class="px-4 py-2 border-r">Bahasa</th>
                                     <th class="px-4 py-2 border-r">Pelatihan</th>
                                     <th class="px-4 py-2 border-r">Uji Kompetensi</th>
@@ -208,7 +208,7 @@
                                                 [style.border]="item.isAktif ? '2px solid #388e3c' : '2px solid #d32f2f'"
                                                 [style.padding]="'8px 5px'" [style.border-radius]="'8px'" [style.font-size]="'12px'"
                                                 [style.font-weight]="'bold'" [style.text-transform]="'uppercase'">
-                                                {{ item.isAktif ? 'Aktif' : 'Tidak Aktif' }}
+                                                {{ item.isAktif ? 'Enabled' : 'Disabled' }}
                                             </div>
                                         </td>
                                         <td class="px-4 py-2 border-r">

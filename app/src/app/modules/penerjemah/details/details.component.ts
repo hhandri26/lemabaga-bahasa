@@ -156,6 +156,60 @@ updateStatus() {
   );
 }
 
+updateStatusKepegawaian() {
+    const status = this.jfpItem.statusKepegawaian;
+    this._changeDetectorRef.detectChanges();
+    
+    this._penerjemahService.updateStatusKepegawaian(this.jfpItem.pnsId, status).pipe(
+      catchError((error) => {
+        // Jika ada error, misalnya error 500 (Internal Server Error), abaikan atau log error
+        console.error('Internal Server Error:', error);  // Log error ke konsol
+        // Mengabaikan error dan melanjutkan eksekusi aplikasi
+        return of(null);  // Mengembalikan observable kosong
+      })
+    ).subscribe(
+      (response) => {
+        if (response) {
+          console.log('Status updated successfully:', response);
+          this._changeDetectorRef.detectChanges();
+        } else {
+          console.log('Status update failed, but no further action needed.');
+        }
+      },
+      (error) => {
+        // Penanganan lebih lanjut jika dibutuhkan
+        console.log('Error during status update:', error);
+      }
+    );
+  }
+
+updateStatusJabatan() {
+    const status = this.jfpItem.statusJabatan;
+    this._changeDetectorRef.detectChanges();
+    
+    this._penerjemahService.updateStatusJabatan(this.jfpItem.pnsId, status).pipe(
+      catchError((error) => {
+        // Jika ada error, misalnya error 500 (Internal Server Error), abaikan atau log error
+        console.error('Internal Server Error:', error);  // Log error ke konsol
+        // Mengabaikan error dan melanjutkan eksekusi aplikasi
+        return of(null);  // Mengembalikan observable kosong
+      })
+    ).subscribe(
+      (response) => {
+        if (response) {
+          console.log('Status updated successfully:', response);
+          this._changeDetectorRef.detectChanges();
+        } else {
+          console.log('Status update failed, but no further action needed.');
+        }
+      },
+      (error) => {
+        // Penanganan lebih lanjut jika dibutuhkan
+        console.log('Error during status update:', error);
+      }
+    );
+  }
+
 
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods

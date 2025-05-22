@@ -915,8 +915,16 @@ export class PenerjemahService {
     }
     updateStatus(id: string, isAktif: boolean | null): Observable<any> {
   // Mengirimkan permintaan PUT ke backend untuk memperbarui status penerjemah
-  return this._httpClient.put(`${this._apiUrl}/profil/${id}/status`, { isAktif });
-}
+    return this._httpClient.put(`${this._apiUrl}/profil/${id}/status`, { isAktif });
+    }
+    updateStatusKepegawaian(id: string, statusKepegawaian: string | null): Observable<any> {
+    // Mengirimkan permintaan PUT ke backend untuk memperbarui status kepegawaian
+    return this._httpClient.put(`${this._apiUrl}/profil/${id}/statusKepegawaian`, { statusKepegawaian });
+    }
+    updateStatusJabatan(id: string, statusJabatan: string | null): Observable<any> {
+        // Mengirimkan permintaan PUT ke backend untuk memperbarui status kepegawaian
+        return this._httpClient.put(`${this._apiUrl}/profil/${id}/statusJabatan`, { statusJabatan });
+        }
 
 
 }

@@ -96,12 +96,24 @@
                 </div>
                 <div class="mt-6">
                     <ul class="-my-3 divide-y">
-                        <li *ngFor="let pns of pnsList; trackBy: trackByFn" class="grid grid-cols-2 py-2">
+                        <li *ngFor="let pns of filteredPnsList; let i = index; trackBy: trackByFn"
+                            (click)="selectPns(pns)"
+                            class="grid grid-cols-2 py-2 p-2 rounded cursor-pointer transition-colors"
+                            [ngClass]="{
+                            'hover:bg-primary-50 dark:hover:bg-hover': true,
+                            'bg-primary-50 dark:bg-hover': selectedItem?.id === pns.id
+                            }">
+                            
                             <div class="flex items-center">
-                                <div class="flex-0 w-2 h-2 rounded-full"></div>
-                                <div class="ml-3 truncate">{{ pns.nama }}</div>
+                                <div class="w-2 h-2 rounded-full mr-3"
+                                    [ngStyle]="{ 'background-color': getProvinsiColor(pns.provinsiNama) }">
+                                </div>
+                                <span class="truncate">{{ pns.nama }}</span>
                             </div>
-                            <div class="text-right text-secondary">{{ pns.nip }} (Provinsi: {{ pns.provinsiNama }})</div>
+
+                            <div class="text-right text-secondary truncate">
+                                {{ pns.nip }} (Provinsi: {{ pns.provinsiNama }})
+                            </div>
                         </li>
                     </ul>
                 </div>
@@ -113,3 +125,9 @@
 
     </div>
 </div>
+<!-- <div class="mb-4">
+    <mat-form-field class="w-full">
+        <mat-label>Cari Nama</mat-label>
+        <input matInput [(ngModel)]="searchText" (ngModelChange)="searchPns()" placeholder="Masukkan nama untuk mencari...">
+    </mat-form-field>
+</div> -->

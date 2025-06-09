@@ -267,10 +267,17 @@ export class ReferensiService {
         );
     }
 
-    instansi(params = { q: '' }):
-        Observable<any> {
-        return this._httpClient.get<any>(this._apiUrl + '/instansi', { params });
+    instansi(params = { q: '' }): Observable<any[]> {
+        return this._httpClient.get<any[]>(this._apiUrl + '/instansi', { params }).pipe(
+            switchMap(result => {
+                if (!result || result.length === 0) {
+                    return throwError(() => new Error('Data instansi tidak ditemukan!'));
+                }
+                return of(result);
+            })
+        );
     }
+    
     // pelatihan(params = { q: '' }):
     //     Observable<any> {
     //     return this._httpClient.get<any>(this._apiUrl + '/pelatihan', { params });

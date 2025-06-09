@@ -156,8 +156,10 @@ export class PenerjemahService {
             sort: order
         };
         params = { ...params, ...search };
+        console.log('Sending params to API:', params);  // Add logging
         return this._httpClient.post<{ pagination: any; items: any[] }>(this._apiUrl + '/public/jfp/filter', params).pipe(
             tap((response) => {
+                console.log('API Response:', response);  // Add logging
                 this._pagination.next({ recordsTotal: response.totalElements, perPage: response.size, draw: response.number });
                 this._jfpItems.next(response.content);
             })

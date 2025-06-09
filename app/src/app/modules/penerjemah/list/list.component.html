@@ -21,13 +21,57 @@
                     <!-- Main actions -->
                     <form [formGroup]="form">
                         <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
-                            <!-- Search -->
+                            <!-- Column Selector -->
                             <div class="flex-auto">
+                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                    <mat-label>Pilih Kolom</mat-label>
+                                    <mat-select [matMenuTriggerFor]="columnMenu">
+                                        <mat-select-trigger>
+                                            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:view-columns'"></mat-icon>
+                                            Pilih Kolom
+                                        </mat-select-trigger>
+                                    </mat-select>
+                                </mat-form-field>
+                                <mat-menu #columnMenu="matMenu" class="p-4">
+                                    <div class="p-2" (click)="$event.stopPropagation()">
+                                        <div class="mb-2">
+                                            <mat-checkbox (change)="toggleAllColumns($event.checked)" [checked]="false">
+                                                Pilih Semua
+                                            </mat-checkbox>
+                                        </div>
+                                        <mat-divider></mat-divider>
+                                        <div class="grid grid-cols-2 gap-2 mt-2">
+                                            <div *ngFor="let column of columnList">
+                                                <mat-checkbox 
+                                                    [checked]="displayedColumns[column.id]"
+                                                    (change)="toggleColumn(column.id)">
+                                                    {{column.label}}
+                                                </mat-checkbox>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </mat-menu>
+                            </div>
+                            <!-- Search -->
+                            <div class="flex-auto ml-4">
                                 <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-full min-w-50">
                                     <mat-label>Nama</mat-label>
                                     <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'">
                                     </mat-icon>
                                     <input matInput [formControlName]="'byNama'" [autocomplete]="'off'" [placeholder]="'Cari nama'" />
+                                </mat-form-field>
+                            </div>
+                            <div class="flex-auto ml-4">
+                                <mat-form-field class="fuse-mat-no-subscript w-full">
+                                    <mat-label>Instansi</mat-label>
+                                    <mat-select [formControlName]="'byInstansi'">
+                                        <mat-option value="">-- Semua Instansi --</mat-option>
+                                        <ng-container *ngFor="let item of instansi$ | async; trackBy: trackByFn">
+                                            <mat-option [value]="item.id">
+                                                {{item.nama | titlecase}}
+                                            </mat-option>
+                                        </ng-container>
+                                    </mat-select>
                                 </mat-form-field>
                             </div>
                             <div class="flex-auto ml-4">
@@ -165,108 +209,112 @@
 
                 <!-- Contacts Table -->
                 <div class="relative">
+                    <!-- Table -->
                     <ng-container *ngIf="jfpItems$ | async as items">
                         <ng-container *ngIf="items.length; else noItems">
-                        <table class="table-auto w-full text-left border-collapse">
-                            <thead>
-                                <tr class="border-b">
-                                    <th class="px-4 py-2 border-r">Foto</th>
-                                    <th class="px-4 py-2 border-r">Nama</th>
-                                    <th class="px-4 py-2 border-r">Instansi</th>
-                                    <th class="px-4 py-2 border-r">Jabatan</th>
-                                    <th class="px-4 py-2 border-r">Status Akun</th>
-                                    <th class="px-4 py-2 border-r">Bahasa</th>
-                                    <th class="px-4 py-2 border-r">Pelatihan</th>
-                                    <th class="px-4 py-2 border-r">Uji Kompetensi</th>
-                                    <th class="px-4 py-2 border-r">Angka Kredit</th>
-                                    <th class="px-4 py-2">Pendidikan</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <ng-container *ngFor="let item of items; let i = index; trackBy: trackByFn">
-                                    <tr [ngClass]="{
-                                  'bg-primary-50 dark:bg-hover': selectedItem && selectedItem.id === item.id
-                              }" [routerLink]="['./', item.id]" class="border-b">
-                                        <td class="px-4 py-2 border-r">
-                                            <div class="flex items-center justify-center w-12 h-12 rounded-full overflow-hidden">
-                                                <ng-container *ngIf="item.urlPhoto">
-                                                    <img class="object-cover w-full h-full" [src]="baseUrl + item.urlPhoto" alt="Foto" />
-                                                </ng-container>
-                                                <ng-container *ngIf="!item.urlPhoto">
-                                                    <div
-                                                        class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                                                        {{ item.nama.charAt(0) }}
-                                                    </div>
-                                                </ng-container>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-2 border-r">{{ item.nama | titlecase }}</td>
-                                        <td class="px-4 py-2 border-r">{{ item.instansiNama | titlecase }}</td>
-                                        <td class="px-4 py-2 border-r">{{ item.jabatanNama| titlecase }}</td>
-                                        <td class="px-4 py-2 border-r">
-                                            <div [style.background-color]="item.isAktif ? '#4caf50' : '#f44336'" [style.color]="'white'"
-                                                [style.border]="item.isAktif ? '2px solid #388e3c' : '2px solid #d32f2f'"
-                                                [style.padding]="'8px 5px'" [style.border-radius]="'8px'" [style.font-size]="'12px'"
-                                                [style.font-weight]="'bold'" [style.text-transform]="'uppercase'">
-                                                {{ item.isAktif ? 'Enabled' : 'Disabled' }}
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-2 border-r">
-                                            <div class="flex items-center">
-                                                <ng-container *ngFor="let bahasa of item.kemahiranBahasas">
-                                                    <div
-                                                        class="py-0.5 px-3 mr-2 rounded-full text-sm text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500">
-                                                        {{bahasa.bahasa.nama}}
-                                                    </div>
-                                                </ng-container>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-2 border-r">
-                                            <div class="flex items-center">
-                                                <ul class="list-disc pl-6">
-                                                    <ng-container *ngFor="let pelatihan of item.pelatihans">
-                                                        <li>{{ pelatihan.nama }}</li>
-                                                    </ng-container>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-2 border-r">
-                                            <div class="flex items-center">
-                                                <ul class="list-disc pl-6">
-                                                    <ng-container *ngFor="let ujikompetensi of item.ujikompetensis">
-                                                        <li>{{ ujikompetensi.jenisUjikom }}</li>
-                                                    </ng-container>
-                                                </ul>
-                                            </div>
-                                        </td>
-                                        <td class="px-4 py-2 border-r">{{ item.nilaiAkkonversi}}</td>
-                                        <td class="px-4 py-2 border-r">
-                                            <div class="flex items-center">
-                                                <ul class="list-disc pl-6">
-                                                    <ng-container *ngFor="let pendidikan of item.pendidikans">
-                                                        <li>{{ pendidikan.pendidikanNama }}</li>
-                                                    </ng-container>
-                                                </ul>
-                                            </div>
-                                        </td>
+                            <table class="table-auto w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="border-b">
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">Foto</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">Nama</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">Instansi</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">Jabatan</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">Status Akun</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">Bahasa</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['pelatihan']">Pelatihan</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['ujiKompetensi']">Uji Kompetensi</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['angkaKredit']">Angka Kredit</th>
+                                        <th class="px-4 py-2" *ngIf="displayedColumns['pendidikan']">Pendidikan</th>
                                     </tr>
-                                </ng-container>
-                            </tbody>
-                        </table>
+                                </thead>
+                                <tbody>
+                                    <ng-container *ngFor="let item of items; let i = index; trackBy: trackByFn">
+                                        <tr [ngClass]="{
+                                            'bg-primary-50 dark:bg-hover': selectedItem && selectedItem.id === item.id
+                                        }" [routerLink]="['./', item.id]" class="border-b">
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">
+                                                <div class="flex items-center justify-center w-12 h-12 rounded-full overflow-hidden">
+                                                    <ng-container *ngIf="item.urlPhoto">
+                                                        <img class="object-cover w-full h-full" [src]="baseUrl + item.urlPhoto" alt="Foto" />
+                                                    </ng-container>
+                                                    <ng-container *ngIf="!item.urlPhoto">
+                                                        <div class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                                            {{ item.nama.charAt(0) }}
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">{{ item.nama | titlecase }}</td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">{{ item.instansiNama | titlecase }}</td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">{{ item.jabatanNama| titlecase }}</td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">
+                                                <div [style.background-color]="item.isAktif ? '#4caf50' : '#f44336'" [style.color]="'white'"
+                                                    [style.border]="item.isAktif ? '2px solid #388e3c' : '2px solid #d32f2f'"
+                                                    [style.padding]="'8px 5px'" [style.border-radius]="'8px'" [style.font-size]="'12px'"
+                                                    [style.font-weight]="'bold'" [style.text-transform]="'uppercase'">
+                                                    {{ item.isAktif ? 'Enabled' : 'Disabled' }}
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">
+                                                <div class="flex items-center">
+                                                    <ng-container *ngFor="let bahasa of item.kemahiranBahasas">
+                                                        <div class="py-0.5 px-3 mr-2 rounded-full text-sm text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500">
+                                                            {{bahasa.bahasa.nama}}
+                                                        </div>
+                                                    </ng-container>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['pelatihan']">
+                                                <div class="flex items-center">
+                                                    <ul class="list-disc pl-6">
+                                                        <ng-container *ngFor="let pelatihan of item.pelatihans">
+                                                            <li>{{ pelatihan.nama }}</li>
+                                                        </ng-container>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['ujiKompetensi']">
+                                                <div class="flex items-center">
+                                                    <ul class="list-disc pl-6">
+                                                        <ng-container *ngFor="let ujikompetensi of item.ujikompetensis">
+                                                            <li>{{ ujikompetensi.jenisUjikom }}</li>
+                                                        </ng-container>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['angkaKredit']">{{ item.nilaiAkkonversi}}</td>
+                                            <td class="px-4 py-2" *ngIf="displayedColumns['pendidikan']">
+                                                <div class="flex items-center">
+                                                    <ul class="list-disc pl-6">
+                                                        <ng-container *ngFor="let pendidikan of item.pendidikans">
+                                                            <li>{{ pendidikan.pendidikanNama }}</li>
+                                                        </ng-container>
+                                                    </ul>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </ng-container>
+                                </tbody>
+                            </table>
 
+                            <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" 
+                                [ngClass]="{'pointer-events-none': isLoading}" 
+                                [length]="pagination.recordsTotal" 
+                                [pageIndex]="(pagination.draw)" 
+                                [pageSize]="pagination.perPage"
+                                [pageSizeOptions]="[10, 50, 100, 250, 500]" 
+                                [showFirstLastButtons]="true" 
+                                (page)="pageEvent($event)">
+                            </mat-paginator>
                         </ng-container>
-
-                        <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" [ngClass]="{'pointer-events-none': isLoading}" [length]="pagination.recordsTotal" [pageIndex]="(pagination.draw)" [pageSize]="pagination.perPage"
-                            [pageSizeOptions]="[10, 50, 100, 250, 500]" [showFirstLastButtons]="true" (page)="pageEvent($event)">
-                        </mat-paginator>
+                
+                        <!-- No contacts -->
+                        <ng-template #noItems>
+                            <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
+                                JFP tidak ditemukan!
+                            </div>
+                        </ng-template>
                     </ng-container>
-
-                    <!-- No contacts -->
-                    <ng-template #noItems>
-                        <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
-                            JFP tidak ditemukan!
-                        </div>
-                    </ng-template>
                 </div>
             </div>
         </mat-drawer-content>

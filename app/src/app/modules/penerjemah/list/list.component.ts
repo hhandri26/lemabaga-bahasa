@@ -37,6 +37,7 @@ export class PenerjemahListComponent implements OnInit, OnDestroy {
 showPelatihanFilter: boolean = false;
     jenisJabatan$: Observable<any[]> = this._referensiService.jabatan();
     provinsi$: Observable<any[]> = this._referensiService.provinsi({q: ''});
+    instansi$: Observable<any[]> = this._referensiService.instansi({q: ''});
     bahasaList: Observable<any> = this._referensiService.jenisBahasa();
     pnsId: String;
     filterBahasa: any[] = [];
@@ -76,6 +77,7 @@ showButtons = false;
             byProvAlamatKantor: [''],
             byNama: [null],
             byJabatan: [''],
+            byInstansi: [''],
             byBahasa: [[]],
             byIsAktif: [null],
             // Add new form controls for the new search criteria
@@ -85,6 +87,26 @@ showButtons = false;
             byJp: [''],
             byPredikatPelatihan: [''],
         });
+
+        // // Subscribe to form value changes
+        // merge(
+        //     this.form.get('byProvAlamatKantor').valueChanges,
+        //     this.form.get('byNama').valueChanges,
+        //     this.form.get('byJabatan').valueChanges,
+        //     this.form.get('byInstansi').valueChanges,
+        //     this.form.get('byBahasa').valueChanges,
+        //     this.form.get('byIsAktif').valueChanges,
+        //     this.form.get('bynamaPelatihan').valueChanges,
+        //     this.form.get('byTahunPelatihan').valueChanges,
+        //     this.form.get('byPeringkatPelatihan').valueChanges,
+        //     this.form.get('byJp').valueChanges,
+        //     this.form.get('byPredikatPelatihan').valueChanges
+        // ).pipe(
+        //     debounceTime(300),
+        //     takeUntil(this._unsubscribeAll)
+        // ).subscribe(() => {
+        //     this.fetch(0, this.pagination.perPage, this.form.getRawValue()).subscribe();
+        // });
 
         // Muat data saat komponen dimulai
         this.fetch(0, 10, this.form.getRawValue()).subscribe();
@@ -213,12 +235,15 @@ onYearInput(event: any): void {
         search.byProvAlamatKantor = search.byProvAlamatKantor || null;
         search.byNama = search.byNama || null;
         search.byJabatan = search.byJabatan || null;
+        search.byInstansi = search.byInstansi || null;  // Add processing for instansi parameter
         search.byIsAktif = search.byIsAktif !== null ? search.byIsAktif : null; 
         search.bynamaPelatihan = search.bynamaPelatihan || null;
         search.byTahunPelatihan = search.byTahunPelatihan || null;
         search.byPeringkatPelatihan = search.byPeringkatPelatihan || null;
         search.byJp = search.byJp || null;
         search.byPredikatPelatihan = search.byPredikatPelatihan || null;
+
+        console.log('Search params:', search);  // Add logging to debug search parameters
 
         return this._penerjemahService.getJfp(+page, +size, 'nama', 'ASC', search).pipe();
     }
@@ -255,6 +280,42 @@ onYearInput(event: any): void {
         this._router.navigate(['./'], { relativeTo: this._activatedRoute });
         this._changeDetectorRef.markForCheck();
     }
-
+    displayedColumns: { [key: string]: boolean } = {
+        foto: true,
+        nama: true,
+        instansi: true,
+        jabatan: true,
+        statusAkun: true,
+        bahasa: true,
+        pelatihan: true,
+        ujiKompetensi: true,
+        angkaKredit: true,
+        pendidikan: true
+    };
+    
+    columnList = [
+        { id: 'foto', label: 'Foto' },
+        { id: 'nama', label: 'Nama' },
+        { id: 'instansi', label: 'Instansi' },
+        { id: 'jabatan', label: 'Jabatan' },
+        { id: 'statusAkun', label: 'Status Akun' },
+        { id: 'bahasa', label: 'Bahasa' },
+        { id: 'pelatihan', label: 'Pelatihan' },
+        { id: 'ujiKompetensi', label: 'Uji Kompetensi' },
+        { id: 'angkaKredit', label: 'Angka Kredit' },
+        { id: 'pendidikan', label: 'Pendidikan' }
+    ];
+    
+    toggleColumn(columnId: string): void {
+        this.displayedColumns[columnId] = !this.displayedColumns[columnId];
+        this._changeDetectorRef.markForCheck();
+    }
+    
+    toggleAllColumns(checked: boolean): void {
+        Object.keys(this.displayedColumns).forEach(key => {
+            this.displayedColumns[key] = checked;
+        });
+        this._changeDetectorRef.markForCheck();
+    }
     
 }

@@ -37,6 +37,8 @@
         "crypto-js": "3.3.0",
         "file-saver": "^2.0.5",
         "highlight.js": "11.6.0",
+        "html2canvas": "^1.4.1",
+        "jspdf": "^3.0.1",
         "lodash-es": "4.17.21",
         "luxon": "^3.6.0",
         "moment": "^2.29.4",

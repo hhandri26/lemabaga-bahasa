@@ -28,9 +28,15 @@ export class ErrorIntercept implements HttpInterceptor {
                         // client-side error
                         errorMessage = `Error: ${error.error.message}`;
                     } else {
-                        errorMessage = `${error.error.message}`;
+                        // server-side error
+                        if (error.status === 500) {
+                            errorMessage = error.error.message || 'Internal Server Error';
+                            console.error('Server Error Details:', error.error);
+                        } else {
+                            errorMessage = error.error.message || `HTTP Error: ${error.status}`;
+                        }
                     }
-                    this._toastr.error(errorMessage, 'ERROR');
+                    // this._toastr.error(errorMessage, 'ERROR');
                     return throwError(() => errorMessage);
                 })
             );

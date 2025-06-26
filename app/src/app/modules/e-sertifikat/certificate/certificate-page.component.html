@@ -1,0 +1,35 @@
+<!-- Preview Sertifikat -->
+<div class="certificate-preview-wrapper">
+  <div class="certificate-bg preview-mode" #certificateContainer>
+    <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
+    <div class="certificate-content">
+      <div class="nomor-sertifikat">No: {{ nomorSertifikat }}</div>
+      <div class="nama">{{ nama }}</div>
+      <div class="peserta">atas partisipasinya sebagai Peserta</div>
+      <div class="judul">{{ judul }}</div>
+      <div class="subjudul">"{{ subjudul }}"</div>
+      <div class="keterangan">
+        yang diselenggarakan pada {{ tanggal }} di {{ tempat }} meliputi {{ jam }} Jam Pelajaran.
+      </div>
+    </div>
+  </div>
+  <button (click)="downloadPDF()">Download PDF</button>
+</div>
+
+<!-- Hidden area untuk download PDF dengan ukuran asli -->
+<div #hiddenCertificate style="position: absolute; left: -99999px; top: 0; width: 4000px; height: 2828px;">
+  <div class="certificate-bg download-mode">
+    <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
+    <div class="certificate-content">
+      <div class="nomor-sertifikat">No: {{ nomorSertifikat }}</div>
+      <div class="nama">{{ nama }}</div>
+      <div class="peserta">atas partisipasinya sebagai Peserta</div>
+      <div class="judul">{{ judul }}</div>
+      <div class="subjudul">"{{ subjudul }}"</div>
+      <div class="keterangan">
+        yang diselenggarakan pada {{ tanggal }} di {{ tempat }} meliputi {{ jam }} Jam Pelajaran.
+      </div>
+    </div>
+  </div>
+</div>
+  

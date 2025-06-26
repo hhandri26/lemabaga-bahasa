@@ -3,7 +3,6 @@ import { AuthGuard } from 'app/core/auth/guards/auth.guard';
 import { NoAuthGuard } from 'app/core/auth/guards/noAuth.guard';
 import { LayoutComponent } from 'app/layout/layout.component';
 import { InitialDataResolver } from 'app/app.resolvers';
-
 // @formatter:off
 /* eslint-disable max-len */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
@@ -116,6 +115,7 @@ export const appRoutes: Route[] = [
             { path: 'pengangkatan', loadChildren: () => import('app/modules/pengangkatan/pengangkatan.module').then(m => m.PengangkatanModule) },
 
             { path: 'profile', loadChildren: () => import('app/modules/settings/settings.module').then(m => m.SettingsModule) },
+            { path: 'e-sertifikat/view', loadChildren: () => import('app/modules/e-sertifikat/e-sertifikat.module').then(m => m.EsertifikatModule) },
         ]
     }
 ];

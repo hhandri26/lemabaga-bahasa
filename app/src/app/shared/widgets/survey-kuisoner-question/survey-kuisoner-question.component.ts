@@ -102,29 +102,28 @@ saveIsian(answer, questionId, isianAnswer): void {
         });
 }
 toggleAnswer(choice: any, question: any): void {
-    // Toggle the answer status
-    choice.isAnswer = !choice.isAnswer;
+    // Set semua pilihan ke false, hanya yang diklik ke true
+    question.question.options.forEach((opt: any) => {
+        opt.isAnswer = (opt === choice);
+    });
 
-    // Prepare the parameters to be sent to the backend
-    const selectedChoices = question.question.options.filter((opt: any) => opt.isAnswer).map((opt: any) => opt.id);
-
+    // Siapkan parameter untuk backend (hanya satu jawaban)
+    const selectedChoice = question.question.options.find((opt: any) => opt.isAnswer);
     const params = {
         hash: this.activeRoute.snapshot.url[1].path,  // Token hash
         questionId: question.question.questionId,  // ID of the question
-        likechartAnswer: selectedChoices,  // Save selected options in likechartAnswer
-        isianAnswer: null,  // Null since this is not for ISIAN type
+        likechartAnswer: selectedChoice ? [selectedChoice.label] : [],  // Kirim satu jawaban
+        isianAnswer: null,  // Null karena bukan tipe ISIAN
     };
 
-    // Call the service to save the survey answer
     this.surveyKuisonerService.answerSurveyKuisoner(params)
         .pipe(takeUntil(this._unsubscribeAll))
         .subscribe((response: any) => {
-            // Handle the response after saving the answer
             if (response.success) {
                 this._toastr.success('Jawaban berhasil disimpan');
-                this._changeDetectorRef.markForCheck();  // Mark for change detection
+                this._changeDetectorRef.markForCheck();
             } else {
-                this._toastr.error(response?.message, 'ERROR');  // Show error message
+                this._toastr.error(response?.message, 'ERROR');
             }
         });
 }

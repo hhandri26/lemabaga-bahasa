@@ -33,7 +33,7 @@ export class KuisonerAddQustionComponent implements OnInit {
         this.form = this._formBuilder.group({
             question: ['', [Validators.required]],
             level: ['EASY', [Validators.required]],
-             kuisonerTipe: ['PG', [Validators.required]],
+             kuisonerTipe: ['LIKECHART', [Validators.required]],
             choiceListKuisoner: [[]]
         });
 
@@ -54,6 +54,21 @@ export class KuisonerAddQustionComponent implements OnInit {
                 checked: false
             }
         ];
+
+        this.form.get('kuisonerTipe').valueChanges.subscribe(val => {
+            if (val === 'LIKECHART') {
+                this.choices = [
+                    { label: 'Sangat Kurang', value: 'SK', isAnswer: false },
+                    { label: 'Kurang', value: 'K', isAnswer: false },
+                    { label: 'Cukup', value: 'C', isAnswer: false },
+                    { label: 'Baik', value: 'B', isAnswer: false },
+                    { label: 'Sangat Baik', value: 'SB', isAnswer: false }
+                ];
+            } else {
+                this.choices = [];
+            }
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     // -----------------------------------------------------------------------------------------------------

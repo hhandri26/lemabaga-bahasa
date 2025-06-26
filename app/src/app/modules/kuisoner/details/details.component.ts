@@ -66,13 +66,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
     }
 
     editQuestion(bucket, question: any): void {
-        this._matDialog.open(KuisonerEditQuestionComponent, {
-            autoFocus: false,
-            data: {
-                bucket: cloneDeep(bucket),
-                questionRequest: cloneDeep(question)
-            }
-        });
+        // this._matDialog.open(KuisonerEditQuestionComponent, {
+        //     autoFocus: false,
+        //     data: {
+        //         bucket: cloneDeep(bucket),
+        //         questionRequest: cloneDeep(question)
+        //     }
+        // });
     }
 
     deleteQuestionKuisoner(no, id, bucketId): void {

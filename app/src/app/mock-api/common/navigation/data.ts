@@ -198,13 +198,13 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
              children: [
               {
                 id   : 'kuisioner',
-                title: 'Kuisioner',
+                title: 'Susun Kuesioner',
                 type : 'basic',
                 link : '/kuisoner'
                  },
               {
                 id   : 'survey-kuisoner',
-                title: 'Survey-Kuisoner',
+                title: 'Pengolahan Survey',
                 type : 'basic',
                 link : '/survey-kuisoner'
                  },

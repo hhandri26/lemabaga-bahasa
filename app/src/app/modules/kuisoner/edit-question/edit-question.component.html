@@ -9,7 +9,7 @@
                             <mat-radio-button [value]="level.value" [checked]="level.checked"></mat-radio-button>
                         </ng-container>
                     </mat-radio-group>
-                    <ng-container *ngFor="let level of levels; trackBy: trackByFn">
+                    <!-- <ng-container *ngFor="let level of levels; trackBy: trackByFn">
                         <div class="relative flex flex-col items-start justify-start p-4 rounded-md shadow cursor-pointer bg-card"
                             [ngClass]="{'ring ring-inset ring-primary': levelRadioGroup.value === level.value}"
                             (click)="levelRadioGroup.value = level.value; form.get('level').setValue(levelRadioGroup.value)">
@@ -19,7 +19,7 @@
                             </ng-container>
                             <div class="font-medium">{{level.label}}</div>
                         </div>
-                    </ng-container>
+                    </ng-container> -->
                 </div>
             </div>
             <!-- <div class="flex items-center mt-5">

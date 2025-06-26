@@ -182,7 +182,7 @@ export class SurveyService {
     }
 
     create(params): Observable<any> {
-        return this._httpClient.post<any>(this._apiUrl + '/survey/create-kuisoner', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
+        return this._httpClient.post<any>(this._apiUrl + '/survey/create', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
             tap((result: any) => result),
             switchMap((result) => {
                 if (!result) {
@@ -194,7 +194,7 @@ export class SurveyService {
     }
 
     save(params): Observable<any> {
-        return this._httpClient.post<any>(this._apiUrl + '/survey/modify-kuisoner', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
+        return this._httpClient.post<any>(this._apiUrl + '/survey/modify', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
             tap((result: any) => result),
             switchMap((result) => {
                 if (!result) {
@@ -206,9 +206,16 @@ export class SurveyService {
     }
 
     delete(id): Observable<any> {
-        return this._httpClient.post<any>(this._apiUrl + '/survey/remove', JSON.stringify({
-            id, notes: 'remove'
-        })).pipe(
+        const body = {
+            id, 
+            notes: 'remove'
+        };
+        
+        return this._httpClient.post<any>(this._apiUrl + '/survey/remove', body, {
+            headers: new HttpHeaders({
+                'Content-Type': 'application/json'
+            })
+        }).pipe(
             tap((result: any) => result),
             switchMap((result) => {
                 if (!result) {

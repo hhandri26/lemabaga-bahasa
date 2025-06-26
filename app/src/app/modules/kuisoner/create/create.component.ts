@@ -41,10 +41,10 @@ export class CreateComponent implements OnInit, OnDestroy {
     ngOnInit(): void {
         console.log('this._data', this._data);
         this.form = this._formBuilder.group({
-            courseGroupId: [this._data?.courseGroup.id ?? ''],
+            // courseGroupId: [this._data?.courseGroup.id ?? ''],
             // courseTopicId: [this._data?.courseTopicId ?? '', [Validators.required]],
             name: [this._data?.name ?? '', [Validators.required]],
-            tipeSurvei: [null, Validators.required],
+            tipeSurvei: [this._data?.tipeSurvei ?? null, Validators.required],
             type: [this._data?.type ?? 'SURVEY', [Validators.required]],
             questionType: [this._data?.questionType ?? 'PG', [Validators.required]],
             durationInMinutes: [this._data?.durationInMinutes ?? 10000, [Validators.required]],

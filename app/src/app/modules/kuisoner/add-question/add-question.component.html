@@ -30,7 +30,7 @@
                     </div> -->
                 </div>
 
-                <div class="flex items-center mt-5">
+                <!-- <div class="flex items-center mt-5">
                     <div class="cursor-pointer ml-3">
                         <mat-radio-group class="flex items-center" [formControlName]="'kuisonerTipe'">
                             <mat-radio-button value="PG" class="mr-3">Pilihan Ganda</mat-radio-button>
@@ -38,23 +38,23 @@
                             <mat-radio-button value="ISIAN">ISIAN</mat-radio-button>
                         </mat-radio-group>
                     </div>
-                </div>
+                </div> -->
 
                 <textarea class="w-full text-lg font-medium leading-5 mt-5" [spellcheck]="'off'"
                     [formControlName]="'question'" [placeholder]="'Pertanyaan...'" (keydown.enter)="save()"
                     cdkTextareaAutosize #questionInput #questionAutosize="cdkTextareaAutosize">
                 </textarea>
-                <ng-container *ngIf="form.get('kuisonerTipe').value">
+                <!-- <ng-container *ngIf="form.get('kuisonerTipe').value">
                     <div class="w-full mx-2 mt-4 space-y-1.5">
                         <ng-container *ngFor="let choice of choices; let i = index; trackBy: trackByFn">
                             <div class="group flex items-center">
                                 <ng-container *ngIf="form.get('kuisonerTipe').value === 'Likert'; else radioTemplate">
-                                    <!-- Checkbox Template -->
+                                    <!-- Checkbox Template
                                     <mat-checkbox [checked]="choice.isAnswer" [color]="'primary'"
                                         (change)="updatePilihan(i, $event.checked, 'option')"></mat-checkbox>
                                 </ng-container>
                                 <ng-template #radioTemplate>
-                                    <!-- Radio Button Template -->
+                                    <!-- Radio Button Template
                                     <mat-radio-button [checked]="choice.isAnswer" [color]="'primary'"
                                         (change)="updatePilihan(i, true, 'option')"></mat-radio-button>
                                 </ng-template>
@@ -74,7 +74,7 @@
                     </ng-container>
 
                     </div>
-                </ng-container>
+                </ng-container> -->
             </div>
             <div class="flex items-center mt-2">
                 <button mat-flat-button [color]="'primary'" [type]="'button'" (click)="save()" [disabled]="!form.valid">

@@ -31,8 +31,49 @@
             </div>
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
-                    <mat-label>Judul</mat-label>
+                    <mat-label>Judul Survey</mat-label>
                     <input matInput [formControlName]="'title'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Judul Sertifikat</mat-label>
+                    <input matInput [formControlName]="'titleCertificate'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 20rem !important;">
+                  <mat-label>Tanggal Sertifikat</mat-label>
+                  <input
+                    matInput
+                    [matDatepicker]="picker"
+                    formControlName="dateCertificate"
+                    placeholder="Pilih tanggal"
+                    [min]="_helperService.maxDate()"
+                  >
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Waktu Sertifikat</mat-label>
+                    <input matInput type="time" formControlName="timeCertificate">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Lokasi Sertifikat</mat-label>
+                    <input matInput [formControlName]="'placeCertificate'">
+                </mat-form-field>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Tipe Sertifikat</mat-label>
+                    <mat-select [formControlName]="'typeCertificate'">
+                        <mat-option [value]="'1'">Sosialisasi</mat-option>
+                        <mat-option [value]="'2'">Bimtek</mat-option>
+                    </mat-select>
                 </mat-form-field>
             </div>
             <div class="mt-4">

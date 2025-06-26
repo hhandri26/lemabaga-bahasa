@@ -10,8 +10,9 @@ import { Observable, Subject } from 'rxjs';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { QuizService } from 'app/services/quiz.service';
 import moment from 'moment';
-import { SurveyService } from 'app/services/survey.service';
+// import { SurveyService } from 'app/services/survey.service';
 import { KuisonerService } from 'app/services/kuisoner.service';
+import { SurveyKuisonerService } from 'app/services/survey-kuisoner.service';
 
 @Component({
     templateUrl: './create.component.html',
@@ -39,7 +40,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         private _toastr: ToastrService,
         private _changeDetectorRef: ChangeDetectorRef,
         private _kuisonerService: KuisonerService,
-        private _surveyService: SurveyService,
+        private _surveyService: SurveyKuisonerService,
     ) { }
 
     ngOnInit(): void {
@@ -49,7 +50,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             startDate: [this._data?.startDate, [Validators.required]],
             endDate: [this._data?.endDate, [Validators.required]],
             tipeSurvei: [this._data?.tipeSurvei, [Validators.required]],
-            bucketId: [this._data?.bucketId, [Validators.required]]
+            bucketId: [this._data?.bucketId, [Validators.required]],
+            titleCertificate: [this._data?.titleCertificate ?? 'Sertifikat Survey', [Validators.required]],
+            timeCertificate: [this._data?.timeCertificate ?? '09:00', [Validators.required]],
+            dateCertificate: [this._data?.dateCertificate ?? new Date(), [Validators.required]],
+            placeCertificate: [this._data?.placeCertificate ?? 'Jakarta', [Validators.required]],
+            typeCertificate: [this._data?.typeCertificate ?? '1', [Validators.required]],
         });
 
         this._kuisonerService.getListKuisoner(0, 1000, {
@@ -74,6 +80,19 @@ export class CreateComponent implements OnInit, OnDestroy {
         body.append('tipeSurvei', formInput.tipeSurvei);
         body.append('startDate', moment(formInput.startDate).format('YYYY-MM-DD'));
         body.append('endDate', moment(formInput.endDate).format('YYYY-MM-DD'));
+
+        const titleCertificate = formInput.titleCertificate || 'Sertifikat Survey';
+        const dateCertificate = formInput.dateCertificate ? moment(formInput.dateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+        const timeCertificate = formInput.timeCertificate || '09:00';
+        const placeCertificate = formInput.placeCertificate || 'Jakarta';
+        const typeCertificate = formInput.typeCertificate || '1';
+
+        body.append('titleCertificate', titleCertificate);
+        body.append('dateCertificate', dateCertificate);
+        body.append('timeCertificate', timeCertificate);
+        body.append('placeCertificate', placeCertificate);
+        body.append('typeCertificate', typeCertificate);
+        
         if(this._data?.id){
             body.append('id', this._data?.id);
             this._surveyService.save(body).subscribe(

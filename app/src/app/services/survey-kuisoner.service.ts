@@ -203,7 +203,7 @@ answerSurveyKuisonerIsian(params: any): Observable<any> {
 }
 
     create(params): Observable<any> {
-        return this._httpClient.post<any>(this._apiUrl + '/survey/create', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
+        return this._httpClient.post<any>(this._apiUrl + '/survey/create-kuisoner', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
             tap((result: any) => result),
             switchMap((result) => {
                 if (!result) {
@@ -215,7 +215,7 @@ answerSurveyKuisonerIsian(params: any): Observable<any> {
     }
 
     save(params): Observable<any> {
-        return this._httpClient.post<any>(this._apiUrl + '/survey/modify', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
+        return this._httpClient.post<any>(this._apiUrl + '/survey/modify-kuisoner', params, { headers: this.__HTTPHeaderUpload(this._authService.accessToken) }).pipe(
             tap((result: any) => result),
             switchMap((result) => {
                 if (!result) {

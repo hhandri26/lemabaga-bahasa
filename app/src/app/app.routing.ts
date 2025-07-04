@@ -115,7 +115,8 @@ export const appRoutes: Route[] = [
             { path: 'pengangkatan', loadChildren: () => import('app/modules/pengangkatan/pengangkatan.module').then(m => m.PengangkatanModule) },
 
             { path: 'profile', loadChildren: () => import('app/modules/settings/settings.module').then(m => m.SettingsModule) },
-            { path: 'e-sertifikat/view', loadChildren: () => import('app/modules/e-sertifikat/e-sertifikat.module').then(m => m.EsertifikatModule) },
+            { path: 'sertifikat/view', loadChildren: () => import('app/modules/survey-kuisoner/sertifikat/e-sertifikat.module').then(m => m.EsertifikatModule) },
+            { path: 'sertifikat/history', loadChildren: () => import('app/modules/survey-kuisoner/sertifikat/history/certificate-history.module').then(m => m.CertificateHistoryModule) },
         ]
     }
 ];

@@ -3,7 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CertificatePageComponent } from './certificate-page.component';
 
 const routes: Routes = [
-  { path: '', component: CertificatePageComponent, data: { layout: 'empty' } }
+  { path: '', component: CertificatePageComponent }
 ];
 
 @NgModule({

@@ -53,13 +53,13 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
     },
     {
         id   : 'quiz',
-        title: 'Soal',
+        title: 'Susun Soal DIKLAT dan Kuesioner Kepuasan Masyarakat',
         type : 'basic',
         link : '/quiz'
     },
     {
         id   : 'survey',
-        title: 'Survey',
+        title: 'Pengolahan Survey Kepuasan Masyarakat',
         type : 'basic',
         link : '/survey'
     },
@@ -197,28 +197,28 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
         type : 'collapsable',
              children: [
               {
+                    id   : 'dashboard',
+                    title: 'Dashboard',
+                    type : 'basic',
+                    link : ''
+                 },
+              {
                 id   : 'kuisioner',
-                title: 'Susun Kuesioner',
+                title: 'Susun Kuesioner Kegiatan',
                 type : 'basic',
                 link : '/kuisoner'
                  },
               {
                 id   : 'survey-kuisoner',
-                title: 'Pengolahan Survey',
+                title: 'Pengolahan Survey Kegiatan',
                 type : 'basic',
                 link : '/survey-kuisoner'
                  },
                {
-                id   : 'dashboard',
-                title: 'Dashboard',
+                id   : 'sertifikat',
+                title: 'Riwayat Sertifikat',
                 type : 'basic',
-                link : ''
-                 },
-               {
-                id   : 'E-Sertifikat',
-                title: 'E-Sertifikat',
-                type : 'basic',
-                link : ''
+                link : '/sertifikat/history'
                  },
         ],
     },
@@ -305,14 +305,20 @@ export const ROLE_USER: FuseNavigationItem[] = [
     },
     {
         id   : 'survey-user',
-        title: 'Survey',
+        title: 'Survey Kepuasan Masyarakat',
         type : 'basic',
         link : '/survey-user'
     },
         {
         id   : 'survey-user-kuisoner',
-        title: 'Survey Kuisioner',
+        title: 'Survey Kegiatan',
         type : 'basic',
         link : '/survey-user-kuisoner'
     },
+    {
+        id   : 'sertifikat',
+        title: 'Riwayat Sertifikat',
+        type : 'basic',
+        link : '/sertifikat/history'
+    }
 ];

@@ -17,7 +17,7 @@ export class CertificateHistoryComponent implements OnInit, AfterViewInit {
   loading = false;
   
   dataSource: MatTableDataSource<any>;
-  displayedColumns: string[] = ['nomor_sertifikat', 'tipe', 'judul_acara', 'nama_partisipan', 'tanggal_terbit', 'aksi'];
+  displayedColumns: string[] = ['nomor_sertifikat', 'tipe', 'judul_sertifikat', 'subjudul_sertifikat', 'nama_partisipan', 'jam_pelajaran', 'tanggal_terbit', 'aksi'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;
@@ -55,6 +55,23 @@ export class CertificateHistoryComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.dataSource.sort = this.sort;
+
+    this.dataSource.filterPredicate = (data: any, filter: string) => {
+      const searchString = filter.toLowerCase();
+
+      // Check studyHours specifically
+      if (data.studyHours !== undefined && data.studyHours !== null) {
+        const studyHoursString = data.studyHours.toString();
+        const studyHoursWithSuffix = studyHoursString + ' jam';
+        if (studyHoursString.includes(searchString) || studyHoursWithSuffix.includes(searchString)) {
+          return true;
+        }
+      }
+
+      // Fallback to general string search for other fields
+      const dataStr = JSON.stringify(data).toLowerCase();
+      return dataStr.includes(searchString);
+    };
   }
 
   fetchCertificates(email: string) {

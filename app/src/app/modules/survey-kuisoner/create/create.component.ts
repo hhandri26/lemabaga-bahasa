@@ -51,11 +51,13 @@ export class CreateComponent implements OnInit, OnDestroy {
             endDate: [this._data?.endDate, [Validators.required]],
             tipeSurvei: [this._data?.tipeSurvei, [Validators.required]],
             bucketId: [this._data?.bucketId, [Validators.required]],
-            titleCertificate: [this._data?.titleCertificate ?? 'Sertifikat Survey', [Validators.required]],
+            titleCertificate: [this._data?.titleCertificate ?? 'Judul Sertifikat', [Validators.required]],
+            subtitleCertificate: [this._data?.subtitleCertificate ?? 'Sub Judul Sertifikat', [Validators.required]],
             timeCertificate: [this._data?.timeCertificate ?? '09:00', [Validators.required]],
             dateCertificate: [this._data?.dateCertificate ?? new Date(), [Validators.required]],
             placeCertificate: [this._data?.placeCertificate ?? 'Jakarta', [Validators.required]],
             typeCertificate: [this._data?.typeCertificate ?? '1', [Validators.required]],
+            studyHours: [this._data?.studyHours ?? 0, [Validators.required]],
         });
 
         this._kuisonerService.getListKuisoner(0, 1000, {
@@ -89,9 +91,11 @@ export class CreateComponent implements OnInit, OnDestroy {
 
         body.append('titleCertificate', titleCertificate);
         body.append('dateCertificate', dateCertificate);
+        body.append('subtitleCertificate', formInput.subtitleCertificate);
         body.append('timeCertificate', timeCertificate);
         body.append('placeCertificate', placeCertificate);
         body.append('typeCertificate', typeCertificate);
+        body.append('studyHours', formInput.studyHours);
         
         if(this._data?.id){
             body.append('id', this._data?.id);

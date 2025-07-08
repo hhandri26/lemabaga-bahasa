@@ -29,7 +29,9 @@ export class CreateComponent implements OnInit, OnDestroy {
     onFileInputed: boolean = false;
     kuisonerList$: Observable<any[]>;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
-    tipeSurvei$: Observable<any[]> = this._referensiService.tipeSurvei();
+    tipeSurvei$: Observable<any[]>;
+    selectedTipeSurveiId: number | null = null;
+    selectedBucketId: number | null = null;
 
     constructor(
         public matDialogRef: MatDialogRef<CreateComponent>,
@@ -49,7 +51,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             title: [this._data?.title ?? '', [Validators.required]],
             startDate: [this._data?.startDate, [Validators.required]],
             endDate: [this._data?.endDate, [Validators.required]],
-            tipeSurvei: [this._data?.tipeSurvei, [Validators.required]],
+            tipeSurvei: [this._data?.tipeSurvei.id, [Validators.required]],
             bucketId: [this._data?.bucketId, [Validators.required]],
             titleCertificate: [this._data?.titleCertificate ?? '', [Validators.required]],
             subtitleCertificate: [this._data?.subtitleCertificate ?? '', [Validators.required]],
@@ -60,12 +62,27 @@ export class CreateComponent implements OnInit, OnDestroy {
             studyHours: [this._data?.studyHours ?? 2, [Validators.required]],
         });
 
+        this.selectedTipeSurveiId = this.form.get('tipeSurvei')?.value;
+        this.toggleCertificateFields(this.selectedTipeSurveiId);
+
+        this.form.get('tipeSurvei')?.valueChanges.subscribe((val: number) => {
+            this.selectedTipeSurveiId = val;
+            this.toggleCertificateFields(val);
+            console.log("TIPE SURVEI = ", this.form.get('tipeSurvei')?.value);
+            console.log("TIPE SURVEI FULL =", this._data?.tipeSurvei.id);
+        });
+
+        this.form.get('bucketId')?.valueChanges.subscribe((val: number) => {
+            this.selectedBucketId = val;
+            console.log("BUCKET ID = ", this.form.get('bucketId')?.value);
+        });
+
         this._kuisonerService.getListKuisoner(0, 1000, {
             byStatus: 'PUBLISHED'
        }).subscribe(response => {
-    console.log('Response from getListKuisoner:', response);
-});
-        
+        console.log('Response from getListKuisoner:', response);
+        });
+        this.tipeSurvei$ = this._referensiService.tipeSurvei();
         this.kuisonerList$ = this._kuisonerService.items$;
     }
 
@@ -74,11 +91,35 @@ export class CreateComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
+    toggleCertificateFields(tipeId: number): void {
+        const certFields = [
+          'titleCertificate',
+          'subtitleCertificate',
+          'timeCertificate',
+          'dateCertificate',
+          'placeCertificate',
+          'typeCertificate',
+          'studyHours'
+        ];
+      
+        certFields.forEach(field => {
+          const control = this.form.get(field);
+          if (!control) return;
+      
+          if (tipeId === 5) {
+            control.clearValidators();
+          } else {
+            control.setValidators([Validators.required]);
+          }
+          control.updateValueAndValidity();
+        });
+      }
+
     create(): void {
         const formInput: any = this.form.getRawValue();
         const body = new FormData();
         body.append('title', formInput.title);
-        body.append('bucketId', formInput.bucketId.id);
+        body.append('bucketId', formInput.bucketId);
         body.append('tipeSurvei', formInput.tipeSurvei);
         body.append('startDate', moment(formInput.startDate).format('YYYY-MM-DD'));
         body.append('endDate', moment(formInput.endDate).format('YYYY-MM-DD'));

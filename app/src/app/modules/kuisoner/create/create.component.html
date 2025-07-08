@@ -31,8 +31,8 @@
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Tipe Survei</mat-label>
-                    <mat-select [formControlName]="'tipeSurvei'">
-                        <mat-option *ngFor="let item of tipeSurvei$ | async" [value]="item.id">{{item.nama}}
+                    <mat-select [formControlName]="'tipeSurvei'" [compareWith]="compareById">
+                        <mat-option *ngFor="let item of tipeSurvei$ | async" [value]="item">{{item.nama}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>

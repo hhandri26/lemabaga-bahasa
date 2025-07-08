@@ -33,7 +33,7 @@ export class KuisonerAddQustionComponent implements OnInit {
         this.form = this._formBuilder.group({
             question: ['', [Validators.required]],
             level: ['EASY', [Validators.required]],
-             kuisonerTipe: ['LIKECHART', [Validators.required]],
+            kuisonerTipe: ['LIKECHART', [Validators.required]],
             choiceListKuisoner: [[]]
         });
 

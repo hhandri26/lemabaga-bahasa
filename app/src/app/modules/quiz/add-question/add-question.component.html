@@ -33,13 +33,9 @@
                     <!-- <div class="cursor-pointer mr-3">
                         <div class="leading-6 font-medium">Isian / Essay</div>
                     </div> -->
-                    <!-- <mat-slide-toggle class="ml-2" [color]="'primary'" [formControlName]="'quizType'">
-                    </mat-slide-toggle>
+
                     <div class="cursor-pointer ml-3">
-                        <div class="leading-6 font-medium">Pilihan ganda</div>
-                    </div> -->
-                    <div class="cursor-pointer ml-3">
-                        <mat-radio-group class="flex items-center gap-x-4" [formControlName]="'quizTipe'">
+                        <mat-radio-group class="flex items-center gap-x-4" [formControlName]="'quizType'">
                             <!-- <mat-radio-button value="PG" class="mr-3">Pilihan Ganda</mat-radio-button> -->
                             <mat-radio-button value="PG">PG</mat-radio-button>
                             <mat-radio-button value="LIKECHART">LIKERT</mat-radio-button>
@@ -51,7 +47,7 @@
                     [formControlName]="'question'" [placeholder]="'Pertanyaan...'" (keydown.enter)="save()"
                     cdkTextareaAutosize #questionInput #questionAutosize="cdkTextareaAutosize">
                 </textarea>
-                <ng-container *ngIf="form.get('quizType').value">
+                <ng-container *ngIf="form.get('quizType').value === 'PG'">
                     <div class="w-full mx-2 mt-4 space-y-1.5">
                         <ng-container *ngFor="let choice of choices; let i = index; trackBy: trackByFn">
                             <div class="group flex items-center">
@@ -59,6 +55,29 @@
                                 (change)="updatePilihan(choice)"></mat-checkbox> -->
                                 <mat-radio-button [checked]="choice.isAnswer" [color]="'primary'"
                                     (change)="updatePilihan(i, true, 'option')"></mat-radio-button>
+                                <input class="w-full px-1 py-0.5" [placeholder]="'Pilihan'" [value]="choice.label"
+                                    (input)="updatePilihan(i, $event.target.value, 'label')">
+                                <mat-icon class="hidden group-hover:flex ml-auto icon-size-5 cursor-pointer"
+                                    [svgIcon]="'heroicons_solid:x'" (click)="removePilihan(i)"></mat-icon>
+                            </div>
+                        </ng-container>
+                        <div class="flex items-center">
+                            <mat-icon class="-ml-0.5 icon-size-5 text-hint"
+                                [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                            <input class="w-full ml-1.5 px-1 py-0.5" [placeholder]="'Tambah pilihan & enter'"
+                                (keydown.enter)="addPilihan(newLabelInput.value); newLabelInput.value = ''"
+                                #newLabelInput>
+                        </div>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="form.get('quizType').value === 'LIKECHART'">
+                    <div class="w-full mx-2 mt-4 space-y-1.5">
+                        <ng-container *ngFor="let choice of choices; let i = index; trackBy: trackByFn">
+                            <div class="group flex items-center">
+                                <!-- <mat-checkbox class="flex items-center" [color]="'primary'" [checked]="choice.isAnswer"
+                                (change)="updatePilihan(choice)"></mat-checkbox> -->
+                                <mat-radio-button [checked]="choice.isAnswer" [disabled]="true" [color]="'primary'">
+                                </mat-radio-button>
                                 <input class="w-full px-1 py-0.5" [placeholder]="'Pilihan'" [value]="choice.label"
                                     (input)="updatePilihan(i, $event.target.value, 'label')">
                                 <mat-icon class="hidden group-hover:flex ml-auto icon-size-5 cursor-pointer"

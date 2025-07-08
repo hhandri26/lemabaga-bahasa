@@ -61,13 +61,13 @@ export class DetailsComponent implements OnInit, OnDestroy {
     }
 
     editQuestion(bucket, question: any): void {
-        this._matDialog.open(QuizEditQuestionComponent, {
-            autoFocus: false,
-            data: {
-                bucket: cloneDeep(bucket),
-                questionRequest: cloneDeep(question)
-            }
-        });
+        // this._matDialog.open(QuizEditQuestionComponent, {
+        //     autoFocus: false,
+        //     data: {
+        //         bucket: cloneDeep(bucket),
+        //         questionRequest: cloneDeep(question)
+        //     }
+        // });
     }
 
     deleteQuestion(no, id, bucketId): void {

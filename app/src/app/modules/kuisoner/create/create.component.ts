@@ -56,18 +56,21 @@ export class CreateComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
+    compareById = (a: any, b: any) => a && b && a.id === b.id;
+
     create(): void {
         const formInput: any = this.form.getRawValue();
         const params: any = {
             name: formInput.name,
             type: formInput.type,
             courseGroupId: formInput.courseGroupId,
-            tipeSurvei:formInput.tipeSurvei,
+            // tipeSurvei:formInput.tipeSurvei.id,
             questionType: formInput.questionType,
             durationInMinutes: formInput.durationInMinutes,
         };
         if(this._data?.id){
             params.id = this._data?.id;
+            params.tipeSurvei = formInput.tipeSurvei;
             this._kuisonerService.saveKuisoner(params).subscribe(
                 (result) => {
                     if (result?.success) {
@@ -81,6 +84,7 @@ export class CreateComponent implements OnInit, OnDestroy {
                 }
             );
         } else {
+            params.tipeSurvei = formInput.tipeSurvei?.id;
             this._kuisonerService.createKuisoner(params).subscribe(
                 (result) => {
                     if (result?.success) {

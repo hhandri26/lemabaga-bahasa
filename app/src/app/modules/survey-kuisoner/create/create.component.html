@@ -23,8 +23,8 @@
                     <mat-label>Soal</mat-label>
                     <mat-select [formControlName]="'bucketId'">
                         <mat-option value="">-- Pilih Soal --</mat-option>
-                        <mat-option *ngFor="let item of kuisonerList$ | async" [value]="item">{{item.name}} |
-                            {{item.questionType}}
+                        <mat-option *ngFor="let item of kuisonerList$ | async" [value]="item.id">{{item.name}} |
+                            {{item.tipeSurvei.nama}}
                         </mat-option>
                     </mat-select>
                 </mat-form-field>
@@ -35,6 +35,8 @@
                     <input matInput [formControlName]="'title'">
                 </mat-form-field>
             </div>
+
+        <ng-container *ngIf="selectedTipeSurveiId !== 5">
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Judul Sertifikat</mat-label>
@@ -88,6 +90,8 @@
                     <input matInput type="number" [formControlName]="'studyHours'">
                 </mat-form-field>
             </div>
+        </ng-container>
+
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 20rem !important;">
                     <mat-label>Jadwal</mat-label>

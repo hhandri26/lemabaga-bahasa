@@ -32,6 +32,14 @@ export class CertificatePageComponent implements OnInit, AfterViewInit {
                 ...response.mapData.certificate,
               };
               console.log('Loaded Certificate Data (Dynamic):', this.certificate);
+
+              if (params['downloadTrigger'] === 'true') {
+                // Ensure the certificate data is loaded before attempting to download
+                // A small delay might be necessary to ensure the DOM is ready
+                setTimeout(() => {
+                  this.downloadPDF();
+                }, 500);
+              }
             } else {
               console.warn('Certificate data not found for ID:', certificateId, response);
               this.certificate = null;
@@ -73,7 +81,7 @@ export class CertificatePageComponent implements OnInit, AfterViewInit {
       const imgData = canvas.toDataURL('image/jpeg', 0.85);
       const pdf = new jsPDF('landscape', 'pt', [4000, 2828]);
       pdf.addImage(imgData, 'JPEG', 0, 0, 4000, 2828);
-      pdf.save(`sertifikat-${this.certificate.nama}.pdf`);
+      pdf.save(`${this.certificate.certificateNumber}-(${this.certificate.nama}).pdf`);
     }).catch(error => {
       console.error('Error generating PDF:', error);
     });

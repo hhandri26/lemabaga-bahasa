@@ -133,8 +133,8 @@ export class CertificateHistoryComponent implements OnInit, AfterViewInit {
   }
 
   downloadSertifikat(certificate: any): void {
-    // Navigate to the certificate view page without the download trigger param
-    this.router.navigate(['/sertifikat/view'], { queryParams: { id: certificate.id } });
+    // Navigate to the certificate view page with a download trigger param
+    this.router.navigate(['/sertifikat/view'], { queryParams: { id: certificate.id, downloadTrigger: true } });
   }
 
   getCertificateType(typeId: number): string {
@@ -165,4 +165,4 @@ export class CertificateHistoryComponent implements OnInit, AfterViewInit {
     const [hour, minute, second] = timeArray;
     return `${hour < 10 ? '0' + hour : hour}:${minute < 10 ? '0' + minute : minute}:${second < 10 ? '0' + second : second}`;
   }
-} 
+}

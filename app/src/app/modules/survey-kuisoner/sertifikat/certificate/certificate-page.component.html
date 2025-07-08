@@ -1,5 +1,8 @@
 <!-- Preview Sertifikat -->
 <div class="certificate-preview-wrapper">
+  <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="downloadPDF()" *ngIf="certificate" style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
+    <span class="ml-2 mr-1">Download Sertifikat (PDF)</span>
+  </button>
   <div class="certificate-bg preview-mode" #certificateContainer *ngIf="certificate">
     <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
     <div class="certificate-content">
@@ -13,7 +16,6 @@
       </div>
     </div>
   </div>
-  <button mat-flat-button color="primary" (click)="downloadPDF()" *ngIf="certificate" class="mt-4">Download PDF</button>
 </div>
 
 <!-- Hidden area untuk download PDF dengan ukuran asli -->

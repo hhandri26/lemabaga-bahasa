@@ -8,7 +8,7 @@
         </button>
         <form class="flex flex-col items-start w-full" [ngClass]="{'opacity-0': !formVisible}" [formGroup]="form">
             <div class="flex flex-col w-full p-5 rounded-lg shadow bg-card">
-                <div class="w-full">
+                <!-- <div class="w-full">
                     <div class="flex flex-wrap gap-6 w-full mt-2">
                         <mat-radio-group class="invisible absolute w-0 h-0 pointer-events-none"
                             [formControlName]="'level'" #levelRadioGroup="matRadioGroup">
@@ -28,15 +28,23 @@
                             </div>
                         </ng-container>
                     </div>
-                </div>
+                </div> -->
                 <div class="flex items-center mt-5">
                     <!-- <div class="cursor-pointer mr-3">
                         <div class="leading-6 font-medium">Isian / Essay</div>
                     </div> -->
-                    <mat-slide-toggle class="ml-2" [color]="'primary'" [formControlName]="'quizType'">
+                    <!-- <mat-slide-toggle class="ml-2" [color]="'primary'" [formControlName]="'quizType'">
                     </mat-slide-toggle>
                     <div class="cursor-pointer ml-3">
                         <div class="leading-6 font-medium">Pilihan ganda</div>
+                    </div> -->
+                    <div class="cursor-pointer ml-3">
+                        <mat-radio-group class="flex items-center gap-x-4" [formControlName]="'quizTipe'">
+                            <!-- <mat-radio-button value="PG" class="mr-3">Pilihan Ganda</mat-radio-button> -->
+                            <mat-radio-button value="PG">PG</mat-radio-button>
+                            <mat-radio-button value="LIKECHART">LIKERT</mat-radio-button>
+                            <mat-radio-button value="ISIAN">ISIAN</mat-radio-button>
+                        </mat-radio-group>
                     </div>
                 </div>
                 <textarea class="w-full text-lg font-medium leading-5 mt-5" [spellcheck]="'off'"

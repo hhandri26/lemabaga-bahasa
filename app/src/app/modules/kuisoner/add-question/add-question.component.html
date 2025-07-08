@@ -8,8 +8,8 @@
         </button>
         <form class="flex flex-col items-start w-full" [ngClass]="{'opacity-0': !formVisible}" [formGroup]="form">
             <div class="flex flex-col w-full p-5 rounded-lg shadow bg-card">
-                <div class="w-full">
-                    <!-- <div class="flex flex-wrap gap-6 w-full mt-2">
+                <!-- <div class="w-full">
+                    <div class="flex flex-wrap gap-6 w-full mt-2">
                         <mat-radio-group class="invisible absolute w-0 h-0 pointer-events-none"
                             [formControlName]="'level'" #levelRadioGroup="matRadioGroup">
                             <ng-container *ngFor="let level of levels; trackBy: trackByFn">
@@ -27,18 +27,18 @@
                                 
                             </div>
                         </ng-container>
-                    </div> -->
-                </div>
+                    </div>
+                </div> -->
 
-                <!-- <div class="flex items-center mt-5">
+                <div class="flex items-center mt-5">
                     <div class="cursor-pointer ml-3">
-                        <mat-radio-group class="flex items-center" [formControlName]="'kuisonerTipe'">
-                            <mat-radio-button value="PG" class="mr-3">Pilihan Ganda</mat-radio-button>
-                            <mat-radio-button value="LIKECHART">LIKEART</mat-radio-button>
+                        <mat-radio-group class="flex items-center gap-x-4" [formControlName]="'kuisonerTipe'">
+                            <!-- <mat-radio-button value="PG" class="mr-3">Pilihan Ganda</mat-radio-button> -->
+                            <mat-radio-button value="LIKECHART">LIKERT</mat-radio-button>
                             <mat-radio-button value="ISIAN">ISIAN</mat-radio-button>
                         </mat-radio-group>
                     </div>
-                </div> -->
+                </div>
 
                 <textarea class="w-full text-lg font-medium leading-5 mt-5" [spellcheck]="'off'"
                     [formControlName]="'question'" [placeholder]="'Pertanyaan...'" (keydown.enter)="save()"

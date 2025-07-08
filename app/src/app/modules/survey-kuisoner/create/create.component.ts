@@ -51,13 +51,13 @@ export class CreateComponent implements OnInit, OnDestroy {
             endDate: [this._data?.endDate, [Validators.required]],
             tipeSurvei: [this._data?.tipeSurvei, [Validators.required]],
             bucketId: [this._data?.bucketId, [Validators.required]],
-            titleCertificate: [this._data?.titleCertificate ?? 'Judul Sertifikat', [Validators.required]],
-            subtitleCertificate: [this._data?.subtitleCertificate ?? 'Sub Judul Sertifikat', [Validators.required]],
-            timeCertificate: [this._data?.timeCertificate ?? '09:00', [Validators.required]],
+            titleCertificate: [this._data?.titleCertificate ?? '', [Validators.required]],
+            subtitleCertificate: [this._data?.subtitleCertificate ?? '', [Validators.required]],
+            timeCertificate: [this._data?.timeCertificate ?? '07:00', [Validators.required]],
             dateCertificate: [this._data?.dateCertificate ?? new Date(), [Validators.required]],
             placeCertificate: [this._data?.placeCertificate ?? 'Jakarta', [Validators.required]],
             typeCertificate: [this._data?.typeCertificate ?? '1', [Validators.required]],
-            studyHours: [this._data?.studyHours ?? 0, [Validators.required]],
+            studyHours: [this._data?.studyHours ?? 2, [Validators.required]],
         });
 
         this._kuisonerService.getListKuisoner(0, 1000, {

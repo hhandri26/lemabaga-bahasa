@@ -14,64 +14,38 @@ export class CertificatePageComponent implements OnInit, AfterViewInit {
 
   certificate: any;
 
-  // Hardcoded values for testing or static display
-  private hardcodedCertificate = {
-    id: 999, // Dummy ID for hardcoded
-    titleCertificate: 'SOSIALISASI JABATAN FUNGSIONAL PENERJEMAH',
-    dateCertificate: [2025, 6, 26],
-    timeCertificate: [8, 51, 11],
-    placeCertificate: 'Jakarta',
-    typeCertificate: 1,
-    nama: 'Abdul Basith',
-    nip: '198002022010011010',
-    email: 'dummy@example.com',
-    certificateNumber: 'SERT.B-0001/Pusbinter/XII/2025'
-  };
-
-  // Set this to true to use hardcoded data, false to use dynamic data from API
-  private useHardcodedData: boolean = true; 
-
   constructor(
     private activatedRoute: ActivatedRoute,
     private certificateService: CertificateHistoryService
   ) {}
 
   ngOnInit(): void {
-    // --- Start: Dynamic Data Fetching Logic (uncomment to activate) ---
-    if (!this.useHardcodedData) {
-      this.activatedRoute.queryParams.subscribe(params => {
-        const certificateId = params['id'];
-        console.log('Certificate ID from URL:', certificateId);
+    this.activatedRoute.queryParams.subscribe(params => {
+      const certificateId = params['id'];
+      console.log('Certificate ID from URL:', certificateId);
 
-        if (certificateId) {
-          this.certificateService.getCertificateById(certificateId).subscribe({
-            next: (response) => {
-              if (response.success && response.mapData && response.mapData.certificate) {
-                this.certificate = response.mapData.certificate;
-                console.log('Loaded Certificate Data (Dynamic):', this.certificate);
-              } else {
-                console.warn('Certificate data not found for ID:', certificateId, response);
-                this.certificate = null;
-              }
-            },
-            error: (err) => {
-              console.error('Error fetching certificate by ID:', err);
+      if (certificateId) {
+        this.certificateService.getCertificateById(certificateId).subscribe({
+          next: (response) => {
+            if (response.success && response.mapData && response.mapData.certificate) {
+              this.certificate = {
+                ...response.mapData.certificate,
+              };
+              console.log('Loaded Certificate Data (Dynamic):', this.certificate);
+            } else {
+              console.warn('Certificate data not found for ID:', certificateId, response);
               this.certificate = null;
             }
-          });
-        } else {
-          console.warn('Certificate ID not provided in query parameters.');
-        }
-      });
-    } 
-    // --- End: Dynamic Data Fetching Logic ---
-
-    // --- Start: Hardcoded Data Logic (uncomment to activate if useHardcodedData is true) ---
-    if (this.useHardcodedData) {
-      this.certificate = this.hardcodedCertificate;
-      console.log('Loaded Certificate Data (Hardcoded):', this.certificate);
-    }
-    // --- End: Hardcoded Data Logic ---
+          },
+          error: (err) => {
+            console.error('Error fetching certificate by ID:', err);
+            this.certificate = null;
+          }
+        });
+      } else {
+        console.warn('Certificate ID not provided in query parameters.');
+      }
+    });
   }
 
   ngAfterViewInit(): void {
@@ -110,7 +84,8 @@ export class CertificatePageComponent implements OnInit, AfterViewInit {
       return '';
     }
     const [year, month, day] = dateArray;
-    return `${day < 10 ? '0' + day : day}-${month < 10 ? '0' + month : month}-${year}`;
+    const date = new Date(year, month - 1, day);
+    return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   formatTime(timeArray: number[] | undefined): string {

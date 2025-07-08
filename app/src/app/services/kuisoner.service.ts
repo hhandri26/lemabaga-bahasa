@@ -138,7 +138,7 @@ export class KuisonerService {
     }
 
     clone(params): Observable<any> {
-        return this._httpClient.post<any>(this._apiUrl + '/quiz/clone-bucket', JSON.stringify(params), { headers: this.httpHeaders }).pipe(
+        return this._httpClient.post<any>(this._apiUrl + '/quiz/clone-bucket-kuisoner', JSON.stringify(params), { headers: this.httpHeaders }).pipe(
             tap((result: any) => result),
             switchMap((result) => {
                 if (!result) {
@@ -151,7 +151,7 @@ export class KuisonerService {
 
     delete(id):
         Observable<any> {
-        return this._httpClient.delete<any>(this._apiUrl + '/quiz/delete-bucket/' + id).pipe(
+        return this._httpClient.delete<any>(this._apiUrl + '/quiz/delete-bucket-kuisoner/' + id).pipe(
             tap((result: any) => result),
             switchMap((result) => {
                 if (!result) {

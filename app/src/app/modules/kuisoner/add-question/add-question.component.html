@@ -44,17 +44,17 @@
                     [formControlName]="'question'" [placeholder]="'Pertanyaan...'" (keydown.enter)="save()"
                     cdkTextareaAutosize #questionInput #questionAutosize="cdkTextareaAutosize">
                 </textarea>
-                <!-- <ng-container *ngIf="form.get('kuisonerTipe').value">
+                <ng-container *ngIf="form.get('kuisonerTipe').value">
                     <div class="w-full mx-2 mt-4 space-y-1.5">
                         <ng-container *ngFor="let choice of choices; let i = index; trackBy: trackByFn">
                             <div class="group flex items-center">
-                                <ng-container *ngIf="form.get('kuisonerTipe').value === 'Likert'; else radioTemplate">
-                                    <!-- Checkbox Template
+                                <ng-container *ngIf="form.get('kuisonerTipe').value === 'LIKECHART'; else radioTemplate">
+                                    <!-- Checkbox Template -->
                                     <mat-checkbox [checked]="choice.isAnswer" [color]="'primary'"
                                         (change)="updatePilihan(i, $event.checked, 'option')"></mat-checkbox>
                                 </ng-container>
                                 <ng-template #radioTemplate>
-                                    <!-- Radio Button Template
+                                    <!-- Radio Button Template -->
                                     <mat-radio-button [checked]="choice.isAnswer" [color]="'primary'"
                                         (change)="updatePilihan(i, true, 'option')"></mat-radio-button>
                                 </ng-template>
@@ -65,16 +65,16 @@
                             </div>
                         </ng-container>
 
-                    <ng-container *ngIf="form.get('kuisonerTipe').value !== 'Isian'">
-                        <div class="flex items-center">
-                            <mat-icon class="-ml-0.5 icon-size-5 text-hint" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
-                            <input class="w-full ml-1.5 px-1 py-0.5" [placeholder]="'Tambah pilihan & enter'"
-                                (keydown.enter)="addPilihan(newLabelInput.value); newLabelInput.value = ''" #newLabelInput>
-                        </div>
-                    </ng-container>
+                        <ng-container *ngIf="form.get('kuisonerTipe').value !== 'ISIAN'">
+                            <div class="flex items-center">
+                                <mat-icon class="-ml-0.5 icon-size-5 text-hint" [svgIcon]="'heroicons_solid:plus'"></mat-icon>
+                                <input class="w-full ml-1.5 px-1 py-0.5" [placeholder]="'Tambah pilihan & enter'"
+                                    (keydown.enter)="addPilihan(newLabelInput.value); newLabelInput.value = ''" #newLabelInput>
+                            </div>
+                        </ng-container>
 
                     </div>
-                </ng-container> -->
+                </ng-container>
             </div>
             <div class="flex items-center mt-2">
                 <button mat-flat-button [color]="'primary'" [type]="'button'" (click)="save()" [disabled]="!form.valid">

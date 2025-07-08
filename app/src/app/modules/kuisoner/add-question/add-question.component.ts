@@ -57,13 +57,20 @@ export class KuisonerAddQustionComponent implements OnInit {
 
         this.form.get('kuisonerTipe').valueChanges.subscribe(val => {
             if (val === 'LIKECHART') {
+                // Initialize with default Likert scale labels
                 this.choices = [
-                    { label: 'Sangat Kurang', value: 'SK', isAnswer: false },
                     { label: 'Kurang', value: 'K', isAnswer: false },
                     { label: 'Cukup', value: 'C', isAnswer: false },
                     { label: 'Baik', value: 'B', isAnswer: false },
                     { label: 'Sangat Baik', value: 'SB', isAnswer: false }
                 ];
+                // Ensure minimum of 4 choices and even number
+                while (this.choices.length < 4) {
+                    this.choices.push({ label: `Pilihan ${this.choices.length + 1}`, value: `P${this.choices.length + 1}`, isAnswer: false });
+                }
+                if (this.choices.length % 2 !== 0) {
+                    this.choices.push({ label: `Pilihan ${this.choices.length + 1}`, value: `P${this.choices.length + 1}`, isAnswer: false });
+                }
             } else {
                 this.choices = [];
             }
@@ -76,11 +83,51 @@ export class KuisonerAddQustionComponent implements OnInit {
     // -----------------------------------------------------------------------------------------------------
 
     addPilihan(newLabelInput: string): void {
-        this.choices.push({ 'label': newLabelInput, 'isAnswer': false });
+        const defaultLabels = ['Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'];
+        let newLabel = newLabelInput;
+        if (!newLabelInput) {
+            // If no input, use a default label from the Likert scale or a generic one
+            newLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+        }
+        this.choices.push({ 'label': newLabel, 'isAnswer': false });
+
+        // Ensure the number of choices is always even and at least 4
+        if (this.choices.length < 4) {
+            while (this.choices.length < 4) {
+                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        } else if (this.choices.length % 2 !== 0) {
+            const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+            this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+        }
     }
 
     removePilihan(index: any): void {
         this.choices.splice(index, 1);
+        const defaultLabels = ['Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'];
+
+        // Ensure the number of choices is always even and at least 4 after removal
+        if (this.choices.length < 4) {
+            while (this.choices.length < 4) {
+                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        } else if (this.choices.length % 2 !== 0) {
+            // If odd after removal, remove one more to make it even, or add if it's below 4
+            if (this.choices.length > 4) {
+                this.choices.splice(this.choices.length - 1, 1);
+            } else {
+                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        }
+        // Re-assign default labels if choices are within the initial Likert scale range
+        this.choices.forEach((choice, i) => {
+            if (i < defaultLabels.length) {
+                choice.label = defaultLabels[i];
+            }
+        });
     }
 
     updatePilihan(index: number, value: any, type: string): void {

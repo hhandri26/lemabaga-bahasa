@@ -143,23 +143,12 @@
                                             </mat-form-field>
                                         </div>
                                         <div class="mt-4">
-                                            <div class="fuse-mat-no-subscript w-full">
-                                                <mat-label>Sertifikat <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
-                                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf"
-                                                    (change)="onFileInput($event)" style="display:none;" />
-                                                <div class="flex flex-auto items-start">
-                                                    <div class="flex items-center justify-start w-full mx-auto">
-                                                        <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'"
-                                                            (click)="fileEditDocument.click()">Unggah
-                                                            Sertifikat</button>
-                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'"
-                                                            (click)="toggleOnFileInputed(false)">
-                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
-                                                        </button>
-                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
-                                                    </div>
-                                                </div>
-                                            </div>
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Sertifikat</mat-label>
+                                                <mat-select [formControlName]="'sertifikatId'">
+                                                    <mat-option *ngFor="let item of sertifikatHistory$ | async" [value]="item.id">{{item.certificateNumber}}</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
                                         </div>
                                     </form>
                                 </div>
@@ -243,7 +232,7 @@
                                             <button *ngIf="selected.dokumenId" class="px-3" mat-button (click)="togglePrint(selected.dokumenId)">
                                                 <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
                                                 </mat-icon>
-                                                <span>Unduh</span>
+                                                <span>{{selected.titleCertificate}}</span>
                                             </button>
                                             <div *ngIf="!selected.dokumenId">-</div>
                                         </div>
@@ -337,23 +326,12 @@
     </mat-form-field>
 </div>
                                     <div class="mt-4">
-                                        <div class="fuse-mat-no-subscript w-full">
-                                            <mat-label>Sertifikat <i>(PDF, Maksimal ukuran 1 MB)</i></mat-label>
-                                            <input #fileInputDocument type="file" (click)="fileInputDocument.value = null" accept="application/pdf"
-                                                (change)="onFileInput($event)" style="display:none;" />
-                                            <div class="flex flex-auto items-start">
-                                                <div class="flex items-center justify-start w-full mx-auto">
-                                                    <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'"
-                                                        (click)="fileInputDocument.click()">Unggah
-                                                        Sertifikat</button>
-                                                    <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'"
-                                                        (click)="toggleOnFileInputed(false)">
-                                                        <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
-                                                    </button>
-                                                    <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
-                                                </div>
-                                            </div>
-                                        </div>
+                                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                                            <mat-label>Sertifikat</mat-label>
+                                            <mat-select [formControlName]="'sertifikatId'">
+                                                <mat-option *ngFor="let item of sertifikatHistory$ | async" [value]="item.id">{{item.titleCertificate}}</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
                                     </div>
                                     </ng-container>
                                 </form>
@@ -365,3 +343,20 @@
         </div>
     </div>
 </ng-template>
+
+<!-- Hidden area for PDF generation -->
+<div #hiddenCertificateForPdf style="position: absolute; left: -99999px;" *ngIf="certificateToGenerate">
+  <div class="certificate-bg download-mode">
+    <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
+    <div class="certificate-content">
+        <div class="nomor-sertifikat">No: {{ certificateToGenerate.certificateNumber }}</div>
+        <div class="nama">{{ certificateToGenerate.nama }}</div>
+        <div class="peserta">atas partisipasinya sebagai Peserta</div>
+        <div class="judul">{{ certificateToGenerate.titleCertificate }}</div>
+        <div class="subjudul">"{{ certificateToGenerate.subtitleCertificate }}"</div>
+        <div class="keterangan">
+          yang diselenggarakan pada {{ formatDate(certificateToGenerate.dateCertificate) }} di {{ certificateToGenerate.placeCertificate }} meliputi {{ certificateToGenerate.studyHours }} Jam Pelajaran
+        </div>
+    </div>
+  </div>
+</div>

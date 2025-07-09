@@ -7,3 +7,32 @@
 
 // regular style toast
 @import 'ngx-toastr/toastr';
+
+/* Certificate Styles for PDF Generation */
+.certificate-bg {
+  position: relative;
+  margin: auto;
+  img {
+    display: block;
+  }
+  .certificate-content {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    font-family: 'TT Chocolates';
+    text-align: center;
+    color: #1D3553; // Dark Blue
+  }
+}
+
+.certificate-bg.download-mode {
+  width: 4000px;
+  height: 2828px;
+  img { width: 4000px; height: 2828px; }
+
+  .nomor-sertifikat { position: absolute; top: 28px; right: 240px; font-size: 72px; }
+  .nama { position: absolute; top: 860px; left: 0; right: 0; font-family: 'Pinyon Script', cursive; font-size: 280px; color: #865300; }
+  .peserta { position: absolute; top: 1320px; left: 0; right: 0; font-size: 88px; }
+  .judul { position: absolute; text-transform: uppercase; top: 1452px; left: 0; right: 0; font-size: 120px; font-weight: bold; }
+  .subjudul { position: absolute; top: 1640px; left: 0; right: 0; font-size: 96px; font-weight: bold; font-style: italic; }
+  .keterangan { position: absolute; top: 1800px; left: 0; right: 0; font-size: 88px; }
+}

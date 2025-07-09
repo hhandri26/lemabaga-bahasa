@@ -18,202 +18,210 @@
                         </div>
                     </div>
 
-                    <!-- Main actions -->
-                    <form [formGroup]="form">
-                        <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
-                            <!-- Column Selector -->
-                            <div class="flex-auto">
-                                <mat-form-field class="fuse-mat-no-subscript w-full">
-                                    <mat-label>Pilih Kolom</mat-label>
-                                    <mat-select [matMenuTriggerFor]="columnMenu">
-                                        <mat-select-trigger>
-                                            <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:view-columns'"></mat-icon>
-                                            Pilih Kolom
-                                        </mat-select-trigger>
-                                    </mat-select>
-                                </mat-form-field>
-                                <mat-menu #columnMenu="matMenu" class="p-4">
-                                    <div class="p-2" (click)="$event.stopPropagation()">
-                                        <div class="mb-2">
-                                            <mat-checkbox (change)="toggleAllColumns($event.checked)" [checked]="false">
-                                                Pilih Semua
-                                            </mat-checkbox>
-                                        </div>
-                                        <mat-divider></mat-divider>
-                                        <div class="grid grid-cols-2 gap-2 mt-2">
-                                            <div *ngFor="let column of columnList">
-                                                <mat-checkbox 
-                                                    [checked]="displayedColumns[column.id]"
-                                                    (change)="toggleColumn(column.id)">
-                                                    {{column.label}}
-                                                </mat-checkbox>
-                                            </div>
-                                        </div>
+                    <!-- Column Selector -->
+                    <div class="mr-4" style="width: 150px;">
+                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                            <mat-label>Pilih Kolom</mat-label>
+                            <mat-select [matMenuTriggerFor]="columnMenu">
+                                <mat-select-trigger>
+                                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:view-columns'"></mat-icon>
+                                    Pilih Kolom
+                                </mat-select-trigger>
+                            </mat-select>
+                        </mat-form-field>
+                        <mat-menu #columnMenu="matMenu" class="p-4">
+                            <div class="p-2" (click)="$event.stopPropagation()">
+                                <div class="mb-2">
+                                    <mat-checkbox (change)="toggleAllColumns($event.checked)" [checked]="false">
+                                        Pilih Semua
+                                    </mat-checkbox>
+                                </div>
+                                <mat-divider></mat-divider>
+                                <div class="grid grid-cols-2 gap-2 mt-2">
+                                    <div *ngFor="let column of columnList">
+                                        <mat-checkbox
+                                            [checked]="displayedColumns[column.id]"
+                                            (change)="toggleColumn(column.id)">
+                                            {{column.label}}
+                                        </mat-checkbox>
                                     </div>
-                                </mat-menu>
+                                </div>
                             </div>
-                            <!-- Search -->
-                            <div class="flex-auto ml-4">
-                                <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-full min-w-50">
-                                    <mat-label>Nama</mat-label>
-                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'">
-                                    </mat-icon>
-                                    <input matInput [formControlName]="'byNama'" [autocomplete]="'off'" [placeholder]="'Cari nama'" />
-                                </mat-form-field>
-                            </div>
-                            <div class="flex-auto ml-4">
-                                <mat-form-field class="fuse-mat-no-subscript w-full">
-                                    <mat-label>Instansi</mat-label>
-                                    <mat-select [formControlName]="'byInstansi'">
-                                        <mat-option value="">-- Semua Instansi --</mat-option>
-                                        <ng-container *ngFor="let item of instansi$ | async; trackBy: trackByFn">
-                                            <mat-option [value]="item.id">
-                                                {{item.nama | titlecase}}
-                                            </mat-option>
-                                        </ng-container>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                            <div class="flex-auto ml-4">
-                                <mat-form-field class="fuse-mat-no-subscript w-full">
-                                    <mat-label>Provinsi</mat-label>
-                                    <mat-select [formControlName]="'byProvAlamatKantor'">
-                                        <mat-option value="">-- Semua Provinsi --</mat-option>
-                                        <ng-container *ngFor="let item of provinsi$ | async; trackBy: trackByFn">
-                                            <mat-option [value]="item.id">
-                                                {{item.nama | titlecase}}
-                                            </mat-option>
-                                        </ng-container>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-                            <div class="flex-auto ml-4">
-                                <mat-list-item class="" role="listitem" *ngIf="bahasaList | async as _bahasaList">
-                                    <mat-form-field class="fuse-mat-no-subscript w-full">
-                                        <mat-label>Bahasa</mat-label>
-                                        <mat-select [formControlName]="'byBahasa'" placeholder="Bahasa" multiple>
-                                            <mat-option *ngFor="let bahasa of _bahasaList" [value]="bahasa">
-                                                {{bahasa.nama}}
-                                            </mat-option>
-                                        </mat-select>
-                                    </mat-form-field>
-                                </mat-list-item>
-                            </div>
-                            <div class="flex-auto ml-4">
-                                <mat-form-field class="fuse-mat-no-subscript w-full">
-                                    <mat-label>Jabatan</mat-label>
-                                    <mat-select [formControlName]="'byJabatan'">
-                                        <mat-option value="">-- Semua Jenis Jabatan --</mat-option>
-                                        <ng-container *ngFor="let item of jenisJabatan$ | async; trackBy: trackByFn">
-                                            <mat-option [value]="item.id">
-                                                {{item.nama}}
-                                            </mat-option>
-                                        </ng-container>
-                                    </mat-select>
-                                </mat-form-field>
-                            </div>
-<div class="flex-auto ml-4">
-    <mat-form-field class="fuse-mat-no-subscript w-full">
-        <mat-label>Status</mat-label>
-        <mat-select [formControlName]="'byIsAktif'" placeholder="Status">
-            <mat-option [value]="null">Semua</mat-option> <!-- Menambahkan opsi untuk semua -->
-            <mat-option [value]="true">Enabled</mat-option>
-            <mat-option [value]="false">Disabled</mat-option>
-        </mat-select>
-    </mat-form-field>
-</div>
+                        </mat-menu>
+                    </div>
 
-            <!-- Add a button to toggle the filter visibility -->
-            <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" mat-button (click)="toggleFilterVisibility()">
-                <span class="ml-2 mr-1">Pelatihan Filter</span> 
-            </button>
-            
-            <!-- Conditionally display the Pelatihan filter fields -->
-            <div *ngIf="showPelatihanFilter">
-                <div class="flex-auto ml-4">
-                    <mat-form-field class="fuse-mat-no-subscript w-full">
-                        <mat-label>Pelatihan</mat-label>
-                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                        <input matInput [formControlName]="'bynamaPelatihan'" [autocomplete]="'off'"
-                            [placeholder]="'Cari Nama Pelatihan'" />
-                    </mat-form-field>
-                </div>
-<div class="flex-auto ml-4">
-    <mat-form-field class="fuse-mat-no-subscript w-full">
-        <mat-label>Tahun</mat-label>
-        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-        <input matInput [formControlName]="'byTahunPelatihan'" [autocomplete]="'off'"
-            [placeholder]="'Cari Tahun (misal: 2002-2004)'" (input)="onYearInput($event)" />
-    </mat-form-field>
-</div>
-
-                <div class="flex-auto ml-4">
-                    <mat-form-field class="fuse-mat-no-subscript w-full">
-                        <mat-label>Peringkat Pelatihan</mat-label>
-                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                        <input matInput [formControlName]="'byPeringkatPelatihan'" [autocomplete]="'off'"
-                            [placeholder]="'Peringkat Pelatihan'" />
-                    </mat-form-field>
-                </div>
-                <div class="flex-auto ml-4">
-                    <mat-form-field class="fuse-mat-no-subscript w-full">
-                        <mat-label>Predikat Pelatihan</mat-label>
-                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                        <input matInput [formControlName]="'byPredikatPelatihan'" [autocomplete]="'off'"
-                            [placeholder]="'Predikat Pelatihan'" />
-                    </mat-form-field>
-                </div>
-            </div>
-
-
-                            <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="toggleSearch()">
-                                <span class="ml-2 mr-1">Cari</span>
-                            </button>
-                            <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="togglePrint()">Cetak</button>
-                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="toggleButtons()"
+                    <!-- Main actions -->
+                    <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
+                        <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="toggleSearch()">
+                            <span class="ml-2 mr-1">Cari</span>
+                        </button>
+                        <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="togglePrint()">Cetak</button>
+                        <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="toggleButtons()"
+                            style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
+                            <mat-icon [svgIcon]="showButtons ? '':'heroicons_outline:plus' "></mat-icon>
+                            <span class="ml-2 mr-1">{{ showButtons ? 'Sembunyi' : 'Tambah Pengguna' }}</span>
+                        </button>
+                        <div *ngIf="showButtons"
+                            style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); animation: fadeIn 0.5s ease-in-out;">
+                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="create()"
                                 style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
-                                <mat-icon [svgIcon]="showButtons ? '':'heroicons_outline:plus' "></mat-icon>
-                                <span class="ml-2 mr-1">{{ showButtons ? 'Sembunyi' : 'Tambah Pengguna' }}</span>
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                <span class="ml-2 mr-1">Penerjemah</span>
                             </button>
-                            <div *ngIf="showButtons"
-                                style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); animation: fadeIn 0.5s ease-in-out;">
-                                <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="create()"
-                                    style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
-                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                                    <span class="ml-2 mr-1">Penerjemah</span>
-                                </button>
-                                <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createadmin()"
-                                    style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
-                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                                    <span class="ml-2 mr-1">Admin</span>
-                                </button>
-                                <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createkepegawaian()"
-                                    style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
-                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                                    <span class="ml-2 mr-1">Kepegawaian</span>
-                                </button>
-                                <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createasesor()"
-                                    style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
-                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                                    <span class="ml-2 mr-1">Asesor</span>
-                                </button>
-                                <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createpengajar()"
-                                    style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
-                                    <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                                    <span class="ml-2 mr-1">Pengajar</span>
-                                </button>
-                            </div>
+                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createadmin()"
+                                style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                <span class="ml-2 mr-1">Admin</span>
+                            </button>
+                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createkepegawaian()"
+                                style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                <span class="ml-2 mr-1">Kepegawaian</span>
+                            </button>
+                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createasesor()"
+                                style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                <span class="ml-2 mr-1">Asesor</span>
+                            </button>
+                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createpengajar()"
+                                style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                <span class="ml-2 mr-1">Pengajar</span>
+                            </button>
                         </div>
-                    </form>
+                    </div>
                 </div>
 
                 <!-- Contacts Table -->
                 <div class="relative">
                     <!-- Table -->
-                    <ng-container *ngIf="displayJfpItems$ | async as items"> <!-- Changed to displayJfpItems$ -->
+                    <ng-container *ngIf="displayJfpItems$ | async as items">
                         <ng-container *ngIf="items.length; else noItems">
-                            <table class="table-auto w-full text-left border-collapse">
+                            <table class="table-auto w-full text-left border-collapse" [formGroup]="form"> <!-- Moved formGroup here -->
                                 <thead>
+                                    <tr class="filter-row border-b"> <!-- New row for filters -->
+                                        <td class="border-r" *ngIf="displayedColumns['foto']"></td>
+                                        <td class="border-r" *ngIf="displayedColumns['nama']">
+                                            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                <input matInput [formControlName]="'byNama'" [autocomplete]="'off'" [placeholder]="'Cari nama'" />
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="border-r" *ngIf="displayedColumns['instansi']">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                <mat-select [formControlName]="'byInstansi'">
+                                                    <mat-option value="">-- Semua Instansi --</mat-option>
+                                                    <ng-container *ngFor="let item of instansi$ | async; trackBy: trackByFn">
+                                                        <mat-option [value]="item.id">
+                                                            {{item.nama | titlecase}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="border-r" *ngIf="displayedColumns['provAlamatKantor']">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                <mat-select [formControlName]="'byProvAlamatKantor'">
+                                                    <mat-option value="">-- Semua Provinsi --</mat-option>
+                                                    <ng-container *ngFor="let item of provinsi$ | async; trackBy: trackByFn">
+                                                        <mat-option [value]="item.id">
+                                                            {{item.nama | titlecase}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="border-r" *ngIf="displayedColumns['jabatan']">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                <mat-select [formControlName]="'byJabatan'">
+                                                    <mat-option value="">-- Semua Jenis Jabatan --</mat-option>
+                                                    <ng-container *ngFor="let item of jenisJabatan$ | async; trackBy: trackByFn">
+                                                        <mat-option [value]="item.id">
+                                                            {{item.nama}}
+                                                        </mat-option>
+                                                    </ng-container>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="border-r" *ngIf="displayedColumns['statusAkun']">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                <mat-select [formControlName]="'byIsAktif'" placeholder="Status">
+                                                    <mat-option [value]="null">Semua</mat-option>
+                                                    <mat-option [value]="true">Enabled</mat-option>
+                                                    <mat-option [value]="false">Disabled</mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="border-r" *ngIf="displayedColumns['bahasa']">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" *ngIf="bahasaList | async as _bahasaList" style="padding: 0px !important; margin: 0px !important;">
+                                                <mat-select [formControlName]="'byBahasa'" placeholder="Bahasa" multiple>
+                                                    <mat-option *ngFor="let bahasa of _bahasaList" [value]="bahasa">
+                                                        {{bahasa.nama}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </td>
+                                        <td class="border-r" *ngIf="displayedColumns['pelatihan']">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pelatihanFilterMenu">
+                                                <mat-select placeholder="Pelatihan"></mat-select>
+                                            </mat-form-field>
+                                            <mat-menu #pelatihanFilterMenu="matMenu" class="p-4">
+                                                <div class="p-2" (click)="$event.stopPropagation()">
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'bynamaPelatihan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Nama Pelatihan'" />
+                                                    </mat-form-field>
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'byTahunPelatihan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Tahun Pelatihan'" (input)="onYearInput($event)" />
+                                                    </mat-form-field>
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'byPeringkatPelatihan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Peringkat Pelatihan'" />
+                                                    </mat-form-field>
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'byPredikatPelatihan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Predikat Pelatihan'" />
+                                                    </mat-form-field>
+                                                </div>
+                                            </mat-menu>
+                                        </td>
+                                        <td class="border-r" *ngIf="displayedColumns['ujiKompetensi']"></td>
+                                        <td class="border-r" *ngIf="displayedColumns['angkaKredit']"></td>
+                                        <td class="" *ngIf="displayedColumns['pendidikan']">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pendidikanFilterMenu">
+                                                <mat-select placeholder="Pendidikan"></mat-select>
+                                            </mat-form-field>
+                                            <mat-menu #pendidikanFilterMenu="matMenu" class="p-4">
+                                                <div class="p-2" (click)="$event.stopPropagation()">
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'byPendidikan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Tingkat Pendidikan'" />
+                                                    </mat-form-field>
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'byNamaSekolahPendidikan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Nama Pendidikan'" />
+                                                    </mat-form-field>
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'byJurusanPendidikan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Jurusan'" />
+                                                    </mat-form-field>
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                        <input matInput [formControlName]="'byTahunLulusPendidikan'" [autocomplete]="'off'"
+                                                            [placeholder]="'Tahun Lulus'" />
+                                                    </mat-form-field>
+                                                </div>
+                                            </mat-menu>
+                                        </td>
+                                    </tr>
                                     <tr class="border-b">
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">Foto</th>
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">Nama</th>
@@ -247,7 +255,7 @@
                                             </td>
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">{{ item.nama | titlecase }}</td>
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">{{ item.instansiNama | titlecase }}</td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">{{ item.provinsiNama | titlecase }}</td> <!-- Changed to provinsiNama -->
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">{{ item.provinsiNama | titlecase }}</td>
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">{{ item.jabatanNama| titlecase }}</td>
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">
                                                 <div [style.background-color]="item.isAktif ? '#4caf50' : '#f44336'" [style.color]="'white'"
@@ -299,17 +307,17 @@
                                 </tbody>
                             </table>
 
-                            <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent" 
-                                [ngClass]="{'pointer-events-none': isLoading}" 
-                                [length]="pagination.recordsTotal" 
-                                [pageIndex]="(pagination.draw)" 
+                            <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                                [ngClass]="{'pointer-events-none': isLoading}"
+                                [length]="pagination.recordsTotal"
+                                [pageIndex]="(pagination.draw)"
                                 [pageSize]="pagination.perPage"
-                                [pageSizeOptions]="[10, 50, 100, 250, 500]" 
-                                [showFirstLastButtons]="true" 
+                                [pageSizeOptions]="[10, 50, 100, 250, 500]"
+                                [showFirstLastButtons]="true"
                                 (page)="pageEvent($event)">
                             </mat-paginator>
                         </ng-container>
-                
+
                         <!-- No contacts -->
                         <ng-template #noItems>
                             <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">

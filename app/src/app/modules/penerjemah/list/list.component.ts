@@ -87,9 +87,13 @@ showButtons = false;
             byPeringkatPelatihan: [''],
             byJp: [''],
             byPredikatPelatihan: [''],
+            byPendidikan: [''],
+            byNamaSekolahPendidikan: [''],
+            byJurusanPendidikan: [''],
+            byTahunLulusPendidikan: [''],
         });
 
-        // // Subscribe to form value changes
+        // Subscribe to form value changes
         // merge(
         //     this.form.get('byProvAlamatKantor').valueChanges,
         //     this.form.get('byNama').valueChanges,
@@ -101,7 +105,11 @@ showButtons = false;
         //     this.form.get('byTahunPelatihan').valueChanges,
         //     this.form.get('byPeringkatPelatihan').valueChanges,
         //     this.form.get('byJp').valueChanges,
-        //     this.form.get('byPredikatPelatihan').valueChanges
+        //     this.form.get('byPredikatPelatihan').valueChanges,
+        //     this.form.get('byPendidikan').valueChanges,
+        //     this.form.get('byNamaSekolahPendidikan').valueChanges,
+        //     this.form.get('byJurusanPendidikan').valueChanges,
+        //     this.form.get('byTahunLulusPendidikan').valueChanges
         // ).pipe(
         //     debounceTime(300),
         //     takeUntil(this._unsubscribeAll)
@@ -263,6 +271,10 @@ onYearInput(event: any): void {
         search.byPeringkatPelatihan = search.byPeringkatPelatihan || null;
         search.byJp = search.byJp || null;
         search.byPredikatPelatihan = search.byPredikatPelatihan || null;
+        search.byPendidikan = search.byPendidikan || null;
+        search.byNamaSekolahPendidikan = search.byNamaSekolahPendidikan || null;
+        search.byJurusanPendidikan = search.byJurusanPendidikan || null;
+        search.byTahunLulusPendidikan = search.byTahunLulusPendidikan || null;
 
         console.log('Search params:', search);  // Add logging to debug search parameters
 

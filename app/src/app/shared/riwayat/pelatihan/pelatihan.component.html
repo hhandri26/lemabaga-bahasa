@@ -329,7 +329,7 @@
                                         <mat-form-field class="fuse-mat-no-subscript w-full">
                                             <mat-label>Sertifikat</mat-label>
                                             <mat-select [formControlName]="'sertifikatId'">
-                                                <mat-option *ngFor="let item of sertifikatHistory$ | async" [value]="item.id">{{item.titleCertificate}}</mat-option>
+                                                <mat-option *ngFor="let item of sertifikatHistory$ | async" [value]="item.id">{{item.certificateNumber}}</mat-option>
                                             </mat-select>
                                         </mat-form-field>
                                     </div>

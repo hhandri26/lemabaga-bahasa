@@ -9,9 +9,13 @@ import { HelperService } from 'app/services/helper.service';
 import { PenerjemahService } from 'app/services/penerjemah.service';
 import { DATE_FORMATS, ReferensiService } from 'app/services/referensi.service';
 import moment from 'moment';
-import { ToastrService } from 'ngx-toastr';
 import { Subject, takeUntil } from 'rxjs';
-import { Observable } from 'rxjs/internal/Observable';
+import { Observable, of } from 'rxjs'; // Import of for fallback observable
+import { switchMap, take } from 'rxjs/operators'; // Import switchMap and take
+import { CertificateHistoryService } from 'app/modules/survey-kuisoner/sertifikat/history/certificate-history.service';
+import { PdfGenerationService } from 'app/services/pdf-generation.service';
+import { ViewChild, ElementRef } from '@angular/core';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
     selector: 'app-uji-kompetensi',
@@ -29,12 +33,17 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
     selected: any | null = null;
     editMode: boolean = false;
     insertMode: boolean = false;
-    onFileInputed: boolean = false;
+    // onFileInputed: boolean = false; // Removed
     form: FormGroup;
     jenisGolongan$: Observable<any[]> = this._referensiService.golongan();
     jenisJabatan$: Observable<any[]> = this._referensiService.jabatan();
     tahun = this._referensiService.tahun();
     lulus = this._referensiService.lulus();
+    sertifikatHistory$: Observable<any[]>; // New property for certificate history
+    certificateToGenerate: any | null = null; // New property for certificate data for PDF generation
+
+    @ViewChild('hiddenCertificateForPdf', { static: false }) hiddenCertificateForPdf!: ElementRef;
+
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
     constructor(
@@ -45,7 +54,9 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
         private _formBuilder: FormBuilder,
         private _toastr: ToastrService,
         private _authService: AuthService,
-        private _userService: UserService
+        private _userService: UserService,
+        private _certificateHistoryService: CertificateHistoryService,
+        private _pdfGenerationService: PdfGenerationService
     ) { }
 
     ngOnInit(): void {
@@ -60,7 +71,8 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
             nilai: [null, Validators.required],
             evaluasi: [null, Validators.required],
             rekomendasi: [null, Validators.required],
-            file: [null, Validators.required]
+            // file: [null, Validators.required] // Removed
+            sertifikatId: [null, Validators.required] // New form control for sertifikat ID
         });
 
         this.loadData();
@@ -72,11 +84,29 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
                 .pipe(takeUntil(this._unsubscribeAll))
                 .subscribe((item: any) => {
                     this.pnsId = item.id;
+                    // Fetch sertifikat history for admin
+                    this._certificateHistoryService.getAllCertificates().pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
+                        this.sertifikatHistory$ = new Observable(observer => {
+                            observer.next(response.mapData.certificate);
+                            observer.complete();
+                        });
+                        this._changeDetectorRef.markForCheck();
+                    });
                     this._changeDetectorRef.markForCheck();
                 });
         } else {
             this._userService.user$.pipe(takeUntil(this._unsubscribeAll)).subscribe((user: any) => {
                 this.pnsId = user.pnsId;
+                // Fetch sertifikat history for regular user
+                if (user.email) {
+                    this._certificateHistoryService.getCertificates(user.email).pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
+                        this.sertifikatHistory$ = new Observable(observer => {
+                            observer.next(response.mapData.certificate);
+                            observer.complete();
+                        });
+                        this._changeDetectorRef.markForCheck();
+                    });
+                }
                 this._changeDetectorRef.markForCheck();
             });
         }
@@ -116,35 +146,95 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
         });
     }
 
-    onFileInput(event) {
-        const response = this._referensiService.onFileInputSingle(event, 'application/pdf', 2000);
-        if (!response.isSuccess) {
-            this._toastr.error(response.msg, 'ERROR');
-            return false;
-        }
-        this.onFileInputed = true;
-        (document.getElementById('fileDokumen') as HTMLElement).innerText = response.fileInfo.name;
-        this.form.get('file').setValue(event.target.files[0]);
-        return true;
-    }
+    // onFileInput(event) { // Removed
+    //     const response = this._referensiService.onFileInputSingle(event, 'application/pdf', 2000);
+    //     if (!response.isSuccess) {
+    //         this._toastr.error(response.msg, 'ERROR');
+    //         return false;
+    //     }
+    //     this.onFileInputed = true;
+    //     (document.getElementById('fileDokumen') as HTMLElement).innerText = response.fileInfo.name;
+    //     this.form.get('file').setValue(event.target.files[0]);
+    //     return true;
+    // }
 
     insert(): void {
         const formInput: any = this.form.getRawValue();
-        const body = new FormData();
-        body.append('pnsId', this.pnsId);
-        if (formInput.golonganId) { body.append('golonganId', formInput.golonganId); }
-        if (formInput.isLulus) { body.append('isLulus', formInput.isLulus); }
-        if (formInput.jabatanId) { body.append('jabatanId', formInput.jabatanId); }
-        if (formInput.tglSk) { body.append('tglSk', moment(formInput.tglSk).format('DD-MM-YYYY')); }
-        if (formInput.noSk) { body.append('noSk', formInput.noSk); }
-        if (formInput.tahun) { body.append('tahun', formInput.tahun); }
-        if (formInput.jenisUjikom) { body.append('jenisUjikom', formInput.jenisUjikom); }
-        if (formInput.evaluasi) { body.append('evaluasi', formInput.evaluasi); }
-        if (formInput.nilai) { body.append('nilai', formInput.nilai); }
-        if (formInput.rekomendasi) { body.append('rekomendasi', formInput.rekomendasi);  }
-        if (formInput.file) { body.append('file', formInput.file); }
+        const sertifikatId = formInput.sertifikatId;
 
-        this._penerjemahService.saveRwUjiKompetensi(body).subscribe(
+        let saveObservable: Observable<any>;
+
+        if (sertifikatId) {
+            saveObservable = this._certificateHistoryService.getCertificateById(sertifikatId).pipe(
+                take(1),
+                switchMap((response: any) => {
+                    if (response.success && response.mapData && response.mapData.certificate) {
+                        this.certificateToGenerate = response.mapData.certificate;
+                        this._changeDetectorRef.detectChanges(); // Ensure the hidden div is rendered
+
+                        return new Observable<Blob>(observer => {
+                            // A small delay to ensure the DOM is ready for html2canvas
+                            setTimeout(() => {
+                                const hiddenEl = this.hiddenCertificateForPdf.nativeElement.querySelector('.certificate-bg.download-mode');
+                                if (hiddenEl) {
+                                    this._pdfGenerationService.generatePdfFromHtml(hiddenEl, `sertifikat_${sertifikatId}.pdf`).subscribe({
+                                        next: (blob) => observer.next(blob),
+                                        error: (err) => observer.error(err),
+                                        complete: () => observer.complete()
+                                    });
+                                } else {
+                                    observer.error('Hidden certificate element not found for PDF generation.');
+                                }
+                            }, 100); // Small delay
+                        }).pipe(
+                            switchMap((pdfBlob: Blob) => {
+                                const fileName = `sertifikat_${sertifikatId}.pdf`;
+                                const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+                                const body = new FormData();
+                                body.append('pnsId', this.pnsId);
+                                if (formInput.golonganId) { body.append('golonganId', formInput.golonganId); }
+                                if (formInput.isLulus) { body.append('isLulus', formInput.isLulus); }
+                                if (formInput.jabatanId) { body.append('jabatanId', formInput.jabatanId); }
+                                if (formInput.tglSk) { body.append('tglSk', moment(formInput.tglSk).format('DD-MM-YYYY')); }
+                                if (formInput.noSk) { body.append('noSk', formInput.noSk); }
+                                if (formInput.tahun) { body.append('tahun', formInput.tahun); }
+                                if (formInput.jenisUjikom) { body.append('jenisUjikom', formInput.jenisUjikom); }
+                                if (formInput.evaluasi) { body.append('evaluasi', formInput.evaluasi); }
+                                if (formInput.nilai) { body.append('nilai', formInput.nilai); }
+                                if (formInput.rekomendasi) { body.append('rekomendasi', formInput.rekomendasi); }
+                                body.append('file', file, fileName);
+
+                                // Reset certificateToGenerate after use
+                                this.certificateToGenerate = null;
+                                this._changeDetectorRef.detectChanges();
+
+                                return this._penerjemahService.saveRwUjiKompetensi(body);
+                            })
+                        );
+                    } else {
+                        return of({ success: false, message: 'Certificate data not found.' });
+                    }
+                })
+            );
+        } else {
+            const body = new FormData();
+            body.append('pnsId', this.pnsId);
+            if (formInput.golonganId) { body.append('golonganId', formInput.golonganId); }
+            if (formInput.isLulus) { body.append('isLulus', formInput.isLulus); }
+            if (formInput.jabatanId) { body.append('jabatanId', formInput.jabatanId); }
+            if (formInput.tglSk) { body.append('tglSk', moment(formInput.tglSk).format('DD-MM-YYYY')); }
+            if (formInput.noSk) { body.append('noSk', formInput.noSk); }
+            if (formInput.tahun) { body.append('tahun', formInput.tahun); }
+            if (formInput.jenisUjikom) { body.append('jenisUjikom', formInput.jenisUjikom); }
+            if (formInput.evaluasi) { body.append('evaluasi', formInput.evaluasi); }
+            if (formInput.nilai) { body.append('nilai', formInput.nilai); }
+            if (formInput.rekomendasi) { body.append('rekomendasi', formInput.rekomendasi); }
+
+            saveObservable = this._penerjemahService.saveRwUjiKompetensi(body);
+        }
+
+        saveObservable.subscribe(
             (result) => {
                 if (result?.success) {
                     this._toastr.success('Selanjutnya usulan Anda akan diverifikasi oleh Admin', 'Usulan Tambah Berhasil');
@@ -155,6 +245,10 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
                 } else {
                     this._toastr.error(result?.message, 'ERROR');
                 }
+            },
+            (error) => {
+                this._toastr.error('Failed to process request', 'ERROR');
+                console.error(error);
             }
         );
     }
@@ -176,22 +270,82 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
 
     update(): void {
         const formInput: any = this.form.getRawValue();
-        const body = new FormData();
-        body.append('pnsId', this.pnsId);
-        body.append('id', this.selected.id);
-        if (formInput.golonganId) { body.append('golonganId', formInput.golonganId); }
-        if (formInput.isLulus) { body.append('isLulus', formInput.isLulus); }
-        if (formInput.jabatanId) { body.append('jabatanId', formInput.jabatanId); }
-        if (formInput.tglSk) { body.append('tglSk', moment(formInput.tglSk).format('DD-MM-YYYY')); }
-        if (formInput.noSk) { body.append('noSk', formInput.noSk); }
-        if (formInput.tahun) { body.append('tahun', formInput.tahun); }
-        if (formInput.jenisUjikom) { body.append('jenisUjikom', formInput.jenisUjikom); }
-        if (formInput.evaluasi) { body.append('evaluasi', formInput.evaluasi); }
-        if (formInput.nilai) { body.append('nilai', formInput.nilai); }
-        if (formInput.rekomendasi) { body.append('rekomendasi', formInput.rekomendasi);  }
-        if (formInput.file) { body.append('file', formInput.file); }
+        const sertifikatId = formInput.sertifikatId;
 
-        this._penerjemahService.saveRwUjiKompetensi(body).subscribe(
+        let updateObservable: Observable<any>;
+
+        if (sertifikatId) {
+            updateObservable = this._certificateHistoryService.getCertificateById(sertifikatId).pipe(
+                take(1),
+                switchMap((response: any) => {
+                    if (response.success && response.mapData && response.mapData.certificate) {
+                        this.certificateToGenerate = response.mapData.certificate;
+                        this._changeDetectorRef.detectChanges(); // Ensure the hidden div is rendered
+
+                        return new Observable<Blob>(observer => {
+                            setTimeout(() => {
+                                const hiddenEl = this.hiddenCertificateForPdf.nativeElement.querySelector('.certificate-bg.download-mode');
+                                if (hiddenEl) {
+                                    this._pdfGenerationService.generatePdfFromHtml(hiddenEl, `sertifikat_${sertifikatId}.pdf`).subscribe({
+                                        next: (blob) => observer.next(blob),
+                                        error: (err) => observer.error(err),
+                                        complete: () => observer.complete()
+                                    });
+                                } else {
+                                    observer.error('Hidden certificate element not found for PDF generation.');
+                                }
+                            }, 100); // Small delay
+                        }).pipe(
+                            switchMap((pdfBlob: Blob) => {
+                                const fileName = `sertifikat_${sertifikatId}.pdf`;
+                                const file = new File([pdfBlob], fileName, { type: 'application/pdf' });
+
+                                const body = new FormData();
+                                body.append('pnsId', this.pnsId);
+                                body.append('id', this.selected.id);
+                                if (formInput.golonganId) { body.append('golonganId', formInput.golonganId); }
+                                if (formInput.isLulus) { body.append('isLulus', formInput.isLulus); }
+                                if (formInput.jabatanId) { body.append('jabatanId', formInput.jabatanId); }
+                                if (formInput.tglSk) { body.append('tglSk', moment(formInput.tglSk).format('DD-MM-YYYY')); }
+                                if (formInput.noSk) { body.append('noSk', formInput.noSk); }
+                                if (formInput.tahun) { body.append('tahun', formInput.tahun); }
+                                if (formInput.jenisUjikom) { body.append('jenisUjikom', formInput.jenisUjikom); }
+                                if (formInput.evaluasi) { body.append('evaluasi', formInput.evaluasi); }
+                                if (formInput.nilai) { body.append('nilai', formInput.nilai); }
+                                if (formInput.rekomendasi) { body.append('rekomendasi', formInput.rekomendasi); }
+                                body.append('file', file, fileName);
+
+                                // Reset certificateToGenerate after use
+                                this.certificateToGenerate = null;
+                                this._changeDetectorRef.detectChanges();
+
+                                return this._penerjemahService.saveRwUjiKompetensi(body);
+                            })
+                        );
+                    } else {
+                        return of({ success: false, message: 'Certificate data not found.' });
+                    }
+                })
+            );
+        } else {
+            const body = new FormData();
+            body.append('pnsId', this.pnsId);
+            body.append('id', this.selected.id);
+            if (formInput.golonganId) { body.append('golonganId', formInput.golonganId); }
+            if (formInput.isLulus) { body.append('isLulus', formInput.isLulus); }
+            if (formInput.jabatanId) { body.append('jabatanId', formInput.jabatanId); }
+            if (formInput.tglSk) { body.append('tglSk', moment(formInput.tglSk).format('DD-MM-YYYY')); }
+            if (formInput.noSk) { body.append('noSk', formInput.noSk); }
+            if (formInput.tahun) { body.append('tahun', formInput.tahun); }
+            if (formInput.jenisUjikom) { body.append('jenisUjikom', formInput.jenisUjikom); }
+            if (formInput.evaluasi) { body.append('evaluasi', formInput.evaluasi); }
+            if (formInput.nilai) { body.append('nilai', formInput.nilai); }
+            if (formInput.rekomendasi) { body.append('rekomendasi', formInput.rekomendasi); }
+
+            updateObservable = this._penerjemahService.saveRwUjiKompetensi(body);
+        }
+
+        updateObservable.subscribe(
             (result) => {
                 if (result?.success) {
                     this._toastr.success('Selanjutnya usulan Anda akan diverifikasi oleh Admin', 'Usulan Perubahan Berhasil');
@@ -202,6 +356,10 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
                 } else {
                     this._toastr.error(result?.message, 'ERROR');
                 }
+            },
+            (error) => {
+                this._toastr.error('Failed to process request', 'ERROR');
+                console.error(error);
             }
         );
     }
@@ -214,17 +372,35 @@ export class UjiKompetensiComponent implements OnInit, OnDestroy {
         return item.id || index;
     }
 
-    toggleOnFileInputed(onFileInputed: boolean | null = null): void {
-        if (onFileInputed === null) {
-            this.onFileInputed = !this.onFileInputed;
-        } else {
-            if (!onFileInputed) {
-                this.form.get('file').setValue(null);
-                (document.getElementById('fileDokumen') as HTMLElement).innerText = null;
-            }
-            this.onFileInputed = onFileInputed;
+    // Removed toggleOnFileInputed method
+    // toggleOnFileInputed(onFileInputed: boolean | null = null): void {
+    //     if (onFileInputed === null) {
+    //         this.onFileInputed = !this.onFileInputed;
+    //     } else {
+    //         if (!onFileInputed) {
+    //             this.form.get('file').setValue(null);
+    //             (document.getElementById('fileDokumen') as HTMLElement).innerText = null;
+    //         }
+    //         this.onFileInputed = onFileInputed;
+    //     }
+    //     this._changeDetectorRef.markForCheck();
+    // }
+
+    formatDate(dateArray: number[] | undefined): string {
+        if (!dateArray || dateArray.length < 3) {
+            return '';
         }
-        this._changeDetectorRef.markForCheck();
+        const [year, month, day] = dateArray;
+        const date = new Date(year, month - 1, day);
+        return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+    }
+
+    formatTime(timeArray: number[] | undefined): string {
+        if (!timeArray || timeArray.length < 3) {
+            return '';
+        }
+        const [hour, minute, second] = timeArray;
+        return `${hour < 10 ? '0' + hour : hour}:${minute < 10 ? '0' + minute : minute}:${second < 10 ? '0' + second : second}`;
     }
 
     toggleInsertMode(insertMode: boolean | null = null): void {

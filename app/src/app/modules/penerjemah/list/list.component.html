@@ -210,7 +210,7 @@
                 <!-- Contacts Table -->
                 <div class="relative">
                     <!-- Table -->
-                    <ng-container *ngIf="jfpItems$ | async as items">
+                    <ng-container *ngIf="displayJfpItems$ | async as items"> <!-- Changed to displayJfpItems$ -->
                         <ng-container *ngIf="items.length; else noItems">
                             <table class="table-auto w-full text-left border-collapse">
                                 <thead>
@@ -218,6 +218,7 @@
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">Foto</th>
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">Nama</th>
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">Instansi</th>
+                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">Provinsi</th>
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">Jabatan</th>
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">Status Akun</th>
                                         <th class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">Bahasa</th>
@@ -246,6 +247,7 @@
                                             </td>
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">{{ item.nama | titlecase }}</td>
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">{{ item.instansiNama | titlecase }}</td>
+                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">{{ item.provinsiNama | titlecase }}</td> <!-- Changed to provinsiNama -->
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">{{ item.jabatanNama| titlecase }}</td>
                                             <td class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">
                                                 <div [style.background-color]="item.isAktif ? '#4caf50' : '#f44336'" [style.color]="'white'"

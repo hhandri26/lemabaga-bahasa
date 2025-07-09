@@ -3,7 +3,7 @@ import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormControl, FormGroup, NgModel } from '@angular/forms';
 import { MatDrawer } from '@angular/material/sidenav';
-import { debounceTime, filter, finalize, fromEvent, map, merge, Observable, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { debounceTime, filter, finalize, fromEvent, map, merge, Observable, Subject, switchMap, takeUntil, tap, combineLatest, of } from 'rxjs';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { Pagination, Pegawai } from '../penerjemah.types';
 import { MatPaginator } from '@angular/material/paginator';
@@ -30,7 +30,8 @@ export class PenerjemahListComponent implements OnInit, OnDestroy {
     @Input() debounce: number = 300;
     @Input() minLength: number = 2;
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-    jfpItems$: Observable<Pegawai[]>;
+    // jfpItems$: Observable<Pegawai[]>; // Original jfpItems$ (will be derived from service, not directly used in template after transformation)
+    displayJfpItems$: Observable<any[]>; // New observable for transformed data
     pagination: Pagination;
     isLoading: boolean = false;
     form: FormGroup;
@@ -111,12 +112,32 @@ showButtons = false;
         // Muat data saat komponen dimulai
         this.fetch(0, 10, this.form.getRawValue()).subscribe();
 
-        this.jfpItems$ = this._penerjemahService.jfpItems$;
-        this.jfpItems$.pipe(
+        // Combine jfpItems$ from service with provinsi$ to enrich data
+        this.displayJfpItems$ = combineLatest([
+            this._penerjemahService.jfpItems$,
+            this.provinsi$
+        ]).pipe(
+            map(([jfpItems, provinsiList]) => {
+                return jfpItems.map(item => {
+                    const province = provinsiList.find(prov => prov.id === item.provinsi);
+                    return {
+                        ...item,
+                        provinsiNama: province ? province.nama : '-'
+                    };
+                });
+            }),
             tap((data) => {
-                console.log('Data jfpItems$ diterima: ', data);
-            })
-        ).subscribe();
+                console.log('Transformed jfpItems$ diterima: ', data);
+            }),
+            takeUntil(this._unsubscribeAll)
+        );
+
+        // Removed original subscription to jfpItems$ as it's now transformed into displayJfpItems$
+        // this.jfpItems$.pipe(
+        //     tap((data) => {
+        //         console.log('Data jfpItems$ diterima: ', data);
+        //     })
+        // ).subscribe();
 
         this._penerjemahService.jfpItem$
             .pipe(takeUntil(this._unsubscribeAll))
@@ -284,6 +305,7 @@ onYearInput(event: any): void {
         foto: true,
         nama: true,
         instansi: true,
+        provAlamatKantor: true,
         jabatan: true,
         statusAkun: true,
         bahasa: true,
@@ -297,6 +319,7 @@ onYearInput(event: any): void {
         { id: 'foto', label: 'Foto' },
         { id: 'nama', label: 'Nama' },
         { id: 'instansi', label: 'Instansi' },
+        { id: 'provAlamatKantor', label: 'Provinsi' },
         { id: 'jabatan', label: 'Jabatan' },
         { id: 'statusAkun', label: 'Status Akun' },
         { id: 'bahasa', label: 'Bahasa' },

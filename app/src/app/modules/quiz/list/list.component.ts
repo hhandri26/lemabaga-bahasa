@@ -50,6 +50,7 @@ export class ListComponent implements OnInit, OnDestroy {
 
         ngOnInit(): void {
             this.items$ = this._quizService.items$;
+            this.fetch(true);
         }
 
         ngOnDestroy(): void {
@@ -57,7 +58,8 @@ export class ListComponent implements OnInit, OnDestroy {
             this._unsubscribeAll.complete();
         }
 
-    fetch(isFilter: boolean = false): void {
+    fetch(isFilter: boolean = true): void {
+        this.filters.byType = 'DIKLAT'; 
         if (isFilter) {
             this._quizService.getList(0, 1000, this.filters).pipe(takeUntil(this._unsubscribeAll)).subscribe();
         } else {

@@ -20,6 +20,7 @@
         categories: any[]; // This can be removed if it's not used elsewhere in the component
         items$: Observable<any[]>;
         show;
+        expandedUsedByIds: Set<string> = new Set();
         groupDiklatList = this._referensiService.groupDiklat();
         topicDiklatList = this._referensiService.groupTopic();
         role: string = this._authService.role;
@@ -68,6 +69,14 @@
             }
             this._changeDetectorRef.markForCheck();
         }
+
+        toggleUsedBy(id: string): void {
+            if (this.expandedUsedByIds.has(id)) {
+              this.expandedUsedByIds.delete(id);
+            } else {
+              this.expandedUsedByIds.add(id);
+            }
+          }
 
         toggleCreate(): void {
             const dialogRef = this._matDialog.open(CreateComponent, { autoFocus: false });

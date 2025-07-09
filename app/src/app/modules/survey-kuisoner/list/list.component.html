@@ -45,9 +45,9 @@
                             <fuse-card class="flex flex-col shadow rounded-2xl overflow-hidden bg-card">
                                 <div class="flex items-center mx-3 sm:mx-5 m-6">
                                     <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide"
-                                        [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.surveyType === 'LAYANAN_PEMBINAAN_JFP',
-                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.surveyType === 'PELAKSANAAN_KEGIATAN'}">
-                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.surveyType |
+                                        [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.tipeSurvei?.id === 5,
+                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.tipeSurvei?.id != 5}">
+                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.tipeSurvei?.nama |
                                             titlecase
                                             }}</span>
                                     </div>
@@ -73,6 +73,23 @@
                                         Publish
                                     </mat-slide-toggle> -->
                                 </div>
+                                <ng-container *ngIf="item.usingKuisoner[0]">
+                                    <hr class="my-2" />
+                                    <div class="sm:mx-5 mb-2">
+                                        <div class="text-md text-secondary">Menggunakan Kuisoner :</div>
+                                    </div>
+                                    <div class="flex items-center sm:mx-5 mb-2">
+                                        <div
+                                            class="inline-flex items-end font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700 mr-3">
+                                            <span
+                                                class="leading-relaxed whitespace-nowrap text-sm">{{item.usingKuisoner[0].jenis}}</span>
+                                        </div>
+                                        <div
+                                            class="flex items-center leading-5 ext-1xl font-semibold leading-tight truncate">
+                                            {{item.usingKuisoner[0].name}}
+                                        </div>
+                                    </div>
+                                </ng-container>
                                 <!-- Footer -->
                                 <div class="flex flex-col w-full mt-auto">
                                     <ng-container *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_INSTRUKTUR'">

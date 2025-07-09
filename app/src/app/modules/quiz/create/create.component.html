@@ -9,7 +9,7 @@
     <!-- Card form -->
     <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
         <div class="flex flex-col w-full">
-            <div class="mt-4">
+            <!-- <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Tipe</mat-label>
                     <mat-select [formControlName]="'type'">
@@ -17,7 +17,7 @@
                         <mat-option [value]="'SURVEY'">SURVEY</mat-option>
                     </mat-select>
                 </mat-form-field>
-            </div>
+            </div> -->
             <div class="mt-4" *ngIf="form.get('type').value === 'DIKLAT'">
                 <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 30rem !important;">
                     <mat-label>Jenis DIKLAT/KURSUS</mat-label>
@@ -28,7 +28,7 @@
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div class="mt-4" *ngIf="form.get('type').value === 'SURVEY'">
+            <!-- <div class="mt-4" *ngIf="form.get('type').value === 'SURVEY'">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Tipe Survey</mat-label>
                     <mat-select [formControlName]="'surveyType'">
@@ -36,7 +36,7 @@
                         <mat-option [value]="'PELAKSANAAN_KEGIATAN'">Pelaksanaan Kegiatan</mat-option>
                     </mat-select>
                 </mat-form-field>
-            </div>
+            </div> -->
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Judul</mat-label>

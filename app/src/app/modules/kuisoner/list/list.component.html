@@ -5,7 +5,7 @@
         <div class="flex flex-col flex-auto w-full mx-auto">
             <!-- Filters -->
             <div class="flex flex-col sm:flex-row items-center justify-between w-full max-w-xs sm:max-w-none">
-                <div class="text-2xl font-extrabold tracking-tight leading-none mr-10">Kuisoner</div>
+                <div class="text-2xl font-extrabold tracking-tight leading-none mr-10">Kuesioner</div>
                 <!-- <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72">
                     <mat-select [value]="''" (selectionChange)="filterByGroup($event)">
                         <mat-option [value]="''">-- Semua Jenis DIKLAT --</mat-option>
@@ -50,9 +50,9 @@
                             <fuse-card class="flex flex-col shadow rounded-2xl overflow-hidden bg-card">
                                 <div class="flex items-center mx-3 sm:mx-5 m-6">
                                     <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide"
-                                        [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.type === 'SURVEY',
-                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.type === 'DIKLAT'}">
-                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.type | titlecase
+                                        [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.tipeSurvei?.id === 5,
+                                                    'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.tipeSurvei?.id != 5}">
+                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.tipeSurvei?.nama | titlecase
                                             }}</span>
                                     </div>
                                     <!-- <div
@@ -61,7 +61,7 @@
                                             | titlecase}}</span>
                                     </div> -->
                                 </div>
-                                <div class="flex items-center mb-4">
+                                <!-- <div class="flex items-center mb-4">
                                     <ng-container *ngIf="item.type === 'SURVEY'">
                                         <div
                                             class="inline-flex items-end text-xs px-2.5 py-0.5 tracking-wide text-gray-500 dark:text-gray-300 dark:bg-gray-700 ml-3">
@@ -77,7 +77,7 @@
                                                 | titlecase}}</span>
                                         </div>
                                     </ng-container>
-                                </div>
+                                </div> -->
                                 <div class="sm:mx-5 mb-4">
                                     <div class="text-1xl font-semibold leading-tight">{{item.name}}</div>
                                 </div>
@@ -98,7 +98,7 @@
                                         Publish
                                     </mat-slide-toggle>
                                 </div>
-                                <ng-container *ngIf="item.usedBy[0]">
+                                <!-- <ng-container *ngIf="item.usedBy[0]">
                                     <hr class="my-2" />
                                     <div class="sm:mx-5 mb-2">
                                         <div class="text-md text-secondary">Digunakan pada Survey :</div>
@@ -114,7 +114,34 @@
                                             {{item.usedBy[0].name}}
                                         </div>
                                     </div>
-                                </ng-container>
+                                </ng-container> -->
+                                <ng-container *ngIf="item.usedBy?.length">
+                                    <hr class="my-2" />
+                                    <div class="sm:mx-5 mb-2">
+                                      <div class="flex justify-between items-center">
+                                        <div class="text-md text-secondary">Digunakan pada Survey:</div>
+                                        <button mat-icon-button (click)="toggleUsedBy(item.id)">
+                                          <mat-icon>
+                                            {{ expandedUsedByIds.has(item.id) ? 'expand_less' : 'expand_more' }}
+                                          </mat-icon>
+                                        </button>
+                                      </div>
+                                    </div>
+                                  
+                                    <div *ngIf="expandedUsedByIds.has(item.id)" class="sm:mx-5 mb-2">
+                                      <ng-container *ngFor="let used of item.usedBy">
+                                        <div class="flex items-center mb-1">
+                                          <div
+                                            class="inline-flex items-end font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700 mr-3">
+                                            <span class="leading-relaxed whitespace-nowrap text-sm">{{ item.tipeSurvei?.nama }}</span>
+                                          </div>
+                                          <div class="flex items-center leading-5 ext-1xl font-semibold leading-tight truncate">
+                                            {{ used.name }}
+                                          </div>
+                                        </div>
+                                      </ng-container>
+                                    </div>
+                                </ng-container>                               
                                 <!-- Footer -->
                                 <div class="flex flex-col w-full mt-auto">
                                     <ng-container *ngIf="role === 'ROLE_ADMIN' || role === 'ROLE_INSTRUKTUR'">

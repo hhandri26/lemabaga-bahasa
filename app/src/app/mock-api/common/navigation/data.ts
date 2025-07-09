@@ -53,16 +53,16 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
     },
     {
         id   : 'quiz',
-        title: 'Susun Soal DIKLAT dan Kuesioner Kepuasan Masyarakat',
+        title: 'Susun Soal DIKLAT',
         type : 'basic',
         link : '/quiz'
     },
-    {
-        id   : 'survey',
-        title: 'Pengolahan Survey Kepuasan Masyarakat',
-        type : 'basic',
-        link : '/survey'
-    },
+    // {
+    //     id   : 'survey',
+    //     title: 'Pengolahan Survey Kepuasan Masyarakat',
+    //     type : 'basic',
+    //     link : '/survey'
+    // },
     {
         id   : 'forum',
         title: 'Forum',
@@ -204,13 +204,13 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
                  },
               {
                 id   : 'kuisioner',
-                title: 'Susun Kuesioner Kegiatan',
+                title: 'Susun Kuesioner',
                 type : 'basic',
                 link : '/kuisoner'
                  },
               {
                 id   : 'survey-kuisoner',
-                title: 'Pengolahan Survey Kegiatan',
+                title: 'Pengolahan Survey',
                 type : 'basic',
                 link : '/survey-kuisoner'
                  },
@@ -303,15 +303,15 @@ export const ROLE_USER: FuseNavigationItem[] = [
         type : 'basic',
         link : '/forum'
     },
-    {
-        id   : 'survey-user',
-        title: 'Survey Kepuasan Masyarakat',
-        type : 'basic',
-        link : '/survey-user'
-    },
+    // {
+    //     id   : 'survey-user',
+    //     title: 'Survey Kepuasan Masyarakat',
+    //     type : 'basic',
+    //     link : '/survey-user'
+    // },
         {
         id   : 'survey-user-kuisoner',
-        title: 'Survey Kegiatan',
+        title: 'Survey',
         type : 'basic',
         link : '/survey-user-kuisoner'
     },

@@ -16,19 +16,19 @@
                 </mat-form-field>
                 <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 sm:ml-4">
                     <mat-select [value]="''" (selectionChange)="filterByTopic($event)">
-                        <mat-option [value]="''">-- Semua Topik DIKLAT --</mat-option>
+                        <mat-option [value]="''">-- Semua Tema DIKLAT --</mat-option>
                         <ng-container *ngFor="let item of topicDiklatList | async; trackBy: trackByFn">
                             <mat-option [value]="item.id">{{item.nama}}</mat-option>
                         </ng-container>
                     </mat-select>
                 </mat-form-field>
-                <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 sm:ml-4">
+                <!-- <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 sm:ml-4">
                     <mat-select [value]="''" (selectionChange)="filterByType($event)">
                         <mat-option [value]="''">-- Semua Tipe --</mat-option>
                         <mat-option [value]="'DIKLAT'">DIKLAT</mat-option>
                         <mat-option [value]="'SURVEY'">SURVEY</mat-option>
                     </mat-select>
-                </mat-form-field>
+                </mat-form-field> -->
                 <!-- <mat-form-field class="fuse-mat-no-subscript w-full sm:w-72 mt-4 sm:mt-0 sm:ml-4"
                     [floatLabel]="'always'">
                     <mat-icon matPrefix class="icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
@@ -52,7 +52,7 @@
                                     <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide"
                                         [ngClass]="{'bg-red-200 text-red-800 dark:bg-red-600 dark:text-red-50': item.type === 'SURVEY',
                                                     'bg-green-200 text-green-800 dark:bg-green-600 dark:text-green-50': item.type === 'DIKLAT'}">
-                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.type | titlecase
+                                        <span class="leading-relaxed whitespace-nowrap text-sm">{{item.courseGroup?.nama | titlecase
                                             }}</span>
                                     </div>
                                     <!-- <div
@@ -61,7 +61,7 @@
                                             | titlecase}}</span>
                                     </div> -->
                                 </div>
-                                <div class="flex items-center mb-4">
+                                <!-- <div class="flex items-center mb-4">
                                     <ng-container *ngIf="item.type === 'SURVEY'">
                                         <div
                                             class="inline-flex items-end text-xs px-2.5 py-0.5 tracking-wide text-gray-500 dark:text-gray-300 dark:bg-gray-700 ml-3">
@@ -77,7 +77,7 @@
                                                 | titlecase}}</span>
                                         </div>
                                     </ng-container>
-                                </div>
+                                </div> -->
                                 <div class="sm:mx-5 mb-4">
                                     <div class="text-1xl font-semibold leading-tight">{{item.name}}</div>
                                 </div>
@@ -101,7 +101,7 @@
                                 <ng-container *ngIf="item.usedBy[0]">
                                     <hr class="my-2" />
                                     <div class="sm:mx-5 mb-2">
-                                        <div class="text-md text-secondary">Digunakan pada DIKLAT/Survey :</div>
+                                        <div class="text-md text-secondary">Digunakan pada DIKLAT :</div>
                                     </div>
                                     <div class="flex items-center sm:mx-5 mb-2">
                                         <div

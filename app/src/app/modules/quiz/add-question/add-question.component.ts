@@ -33,7 +33,7 @@ export class QuizAddQustionComponent implements OnInit {
         this.form = this._formBuilder.group({
             question: ['', [Validators.required]],
             level: ['EASY', [Validators.required]],
-            quizType: ['PG', [Validators.required]],
+            quizType: [this.questionType, [Validators.required]],
             choiceList: [[]]
         });
 

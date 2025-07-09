@@ -88,8 +88,8 @@ export const appRoutes: Route[] = [
             { path: 'konseling', loadChildren: () => import('app/modules/konseling/konseling.module').then(m => m.KonselingModule) },
             { path: 'survey-kuisoner', loadChildren: () => import('app/modules/survey-kuisoner/survey-kuisoner.module').then(m => m.SurveyKuisonerModule) },
 
-            { path: 'survey', loadChildren: () => import('app/modules/survey/survey.module').then(m => m.SurveyModule) },
-            { path: 'survey-user', loadChildren: () => import('app/modules/survey-user/survey-user.module').then(m => m.SurveyUserModule) },
+            // { path: 'survey', loadChildren: () => import('app/modules/survey/survey.module').then(m => m.SurveyModule) },
+            // { path: 'survey-user', loadChildren: () => import('app/modules/survey-user/survey-user.module').then(m => m.SurveyUserModule) },
             { path: 'survey-user-kuisoner', loadChildren: () => import('app/modules/survey-user-kuisoner/survey-user-kuisoner.module').then(m => m.SurveyKuisonerUserModule) },
 
             { path: 'rekapitulasi-monev', loadChildren: () => import('app/modules/rekapitulasi/rekapitulasi-monev/rekapitulasi-monev.module').then(m => m.RekapitulasiMonevModule) },

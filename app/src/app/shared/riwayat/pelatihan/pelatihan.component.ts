@@ -33,7 +33,7 @@ export class PelatihanComponent implements OnInit, OnDestroy {
     selected: any | null = null;
     editMode: boolean = false;
     insertMode: boolean = false;
-    // onFileInputed: boolean = false; // Removed
+    onFileInputed: boolean = false; // Reintroduced
     form: FormGroup;
     lingkupPelatihan = this._referensiService.lingkupPelatihan();
     onChange = (year: Date) => { };
@@ -63,8 +63,8 @@ export class PelatihanComponent implements OnInit, OnDestroy {
             tahun: [moment(), Validators.required],
             lingkupPelatihan: [null, Validators.required],
             institusi: [null, Validators.required],
-            // file: [null, Validators.required], // Removed
-            sertifikatId: [null, Validators.required], // New form control for sertifikat ID
+            file: [null], // No initial required validator
+            sertifikatId: [null], // No initial required validator
             pelatihanId: [null, Validators.required],
             nilai: [null, Validators.required],
             predikat: [null, Validators.required],
@@ -73,6 +73,38 @@ export class PelatihanComponent implements OnInit, OnDestroy {
         });
 
         this.loadData();
+
+        // Listen for changes in sertifikatId and file to update validators
+        this.form.get('sertifikatId').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(value => {
+            if (value) {
+                this.form.get('file').clearValidators();
+                this.form.get('file').updateValueAndValidity();
+            }
+        });
+
+        this.form.get('file').valueChanges.pipe(takeUntil(this._unsubscribeAll)).subscribe(value => {
+            if (value) {
+                this.form.get('sertifikatId').clearValidators();
+                this.form.get('sertifikatId').updateValueAndValidity();
+            }
+        });
+
+        // Set initial validators based on default onFileInputed state
+        this._changeDetectorRef.detectChanges();
+        setTimeout(() => {
+            this.form.get('sertifikatId').updateValueAndValidity();
+            this.form.get('file').updateValueAndValidity();
+
+            if (this.onFileInputed) {
+                this.form.get('file').setValidators(Validators.required);
+                this.form.get('sertifikatId').clearValidators();
+            } else {
+                this.form.get('sertifikatId').setValidators(Validators.required);
+                this.form.get('file').clearValidators();
+            }
+            this.form.get('file').updateValueAndValidity();
+            this.form.get('sertifikatId').updateValueAndValidity();
+        }, 0);
     }
 
     loadData() {
@@ -143,25 +175,43 @@ export class PelatihanComponent implements OnInit, OnDestroy {
         });
     }
 
-    // onFileInput(event) { // Removed
-    //     const response = this._referensiService.onFileInputSingle(event, 'application/pdf', 2000);
-    //     if (!response.isSuccess) {
-    //         this._toastr.error(response.msg, 'ERROR');
-    //         return false;
-    //     }
-    //     this.onFileInputed = true;
-    //     (document.getElementById('fileDokumen') as HTMLElement).innerText = response.fileInfo.name;
-    //     this.form.get('file').setValue(event.target.files[0]);
-    //     return true;
-    // }
+    onFileInput(event) { // Reintroduced
+        const response = this._referensiService.onFileInputSingle(event, 'application/pdf', 2000);
+        if (!response.isSuccess) {
+            this._toastr.error(response.msg, 'ERROR');
+            return false;
+        }
+        this.onFileInputed = true;
+        (document.getElementById('fileDokumen') as HTMLElement).innerText = response.fileInfo.name;
+        this.form.get('file').setValue(event.target.files[0]);
+        return true;
+    }
 
     insert(): void {
         const formInput: any = this.form.getRawValue();
         const sertifikatId = formInput.sertifikatId;
+        const uploadedFile = formInput.file;
 
         let saveObservable: Observable<any>;
 
-        if (sertifikatId) {
+        if (uploadedFile) {
+            // Handle file upload
+            const body = new FormData();
+            body.append('pnsId', this.pnsId);
+            if (formInput.pelatihanId) { body.append('pelatihanId', formInput.pelatihanId); }
+            if (formInput.nilai) { body.append('nilai', formInput.nilai); }
+            if (formInput.predikat) { body.append('predikat', formInput.predikat); }
+            if (formInput.peringkat) { body.append('peringkat', formInput.peringkat); }
+            if (formInput.jp) { body.append('jp', formInput.jp); }
+            if (formInput.nama) { body.append('nama', formInput.nama); }
+            if (formInput.tahun) { body.append('tahun', moment(formInput.tahun).format('YYYY')); }
+            if (formInput.lingkupPelatihan) { body.append('lingkupPelatihan', formInput.lingkupPelatihan); }
+            if (formInput.institusi) { body.append('institusi', formInput.institusi); }
+            body.append('file', uploadedFile, uploadedFile.name);
+
+            saveObservable = this._penerjemahService.saveRwPelatihan(body);
+        } else if (sertifikatId) {
+            // Handle certificate selection and PDF generation
             saveObservable = this._certificateHistoryService.getCertificateById(sertifikatId).pipe(
                 take(1),
                 switchMap((response: any) => {
@@ -214,19 +264,8 @@ export class PelatihanComponent implements OnInit, OnDestroy {
                 })
             );
         } else {
-            const body = new FormData();
-            body.append('pnsId', this.pnsId);
-            if (formInput.pelatihanId) { body.append('pelatihanId', formInput.pelatihanId); }
-            if (formInput.nilai) { body.append('nilai', formInput.nilai); }
-            if (formInput.predikat) { body.append('predikat', formInput.predikat); }
-            if (formInput.peringkat) { body.append('peringkat', formInput.peringkat); }
-            if (formInput.jp) { body.append('jp', formInput.jp); }
-            if (formInput.nama) { body.append('nama', formInput.nama); }
-            if (formInput.tahun) { body.append('tahun', moment(formInput.tahun).format('YYYY')); }
-            if (formInput.lingkupPelatihan) { body.append('lingkupPelatihan', formInput.lingkupPelatihan); }
-            if (formInput.institusi) { body.append('institusi', formInput.institusi); }
-
-            saveObservable = this._penerjemahService.saveRwPelatihan(body);
+            this._toastr.error('Mohon pilih sertifikat atau unggah file.', 'ERROR');
+            return;
         }
 
         saveObservable.subscribe(
@@ -266,10 +305,29 @@ export class PelatihanComponent implements OnInit, OnDestroy {
     update(): void {
         const formInput: any = this.form.getRawValue();
         const sertifikatId = formInput.sertifikatId;
+        const uploadedFile = formInput.file;
 
         let updateObservable: Observable<any>;
 
-        if (sertifikatId) {
+        if (uploadedFile) {
+            // Handle file upload
+            const body = new FormData();
+            body.append('pnsId', this.pnsId);
+            body.append('id', this.selected.id);
+            if (formInput.nama) { body.append('nama', formInput.nama); }
+            if (formInput.tahun) { body.append('tahun', moment(formInput.tahun).format('YYYY')); }
+            if (formInput.lingkupPelatihan) { body.append('lingkupPelatihan', formInput.lingkupPelatihan); }
+            if (formInput.institusi) { body.append('institusi', formInput.institusi); }
+            if (formInput.pelatihanId) { body.append('pelatihanId', formInput.pelatihanId); }
+            if (formInput.nilai) { body.append('nilai', formInput.nilai); }
+            if (formInput.predikat) { body.append('predikat', formInput.predikat); }
+            if (formInput.peringkat) { body.append('peringkat', formInput.peringkat); }
+            if (formInput.jp) { body.append('jp', formInput.jp); }
+            body.append('file', uploadedFile, uploadedFile.name);
+
+            updateObservable = this._penerjemahService.saveRwPelatihan(body);
+        } else if (sertifikatId) {
+            // Handle certificate selection and PDF generation
             updateObservable = this._certificateHistoryService.getCertificateById(sertifikatId).pipe(
                 take(1),
                 switchMap((response: any) => {
@@ -322,20 +380,8 @@ export class PelatihanComponent implements OnInit, OnDestroy {
                 })
             );
         } else {
-            const body = new FormData();
-            body.append('pnsId', this.pnsId);
-            body.append('id', this.selected.id);
-            if (formInput.nama) { body.append('nama', formInput.nama); }
-            if (formInput.tahun) { body.append('tahun', moment(formInput.tahun).format('YYYY')); }
-            if (formInput.lingkupPelatihan) { body.append('lingkupPelatihan', formInput.lingkupPelatihan); }
-            if (formInput.institusi) { body.append('institusi', formInput.institusi); }
-            if (formInput.pelatihanId) { body.append('pelatihanId', formInput.pelatihanId); }
-            if (formInput.nilai) { body.append('nilai', formInput.nilai); }
-            if (formInput.predikat) { body.append('predikat', formInput.predikat); }
-            if (formInput.peringkat) { body.append('peringkat', formInput.peringkat); }
-            if (formInput.jp) { body.append('jp', formInput.jp); }
-
-            updateObservable = this._penerjemahService.saveRwPelatihan(body);
+            this._toastr.error('Mohon pilih sertifikat atau unggah file.', 'ERROR');
+            return;
         }
 
         updateObservable.subscribe(
@@ -373,18 +419,29 @@ export class PelatihanComponent implements OnInit, OnDestroy {
         _tahun.close();
     }
 
-    // toggleOnFileInputed(onFileInputed: boolean | null = null): void { // Removed
-    //     if (onFileInputed === null) {
-    //         this.onFileInputed = !this.onFileInputed;
-    //     } else {
-    //         if (!onFileInputed) {
-    //             this.form.get('file').setValue(null);
-    //             (document.getElementById('fileDokumen') as HTMLElement).innerText = null;
-    //         }
-    //         this.onFileInputed = onFileInputed;
-    //     }
-    //     this._changeDetectorRef.markForCheck();
-    // }
+    toggleOnFileInputed(onFileInputed: boolean | null = null): void {
+        if (onFileInputed === null) {
+            this.onFileInputed = !this.onFileInputed;
+        } else {
+            this.onFileInputed = onFileInputed;
+        }
+
+        // Clear values and set validators based on the current state of onFileInputed
+        if (this.onFileInputed) { // If file upload is selected
+            this.form.get('sertifikatId').setValue(null);
+            this.form.get('sertifikatId').clearValidators();
+            this.form.get('file').setValidators(Validators.required);
+            (document.getElementById('fileDokumen') as HTMLElement).innerText = null; // Clear file name display
+        } else { // If certificate selection is selected
+            this.form.get('file').setValue(null);
+            this.form.get('file').clearValidators();
+            this.form.get('sertifikatId').setValidators(Validators.required);
+        }
+
+        this.form.get('sertifikatId').updateValueAndValidity();
+        this.form.get('file').updateValueAndValidity();
+        this._changeDetectorRef.markForCheck();
+    }
 
     toggleInsertMode(insertMode: boolean | null = null): void {
         if (insertMode === null) {

@@ -267,13 +267,14 @@ export class ReferensiService {
         );
     }
 
-    instansi(params = { q: '' }): Observable<any[]> {
-        return this._httpClient.get<any[]>(this._apiUrl + '/instansi', { params }).pipe(
+    instansi(params: { q: string; size?: number, sortBy?: string, sort?: 'ASC' | 'DESC' | '' } = { q: '' }): Observable<any[]> {
+        return this._httpClient.get<any>(this._apiUrl + '/instansi', { params }).pipe(
             switchMap(result => {
-                if (!result || result.length === 0) {
+                const instansiData = result && result.content ? result.content : result;
+                if (!instansiData || instansiData.length === 0) {
                     return throwError(() => new Error('Data instansi tidak ditemukan!'));
                 }
-                return of(result);
+                return of(instansiData);
             })
         );
     }
@@ -487,7 +488,7 @@ export class ReferensiService {
         );
     }
 
-    provinsi(params): Observable<any> {
+    provinsi(params: { q?: string; sortBy?: string, sort?: 'ASC' | 'DESC' | '' } = { q: '' }): Observable<any> {
         return this._httpClient.get<any>(this._apiUrl + '/propinsi', { params }).pipe(
             tap((result: any) => result?.content),
             switchMap((result) => {

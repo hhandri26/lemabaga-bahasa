@@ -38,7 +38,7 @@ export class PenerjemahListComponent implements OnInit, OnDestroy {
 showPelatihanFilter: boolean = false;
     jenisJabatan$: Observable<any[]> = this._referensiService.jabatan();
     provinsi$: Observable<any[]> = this._referensiService.provinsi({q: ''});
-    instansi$: Observable<any[]> = this._referensiService.instansi({q: ''});
+    instansi$: Observable<any[]> = this._referensiService.instansi({q: '', size: 1000});
     bahasaList: Observable<any> = this._referensiService.jenisBahasa();
     pnsId: String;
     filterBahasa: any[] = [];
@@ -123,14 +123,17 @@ showButtons = false;
         // Combine jfpItems$ from service with provinsi$ to enrich data
         this.displayJfpItems$ = combineLatest([
             this._penerjemahService.jfpItems$,
-            this.provinsi$
+            this.provinsi$,
+            this.instansi$
         ]).pipe(
-            map(([jfpItems, provinsiList]) => {
+            map(([jfpItems, provinsiList, instansiList]) => {
                 return jfpItems.map(item => {
                     const province = provinsiList.find(prov => prov.id === item.provinsi);
+                    const instansi = instansiList.find(inst => inst.id === item.instansiId);
                     return {
                         ...item,
-                        provinsiNama: province ? province.nama : '-'
+                        provinsiNama: province ? province.nama : '-',
+                        instansiNama: instansi ? instansi.nama : '-'
                     };
                 });
             }),

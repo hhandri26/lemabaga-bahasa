@@ -35,7 +35,7 @@ export class PenerjemahListComponent implements OnInit, OnDestroy {
     pagination: Pagination;
     isLoading: boolean = false;
     form: FormGroup;
-showPelatihanFilter: boolean = false;
+    showPelatihanFilter: boolean = false;
     jenisJabatan$: Observable<any[]> = this._referensiService.jabatan();
     provinsi$: Observable<any[]> = this._referensiService.provinsi({q: ''});
     instansi$: Observable<any[]> = this._referensiService.instansi({q: '', size: 1000});
@@ -43,7 +43,7 @@ showPelatihanFilter: boolean = false;
     pnsId: String;
     filterBahasa: any[] = [];
     filteredYears: number[] = [];
-showButtons = false;
+    showButtons = false;
     drawerMode: 'side' | 'over';
     searchInputControl: FormControl = new FormControl();
     selectedItem: Pegawai;
@@ -75,10 +75,10 @@ showButtons = false;
 
     ngOnInit(): void {
         this.form = this._formBuilder.group({
-            byProvAlamatKantor: [''],
+            byProvAlamatKantorList: [[]],
             byNama: [null],
-            byJabatan: [''],
-            byInstansi: [''],
+            byJabatanList: [[]],
+            byInstansiList: [[]],
             byBahasa: [[]],
             byIsAktif: [null],
             // Add new form controls for the new search criteria
@@ -95,10 +95,10 @@ showButtons = false;
 
         // Subscribe to form value changes
         merge(
-            this.form.get('byProvAlamatKantor').valueChanges,
+            this.form.get('byProvAlamatKantorList').valueChanges,
             this.form.get('byNama').valueChanges,
-            this.form.get('byJabatan').valueChanges,
-            this.form.get('byInstansi').valueChanges,
+            this.form.get('byJabatanList').valueChanges,
+            this.form.get('byInstansiList').valueChanges,
             this.form.get('byBahasa').valueChanges,
             this.form.get('byIsAktif').valueChanges,
             this.form.get('bynamaPelatihan').valueChanges,
@@ -263,11 +263,29 @@ onYearInput(event: any): void {
             search.byBahasa = null;
         }
 
+        if (search.byInstansiList.length > 0) {
+            search.byInstansiList = search.byInstansiList.map((instansi: any) => instansi.id);
+        } else {
+            search.byInstansiList = null;
+        }
+
+        if (search.byJabatanList.length > 0) {
+            search.byJabatanList = search.byJabatanList.map((jabatan: any) => jabatan.id);
+        } else {
+            search.byJabatanList = null;
+        }
+
+        if (search.byProvAlamatKantorList.length > 0) {
+            search.byProvAlamatKantorList = search.byProvAlamatKantorList.map((provinsi: any) => provinsi.id);
+        } else {
+            search.byProvAlamatKantorList = null;
+        }
+
         // Handle new search criteria
-        search.byProvAlamatKantor = search.byProvAlamatKantor || null;
+        // search.byProvAlamatKantor = search.byProvAlamatKantor || null;
         search.byNama = search.byNama || null;
-        search.byJabatan = search.byJabatan || null;
-        search.byInstansi = search.byInstansi || null;  // Add processing for instansi parameter
+        // search.byJabatan = search.byJabatan || null;
+        // search.byInstansi = search.byInstansi || null;  // Add processing for instansi parameter
         search.byIsAktif = search.byIsAktif !== null ? search.byIsAktif : null; 
         search.bynamaPelatihan = search.bynamaPelatihan || null;
         search.byTahunPelatihan = search.byTahunPelatihan || null;

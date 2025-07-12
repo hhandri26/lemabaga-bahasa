@@ -110,10 +110,9 @@
                                     </td>
                                     <td class="border-r" *ngIf="displayedColumns['instansi']">
                                         <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                            <mat-select [formControlName]="'byInstansi'">
-                                                <mat-option value="">-- Semua Instansi --</mat-option>
+                                            <mat-select [formControlName]="'byInstansiList'" placeholder="Instansi" multiple>
                                                 <ng-container *ngFor="let item of instansi$ | async; trackBy: trackByFn">
-                                                    <mat-option [value]="item.id">
+                                                    <mat-option [value]="item">
                                                         {{item.nama | titlecase}}
                                                     </mat-option>
                                                 </ng-container>
@@ -122,10 +121,9 @@
                                     </td>
                                     <td class="border-r" *ngIf="displayedColumns['provAlamatKantor']">
                                         <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                            <mat-select [formControlName]="'byProvAlamatKantor'">
-                                                <mat-option value="">-- Semua Provinsi --</mat-option>
+                                            <mat-select [formControlName]="'byProvAlamatKantorList'" placeholder="Provinsi" multiple>
                                                 <ng-container *ngFor="let item of provinsi$ | async; trackBy: trackByFn">
-                                                    <mat-option [value]="item.id">
+                                                    <mat-option [value]="item">
                                                         {{item.nama | titlecase}}
                                                     </mat-option>
                                                 </ng-container>
@@ -134,10 +132,9 @@
                                     </td>
                                     <td class="border-r" *ngIf="displayedColumns['jabatan']">
                                         <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                            <mat-select [formControlName]="'byJabatan'">
-                                                <mat-option value="">-- Semua Jenis Jabatan --</mat-option>
+                                            <mat-select [formControlName]="'byJabatanList'" placeholder="Jabatan" multiple>
                                                 <ng-container *ngFor="let item of jenisJabatan$ | async; trackBy: trackByFn">
-                                                    <mat-option [value]="item.id">
+                                                    <mat-option [value]="item">
                                                         {{item.nama}}
                                                     </mat-option>
                                                 </ng-container>

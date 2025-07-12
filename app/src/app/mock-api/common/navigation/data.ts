@@ -187,7 +187,7 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
     },
     {
         id   : 'pengguna',
-        title: 'Pengguna',
+        title: 'Daftar Pengguna',
         type : 'basic',
         link : '/pengguna'
     },

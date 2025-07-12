@@ -48,8 +48,8 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
         });
 
         // Initialize choices based on kuisonerTipe
-        this.choices = this._data.questionRequest.choiceList;
-        if (this.form.get('kuisonerTipe').value === 'LIKECHART' && (!this.choices || this.choices.length === 0)) {
+        this.choices = this._data.questionRequest.choiceListKuisoner || [];
+        if (this.form.get('kuisonerTipe').value === 'LIKECHART' && this.choices.length === 0) {
             this.choices = [
                 { label: 'Kurang', value: 'K', isAnswer: false },
                 { label: 'Cukup', value: 'C', isAnswer: false },
@@ -62,8 +62,6 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
             if (this.choices.length % 2 !== 0) {
                 this.choices.push({ label: `Pilihan ${this.choices.length + 1}`, value: `P${this.choices.length + 1}`, isAnswer: false });
             }
-        } else if (this.form.get('kuisonerTipe').value !== 'ISIAN' && (!this.choices || this.choices.length === 0)) {
-            this.choices = [];
         }
 
         this.levels = [
@@ -124,18 +122,9 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
                 this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
             }
         } else if (this.choices.length % 2 !== 0) {
-            if (this.choices.length > 4) {
-                this.choices.splice(this.choices.length - 1, 1);
-            } else {
-                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
-                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
-            }
+            const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+            this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
         }
-        this.choices.forEach((choice, i) => {
-            if (i < defaultLabels.length) {
-                choice.label = defaultLabels[i];
-            }
-        });
     }
 
     removePilihan(index: any): void {

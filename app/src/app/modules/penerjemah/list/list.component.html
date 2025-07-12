@@ -160,7 +160,7 @@
                                         </mat-form-field>
                                     </td>
                                     <td class="border-r" *ngIf="displayedColumns['pelatihan']">
-                                        <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pelatihanFilterMenu">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pelatihanFilterMenu" [ngClass]="{ 'mat-focused': isPelatihanFilterFilled(), 'mat-form-field-should-float': isPelatihanFilterFilled() }">
                                             <mat-select placeholder="Pelatihan"></mat-select>
                                         </mat-form-field>
                                         <mat-menu #pelatihanFilterMenu="matMenu" class="p-4">
@@ -189,7 +189,7 @@
                                         </mat-menu>
                                     </td>
                                     <td class="border-r" *ngIf="displayedColumns['pendidikan']">
-                                        <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pendidikanFilterMenu">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pendidikanFilterMenu" [ngClass]="{ 'mat-focused': isPendidikanFilterFilled(), 'mat-form-field-should-float': isPendidikanFilterFilled() }">
                                             <mat-select placeholder="Pendidikan"></mat-select>
                                         </mat-form-field>
                                         <mat-menu #pendidikanFilterMenu="matMenu" class="p-4">

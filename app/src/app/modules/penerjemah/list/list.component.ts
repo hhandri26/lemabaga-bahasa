@@ -373,5 +373,21 @@ onYearInput(event: any): void {
         });
         this._changeDetectorRef.markForCheck();
     }
+
+    isPendidikanFilterFilled(): boolean {
+        const f = this.form;
+        return f.get('byNamaSekolahPendidikan')?.value ||
+               f.get('byTahunLulusPendidikan')?.value ||
+               f.get('byPendidikan')?.value ||
+               f.get('byJurusanPendidikan')?.value;
+      }
+
+    isPelatihanFilterFilled(): boolean {
+        const f = this.form;
+        return f.get('bynamaPelatihan')?.value ||
+               f.get('byTahunPelatihan')?.value ||
+               f.get('byPeringkatPelatihan')?.value ||
+               f.get('byPredikatPelatihan')?.value;
+      }
     
 }

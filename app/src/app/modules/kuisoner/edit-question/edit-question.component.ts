@@ -20,7 +20,6 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
     form: UntypedFormGroup;
     choices: any[] = [];
     levels: any[];
-    maxCharIsian= 500;
     noteChanged: Subject<any> = new Subject<any>();
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -43,12 +42,29 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
 
         this.form = this._formBuilder.group({
             question: [this._data.questionRequest.question, [Validators.required]],
-            level: [this._data.questionRequest.level, [Validators.required]],
-            quizType: [{ value: (this._data.bucket.questionType === 'PG') ? true : false, disabled: true }, [Validators.required]],
-            choiceList: [[]]
+            level: ['EASY', [Validators.required]],
+            kuisonerTipe: [this._data.bucket.questionType === 'PG' ? 'LIKECHART' : this._data.bucket.questionType, [Validators.required]],
+            choiceListKuisoner: [[]]
         });
 
+        // Initialize choices based on kuisonerTipe
         this.choices = this._data.questionRequest.choiceList;
+        if (this.form.get('kuisonerTipe').value === 'LIKECHART' && (!this.choices || this.choices.length === 0)) {
+            this.choices = [
+                { label: 'Kurang', value: 'K', isAnswer: false },
+                { label: 'Cukup', value: 'C', isAnswer: false },
+                { label: 'Baik', value: 'B', isAnswer: false },
+                { label: 'Sangat Baik', value: 'SB', isAnswer: false }
+            ];
+            while (this.choices.length < 4) {
+                this.choices.push({ label: `Pilihan ${this.choices.length + 1}`, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+            if (this.choices.length % 2 !== 0) {
+                this.choices.push({ label: `Pilihan ${this.choices.length + 1}`, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        } else if (this.form.get('kuisonerTipe').value !== 'ISIAN' && (!this.choices || this.choices.length === 0)) {
+            this.choices = [];
+        }
 
         this.levels = [
             {
@@ -67,6 +83,26 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
                 checked: false
             }
         ];
+
+        this.form.get('kuisonerTipe').valueChanges.subscribe(val => {
+            if (val === 'LIKECHART') {
+                this.choices = [
+                    { label: 'Kurang', value: 'K', isAnswer: false },
+                    { label: 'Cukup', value: 'C', isAnswer: false },
+                    { label: 'Baik', value: 'B', isAnswer: false },
+                    { label: 'Sangat Baik', value: 'SB', isAnswer: false }
+                ];
+                while (this.choices.length < 4) {
+                    this.choices.push({ label: `Pilihan ${this.choices.length + 1}`, value: `P${this.choices.length + 1}`, isAnswer: false });
+                }
+                if (this.choices.length % 2 !== 0) {
+                    this.choices.push({ label: `Pilihan ${this.choices.length + 1}`, value: `P${this.choices.length + 1}`, isAnswer: false });
+                }
+            } else {
+                this.choices = [];
+            }
+            this._changeDetectorRef.markForCheck();
+        });
     }
 
     ngOnDestroy(): void {
@@ -75,31 +111,82 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
     }
 
     addPilihan(newLabelInput: string): void {
-        this.choices.push({ 'label': newLabelInput, 'isAnswer': false });
+        const defaultLabels = ['Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'];
+        let newLabel = newLabelInput;
+        if (!newLabelInput) {
+            newLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+        }
+        this.choices.push({ 'label': newLabel, 'isAnswer': false });
+
+        if (this.choices.length < 4) {
+            while (this.choices.length < 4) {
+                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        } else if (this.choices.length % 2 !== 0) {
+            if (this.choices.length > 4) {
+                this.choices.splice(this.choices.length - 1, 1);
+            } else {
+                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        }
+        this.choices.forEach((choice, i) => {
+            if (i < defaultLabels.length) {
+                choice.label = defaultLabels[i];
+            }
+        });
     }
 
     removePilihan(index: any): void {
         this.choices.splice(index, 1);
+        const defaultLabels = ['Sangat Kurang', 'Kurang', 'Cukup', 'Baik', 'Sangat Baik'];
+
+        if (this.choices.length < 4) {
+            while (this.choices.length < 4) {
+                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        } else if (this.choices.length % 2 !== 0) {
+            if (this.choices.length > 4) {
+                this.choices.splice(this.choices.length - 1, 1);
+            } else {
+                const nextLabel = defaultLabels[this.choices.length] || `Pilihan ${this.choices.length + 1}`;
+                this.choices.push({ label: nextLabel, value: `P${this.choices.length + 1}`, isAnswer: false });
+            }
+        }
+        this.choices.forEach((choice, i) => {
+            if (i < defaultLabels.length) {
+                choice.label = defaultLabels[i];
+            }
+        });
     }
 
-    updatePilihan(index, value: any, type): void {
+    updatePilihan(index: number, value: any, type: string): void {
         if (type === 'label') {
             this.choices[index].label = value;
         }
         if (type === 'option') {
-            this.choices.forEach((element: any) => {
-                element.isAnswer = false;
-            });
-            this.choices[index].isAnswer = value;
+            if (this.form.get('kuisonerTipe').value === 'LIKECHART') {
+                this.choices.forEach((element: any) => {
+                    element.isAnswer = false;
+                });
+                this.choices[index].isAnswer = value;
+            } else {
+                this.choices.forEach((element: any) => {
+                    element.isAnswer = false;
+                });
+                this.choices[index].isAnswer = value;
+            }
         }
     }
 
     save(): void {
-
         const questionRequest = this.form.getRawValue();
-        questionRequest.quizType = (questionRequest.quizType) ? 'PG' : null;
+        questionRequest.kuisonerTipe = this.form.get('kuisonerTipe').value;
+
         if (this.choices.length) {
-            questionRequest.choiceList = this.choices;
+            questionRequest.choiceListKuisoner = this.choices;
         }
         console.log(questionRequest);
 
@@ -111,7 +198,7 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
             (result) => {
                 if (result?.success) {
                     this.form.get('question').setValue('');
-                    this.form.get('choiceList').setValue([]);
+                    this.form.get('choiceListKuisoner').setValue([]);
                     setTimeout(() => {
                         this.questionInput.nativeElement.value = '';
                         this.questionAutosize.reset();
@@ -124,17 +211,6 @@ export class KuisonerEditQuestionComponent implements OnInit, OnDestroy {
                 }
             }
         );
-
-        // this.saved.next(questionRequest);
-
-        // this.formVisible = false;
-        // this.form.get('question').setValue('');
-        // this.form.get('choiceList').setValue('');
-        // setTimeout(() => {
-        //     this.questionInput.nativeElement.value = '';
-        //     this.questionAutosize.reset();
-        // });
-
         this._changeDetectorRef.markForCheck();
     }
 

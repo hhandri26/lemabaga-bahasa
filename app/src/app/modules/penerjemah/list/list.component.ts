@@ -94,28 +94,28 @@ showButtons = false;
         });
 
         // Subscribe to form value changes
-        // merge(
-        //     this.form.get('byProvAlamatKantor').valueChanges,
-        //     this.form.get('byNama').valueChanges,
-        //     this.form.get('byJabatan').valueChanges,
-        //     this.form.get('byInstansi').valueChanges,
-        //     this.form.get('byBahasa').valueChanges,
-        //     this.form.get('byIsAktif').valueChanges,
-        //     this.form.get('bynamaPelatihan').valueChanges,
-        //     this.form.get('byTahunPelatihan').valueChanges,
-        //     this.form.get('byPeringkatPelatihan').valueChanges,
-        //     this.form.get('byJp').valueChanges,
-        //     this.form.get('byPredikatPelatihan').valueChanges,
-        //     this.form.get('byPendidikan').valueChanges,
-        //     this.form.get('byNamaSekolahPendidikan').valueChanges,
-        //     this.form.get('byJurusanPendidikan').valueChanges,
-        //     this.form.get('byTahunLulusPendidikan').valueChanges
-        // ).pipe(
-        //     debounceTime(300),
-        //     takeUntil(this._unsubscribeAll)
-        // ).subscribe(() => {
-        //     this.fetch(0, this.pagination.perPage, this.form.getRawValue()).subscribe();
-        // });
+        merge(
+            this.form.get('byProvAlamatKantor').valueChanges,
+            this.form.get('byNama').valueChanges,
+            this.form.get('byJabatan').valueChanges,
+            this.form.get('byInstansi').valueChanges,
+            this.form.get('byBahasa').valueChanges,
+            this.form.get('byIsAktif').valueChanges,
+            this.form.get('bynamaPelatihan').valueChanges,
+            this.form.get('byTahunPelatihan').valueChanges,
+            this.form.get('byPeringkatPelatihan').valueChanges,
+            this.form.get('byJp').valueChanges,
+            this.form.get('byPredikatPelatihan').valueChanges,
+            this.form.get('byPendidikan').valueChanges,
+            this.form.get('byNamaSekolahPendidikan').valueChanges,
+            this.form.get('byJurusanPendidikan').valueChanges,
+            this.form.get('byTahunLulusPendidikan').valueChanges
+        ).pipe(
+            debounceTime(300),
+            takeUntil(this._unsubscribeAll)
+        ).subscribe(() => {
+            this.fetch(0, this.pagination.perPage, this.form.getRawValue()).subscribe();
+        });
 
         // Muat data saat komponen dimulai
         this.fetch(0, 10, this.form.getRawValue()).subscribe();

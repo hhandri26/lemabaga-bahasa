@@ -11,79 +11,81 @@
                 <!-- Header -->
                 <div class="relative flex flex-col sm:flex-row flex-0 sm:items-center sm:justify-between py-4 px-4 md:px-8 border-b">
                     <!-- Title -->
-                    <div>
-                        <div class="text-2xl font-extrabold tracking-tight leading-none">Daftar&nbsp;JFP&nbsp;&nbsp;</div>
-                        <div class="ml-0.5 font-medium text-secondary">
-                            <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;JFP</ng-container>
+                    <div class="flex items-center gap-4">
+                        <div>
+                            <div class="text-2xl font-extrabold tracking-tight leading-none">Daftar&nbsp;JFP&nbsp;&nbsp;</div>
+                            <div class="ml-0.5 font-medium text-secondary">
+                                <ng-container *ngIf="pagination.recordsTotal > 0">{{pagination.recordsTotal | number}}&nbsp;JFP</ng-container>
+                            </div>
+                        </div>
+
+                        <!-- Column Selector -->
+                        <div class="w-[150px]">
+                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                <!-- <mat-label>Pilih Kolom</mat-label> -->
+                                <mat-select [matMenuTriggerFor]="columnMenu" placeholder="Pilih Kolom">
+                                    <mat-select-trigger>
+                                        <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:view-columns'"></mat-icon>
+                                        Pilih Kolom
+                                    </mat-select-trigger>
+                                </mat-select>
+                            </mat-form-field>
+                            <mat-menu #columnMenu="matMenu" class="p-4">
+                                <div class="p-2" (click)="$event.stopPropagation()">
+                                    <div class="mb-2">
+                                        <mat-checkbox (change)="toggleAllColumns($event.checked)" [checked]="false">
+                                            Pilih Semua
+                                        </mat-checkbox>
+                                    </div>
+                                    <mat-divider></mat-divider>
+                                    <div class="grid grid-cols-2 gap-2 mt-2">
+                                        <div *ngFor="let column of columnList">
+                                            <mat-checkbox
+                                                [checked]="displayedColumns[column.id]"
+                                                (change)="toggleColumn(column.id)">
+                                                {{column.label}}
+                                            </mat-checkbox>
+                                        </div>
+                                    </div>
+                                </div>
+                            </mat-menu>
                         </div>
                     </div>
 
-                    <!-- Column Selector -->
-                    <div class="mr-4" style="width: 150px;">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
-                            <mat-label>Pilih Kolom</mat-label>
-                            <mat-select [matMenuTriggerFor]="columnMenu">
-                                <mat-select-trigger>
-                                    <mat-icon class="icon-size-5 mr-2" [svgIcon]="'heroicons_solid:view-columns'"></mat-icon>
-                                    Pilih Kolom
-                                </mat-select-trigger>
-                            </mat-select>
-                        </mat-form-field>
-                        <mat-menu #columnMenu="matMenu" class="p-4">
-                            <div class="p-2" (click)="$event.stopPropagation()">
-                                <div class="mb-2">
-                                    <mat-checkbox (change)="toggleAllColumns($event.checked)" [checked]="false">
-                                        Pilih Semua
-                                    </mat-checkbox>
-                                </div>
-                                <mat-divider></mat-divider>
-                                <div class="grid grid-cols-2 gap-2 mt-2">
-                                    <div *ngFor="let column of columnList">
-                                        <mat-checkbox
-                                            [checked]="displayedColumns[column.id]"
-                                            (change)="toggleColumn(column.id)">
-                                            {{column.label}}
-                                        </mat-checkbox>
-                                    </div>
-                                </div>
-                            </div>
-                        </mat-menu>
-                    </div>
-
                     <!-- Main actions -->
-                    <div class="flex items-center mt-4 sm:mt-0 md:mt-4">
-                        <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="toggleSearch()">
+                    <div class="flex items-center gap-4">
+                        <!-- <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="toggleSearch()">
                             <span class="ml-2 mr-1">Cari</span>
-                        </button>
-                        <button class="ml-4 mt-5 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="togglePrint()">Cetak</button>
-                        <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="toggleButtons()"
+                        </button> -->
+                        <button class="ml-4 bg-card hover:bg-hover" mat-stroked-button [color]="'primary'" (click)="togglePrint()">Cetak</button>
+                        <button class="ml-4" mat-flat-button [color]="'primary'" (click)="toggleButtons()"
                             style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
-                            <mat-icon [svgIcon]="showButtons ? '':'heroicons_outline:plus' "></mat-icon>
+                            <mat-icon [svgIcon]="showButtons ? 'heroicons_outline:minus':'heroicons_outline:plus' "></mat-icon>
                             <span class="ml-2 mr-1">{{ showButtons ? 'Sembunyi' : 'Tambah Pengguna' }}</span>
                         </button>
                         <div *ngIf="showButtons"
                             style="display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); animation: fadeIn 0.5s ease-in-out;">
-                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="create()"
+                            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()"
                                 style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
                                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                                 <span class="ml-2 mr-1">Penerjemah</span>
                             </button>
-                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createadmin()"
+                            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createadmin()"
                                 style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
                                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                                 <span class="ml-2 mr-1">Admin</span>
                             </button>
-                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createkepegawaian()"
+                            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createkepegawaian()"
                                 style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
                                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                                 <span class="ml-2 mr-1">Kepegawaian</span>
                             </button>
-                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createasesor()"
+                            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createasesor()"
                                 style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
                                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                                 <span class="ml-2 mr-1">Asesor</span>
                             </button>
-                            <button class="ml-4 mt-5" mat-flat-button [color]="'primary'" (click)="createpengajar()"
+                            <button class="ml-4" mat-flat-button [color]="'primary'" (click)="createpengajar()"
                                 style="background-color: #ea3232; color: white; border-radius: 25px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); transition: transform 0.2s ease-in-out, box-shadow 0.3s ease-in-out;">
                                 <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
                                 <span class="ml-2 mr-1">Pengajar</span>
@@ -96,235 +98,236 @@
                 <div class="relative">
                     <!-- Table -->
                     <ng-container *ngIf="displayJfpItems$ | async as items">
-                        <ng-container *ngIf="items.length; else noItems">
-                            <table class="table-auto w-full text-left border-collapse" [formGroup]="form"> <!-- Moved formGroup here -->
-                                <thead>
-                                    <tr class="filter-row border-b"> <!-- New row for filters -->
-                                        <td class="border-r" *ngIf="displayedColumns['foto']"></td>
-                                        <td class="border-r" *ngIf="displayedColumns['nama']">
-                                            <mat-form-field class="fuse-mat-dense fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                <input matInput [formControlName]="'byNama'" [autocomplete]="'off'" [placeholder]="'Cari nama'" />
-                                            </mat-form-field>
-                                        </td>
-                                        <td class="border-r" *ngIf="displayedColumns['instansi']">
-                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                <mat-select [formControlName]="'byInstansi'">
-                                                    <mat-option value="">-- Semua Instansi --</mat-option>
-                                                    <ng-container *ngFor="let item of instansi$ | async; trackBy: trackByFn">
-                                                        <mat-option [value]="item.id">
-                                                            {{item.nama | titlecase}}
-                                                        </mat-option>
-                                                    </ng-container>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </td>
-                                        <td class="border-r" *ngIf="displayedColumns['provAlamatKantor']">
-                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                <mat-select [formControlName]="'byProvAlamatKantor'">
-                                                    <mat-option value="">-- Semua Provinsi --</mat-option>
-                                                    <ng-container *ngFor="let item of provinsi$ | async; trackBy: trackByFn">
-                                                        <mat-option [value]="item.id">
-                                                            {{item.nama | titlecase}}
-                                                        </mat-option>
-                                                    </ng-container>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </td>
-                                        <td class="border-r" *ngIf="displayedColumns['jabatan']">
-                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                <mat-select [formControlName]="'byJabatan'">
-                                                    <mat-option value="">-- Semua Jenis Jabatan --</mat-option>
-                                                    <ng-container *ngFor="let item of jenisJabatan$ | async; trackBy: trackByFn">
-                                                        <mat-option [value]="item.id">
-                                                            {{item.nama}}
-                                                        </mat-option>
-                                                    </ng-container>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </td>
-                                        <td class="border-r" *ngIf="displayedColumns['statusAkun']">
-                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                <mat-select [formControlName]="'byIsAktif'" placeholder="Status">
-                                                    <mat-option [value]="null">Semua</mat-option>
-                                                    <mat-option [value]="true">Enabled</mat-option>
-                                                    <mat-option [value]="false">Disabled</mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
-                                        </td>
-                                        <td class="border-r" *ngIf="displayedColumns['bahasa']">
-                                            <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" *ngIf="bahasaList | async as _bahasaList" style="padding: 0px !important; margin: 0px !important;">
-                                                <mat-select [formControlName]="'byBahasa'" placeholder="Bahasa" multiple>
-                                                    <mat-option *ngFor="let bahasa of _bahasaList" [value]="bahasa">
-                                                        {{bahasa.nama}}
+                        <table class="table-auto w-full text-left border-collapse" [formGroup]="form"> <!-- Moved formGroup here -->
+                            <thead>
+                                <tr class="filter-row border-b"> <!-- New row for filters -->
+                                    <td class="border-r" *ngIf="displayedColumns['foto']"></td>
+                                    <td class="border-r" *ngIf="displayedColumns['nama']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                            <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                            <input matInput [formControlName]="'byNama'" [autocomplete]="'off'" [placeholder]="'Cari nama'" />
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['instansi']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                            <mat-select [formControlName]="'byInstansi'">
+                                                <mat-option value="">-- Semua Instansi --</mat-option>
+                                                <ng-container *ngFor="let item of instansi$ | async; trackBy: trackByFn">
+                                                    <mat-option [value]="item.id">
+                                                        {{item.nama | titlecase}}
                                                     </mat-option>
-                                                </mat-select>
-                                            </mat-form-field>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['provAlamatKantor']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                            <mat-select [formControlName]="'byProvAlamatKantor'">
+                                                <mat-option value="">-- Semua Provinsi --</mat-option>
+                                                <ng-container *ngFor="let item of provinsi$ | async; trackBy: trackByFn">
+                                                    <mat-option [value]="item.id">
+                                                        {{item.nama | titlecase}}
+                                                    </mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['jabatan']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                            <mat-select [formControlName]="'byJabatan'">
+                                                <mat-option value="">-- Semua Jenis Jabatan --</mat-option>
+                                                <ng-container *ngFor="let item of jenisJabatan$ | async; trackBy: trackByFn">
+                                                    <mat-option [value]="item.id">
+                                                        {{item.nama}}
+                                                    </mat-option>
+                                                </ng-container>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['statusAkun']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                            <mat-select [formControlName]="'byIsAktif'" placeholder="Status">
+                                                <mat-option [value]="null">Semua</mat-option>
+                                                <mat-option [value]="true">Enabled</mat-option>
+                                                <mat-option [value]="false">Disabled</mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['bahasa']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" *ngIf="bahasaList | async as _bahasaList" style="padding: 0px !important; margin: 0px !important;">
+                                            <mat-select [formControlName]="'byBahasa'" placeholder="Bahasa" multiple>
+                                                <mat-option *ngFor="let bahasa of _bahasaList" [value]="bahasa">
+                                                    {{bahasa.nama}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['pelatihan']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pelatihanFilterMenu">
+                                            <mat-select placeholder="Pelatihan"></mat-select>
+                                        </mat-form-field>
+                                        <mat-menu #pelatihanFilterMenu="matMenu" class="p-4">
+                                            <div class="p-2" (click)="$event.stopPropagation()">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'bynamaPelatihan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Nama Pelatihan'" />
+                                                </mat-form-field>
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'byTahunPelatihan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Tahun Pelatihan'" (input)="onYearInput($event)" />
+                                                </mat-form-field>
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'byPeringkatPelatihan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Peringkat Pelatihan'" />
+                                                </mat-form-field>
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'byPredikatPelatihan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Predikat Pelatihan'" />
+                                                </mat-form-field>
+                                            </div>
+                                        </mat-menu>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['pendidikan']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pendidikanFilterMenu">
+                                            <mat-select placeholder="Pendidikan"></mat-select>
+                                        </mat-form-field>
+                                        <mat-menu #pendidikanFilterMenu="matMenu" class="p-4">
+                                            <div class="p-2" (click)="$event.stopPropagation()">
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'byNamaSekolahPendidikan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Nama Pendidikan'" />
+                                                </mat-form-field>
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'byTahunLulusPendidikan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Tahun Lulus'" />
+                                                </mat-form-field>
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'byPendidikan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Tingkat Pendidikan'" />
+                                                </mat-form-field>
+                                                <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
+                                                    <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                                    <input matInput [formControlName]="'byJurusanPendidikan'" [autocomplete]="'off'"
+                                                        [placeholder]="'Jurusan'" />
+                                                </mat-form-field>
+                                            </div>
+                                        </mat-menu>
+                                    </td>
+                                    <td class="border-r" *ngIf="displayedColumns['ujiKompetensi']"></td>
+                                    <td class="" *ngIf="displayedColumns['angkaKredit']"></td>
+                                </tr>
+                                <tr class="border-b">
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">Foto</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">Nama</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">Instansi</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">Provinsi</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">Jabatan</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">Status Akun</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">Bahasa</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['pelatihan']">Pelatihan</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['pendidikan']">Pendidikan</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['ujiKompetensi']">Uji Kompetensi</th>
+                                    <th class="px-4 py-2" *ngIf="displayedColumns['angkaKredit']">Angka Kredit</th>
+                                </tr>
+                            </thead>
+                            <tbody *ngIf="items.length; else noItems">
+                                <ng-container *ngFor="let item of items; let i = index; trackBy: trackByFn">
+                                    <tr [ngClass]="{
+                                        'bg-primary-50 dark:bg-hover': selectedItem && selectedItem.id === item.id
+                                    }" [routerLink]="['./', item.id]" class="border-b">
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">
+                                            <div class="flex items-center justify-center w-12 h-12 rounded-full overflow-hidden">
+                                                <ng-container *ngIf="item.urlPhoto">
+                                                    <img class="object-cover w-full h-full" [src]="baseUrl + item.urlPhoto" alt="Foto" />
+                                                </ng-container>
+                                                <ng-container *ngIf="!item.urlPhoto">
+                                                    <div class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
+                                                        {{ item.nama.charAt(0) }}
+                                                    </div>
+                                                </ng-container>
+                                            </div>
                                         </td>
-                                        <td class="border-r" *ngIf="displayedColumns['pelatihan']">
-                                            <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pelatihanFilterMenu">
-                                                <mat-select placeholder="Pelatihan"></mat-select>
-                                            </mat-form-field>
-                                            <mat-menu #pelatihanFilterMenu="matMenu" class="p-4">
-                                                <div class="p-2" (click)="$event.stopPropagation()">
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'bynamaPelatihan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Nama Pelatihan'" />
-                                                    </mat-form-field>
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'byTahunPelatihan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Tahun Pelatihan'" (input)="onYearInput($event)" />
-                                                    </mat-form-field>
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'byPeringkatPelatihan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Peringkat Pelatihan'" />
-                                                    </mat-form-field>
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'byPredikatPelatihan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Predikat Pelatihan'" />
-                                                    </mat-form-field>
-                                                </div>
-                                            </mat-menu>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">{{ item.nama | titlecase }}</td>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">{{ item.instansiNama | titlecase }}</td>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">{{ item.provinsiNama | titlecase }}</td>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">{{ item.jabatanNama| titlecase }}</td>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">
+                                            <div [style.background-color]="item.isAktif ? '#4caf50' : '#f44336'" [style.color]="'white'"
+                                                [style.border]="item.isAktif ? '2px solid #388e3c' : '2px solid #d32f2f'"
+                                                [style.padding]="'8px 5px'" [style.border-radius]="'8px'" [style.font-size]="'12px'"
+                                                [style.font-weight]="'bold'" [style.text-transform]="'uppercase'">
+                                                {{ item.isAktif ? 'Enabled' : 'Disabled' }}
+                                            </div>
                                         </td>
-                                        <td class="border-r" *ngIf="displayedColumns['ujiKompetensi']"></td>
-                                        <td class="border-r" *ngIf="displayedColumns['angkaKredit']"></td>
-                                        <td class="" *ngIf="displayedColumns['pendidikan']">
-                                            <mat-form-field class="fuse-mat-no-subscript w-full" [matMenuTriggerFor]="pendidikanFilterMenu">
-                                                <mat-select placeholder="Pendidikan"></mat-select>
-                                            </mat-form-field>
-                                            <mat-menu #pendidikanFilterMenu="matMenu" class="p-4">
-                                                <div class="p-2" (click)="$event.stopPropagation()">
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'byPendidikan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Tingkat Pendidikan'" />
-                                                    </mat-form-field>
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'byNamaSekolahPendidikan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Nama Pendidikan'" />
-                                                    </mat-form-field>
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'byJurusanPendidikan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Jurusan'" />
-                                                    </mat-form-field>
-                                                    <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
-                                                        <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'byTahunLulusPendidikan'" [autocomplete]="'off'"
-                                                            [placeholder]="'Tahun Lulus'" />
-                                                    </mat-form-field>
-                                                </div>
-                                            </mat-menu>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">
+                                            <div class="flex items-center">
+                                                <ng-container *ngFor="let bahasa of item.kemahiranBahasas">
+                                                    <div class="py-0.5 px-3 mr-2 rounded-full text-sm text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500">
+                                                        {{bahasa.bahasa.nama}}
+                                                    </div>
+                                                </ng-container>
+                                            </div>
                                         </td>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['pelatihan']">
+                                            <div class="flex items-center">
+                                                <ul class="list-disc pl-6">
+                                                    <ng-container *ngFor="let pelatihan of item.pelatihans">
+                                                        <li>{{ pelatihan.nama }}</li>
+                                                    </ng-container>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['pendidikan']">
+                                            <div class="flex items-center">
+                                                <ul class="list-disc pl-6">
+                                                    <ng-container *ngFor="let pendidikan of item.pendidikans">
+                                                        <li>{{ pendidikan.pendidikanNama }}</li>
+                                                    </ng-container>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['ujiKompetensi']">
+                                            <div class="flex items-center">
+                                                <ul class="list-disc pl-6">
+                                                    <ng-container *ngFor="let ujikompetensi of item.ujikompetensis">
+                                                        <li>{{ ujikompetensi.jenisUjikom }}</li>
+                                                    </ng-container>
+                                                </ul>
+                                            </div>
+                                        </td>
+                                        <td class="px-4 py-2" *ngIf="displayedColumns['angkaKredit']">{{ item.nilaiAkkonversi}}</td>
+                                        
                                     </tr>
-                                    <tr class="border-b">
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">Foto</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">Nama</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">Instansi</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">Provinsi</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">Jabatan</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">Status Akun</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">Bahasa</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['pelatihan']">Pelatihan</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['ujiKompetensi']">Uji Kompetensi</th>
-                                        <th class="px-4 py-2 border-r" *ngIf="displayedColumns['angkaKredit']">Angka Kredit</th>
-                                        <th class="px-4 py-2" *ngIf="displayedColumns['pendidikan']">Pendidikan</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <ng-container *ngFor="let item of items; let i = index; trackBy: trackByFn">
-                                        <tr [ngClass]="{
-                                            'bg-primary-50 dark:bg-hover': selectedItem && selectedItem.id === item.id
-                                        }" [routerLink]="['./', item.id]" class="border-b">
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['foto']">
-                                                <div class="flex items-center justify-center w-12 h-12 rounded-full overflow-hidden">
-                                                    <ng-container *ngIf="item.urlPhoto">
-                                                        <img class="object-cover w-full h-full" [src]="baseUrl + item.urlPhoto" alt="Foto" />
-                                                    </ng-container>
-                                                    <ng-container *ngIf="!item.urlPhoto">
-                                                        <div class="flex items-center justify-center w-full h-full rounded-full text-lg uppercase bg-gray-200 text-gray-600 dark:bg-gray-700 dark:text-gray-200">
-                                                            {{ item.nama.charAt(0) }}
-                                                        </div>
-                                                    </ng-container>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['nama']">{{ item.nama | titlecase }}</td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">{{ item.instansiNama | titlecase }}</td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">{{ item.provinsiNama | titlecase }}</td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">{{ item.jabatanNama| titlecase }}</td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">
-                                                <div [style.background-color]="item.isAktif ? '#4caf50' : '#f44336'" [style.color]="'white'"
-                                                    [style.border]="item.isAktif ? '2px solid #388e3c' : '2px solid #d32f2f'"
-                                                    [style.padding]="'8px 5px'" [style.border-radius]="'8px'" [style.font-size]="'12px'"
-                                                    [style.font-weight]="'bold'" [style.text-transform]="'uppercase'">
-                                                    {{ item.isAktif ? 'Enabled' : 'Disabled' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">
-                                                <div class="flex items-center">
-                                                    <ng-container *ngFor="let bahasa of item.kemahiranBahasas">
-                                                        <div class="py-0.5 px-3 mr-2 rounded-full text-sm text-blue-800 bg-blue-100 dark:text-blue-50 dark:bg-blue-500">
-                                                            {{bahasa.bahasa.nama}}
-                                                        </div>
-                                                    </ng-container>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['pelatihan']">
-                                                <div class="flex items-center">
-                                                    <ul class="list-disc pl-6">
-                                                        <ng-container *ngFor="let pelatihan of item.pelatihans">
-                                                            <li>{{ pelatihan.nama }}</li>
-                                                        </ng-container>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['ujiKompetensi']">
-                                                <div class="flex items-center">
-                                                    <ul class="list-disc pl-6">
-                                                        <ng-container *ngFor="let ujikompetensi of item.ujikompetensis">
-                                                            <li>{{ ujikompetensi.jenisUjikom }}</li>
-                                                        </ng-container>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                            <td class="px-4 py-2 border-r" *ngIf="displayedColumns['angkaKredit']">{{ item.nilaiAkkonversi}}</td>
-                                            <td class="px-4 py-2" *ngIf="displayedColumns['pendidikan']">
-                                                <div class="flex items-center">
-                                                    <ul class="list-disc pl-6">
-                                                        <ng-container *ngFor="let pendidikan of item.pendidikans">
-                                                            <li>{{ pendidikan.pendidikanNama }}</li>
-                                                        </ng-container>
-                                                    </ul>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    </ng-container>
-                                </tbody>
-                            </table>
+                                </ng-container>
+                            </tbody>
+                        </table>
 
-                            <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
-                                [ngClass]="{'pointer-events-none': isLoading}"
-                                [length]="pagination.recordsTotal"
-                                [pageIndex]="(pagination.draw)"
-                                [pageSize]="pagination.perPage"
-                                [pageSizeOptions]="[10, 50, 100, 250, 500]"
-                                [showFirstLastButtons]="true"
-                                (page)="pageEvent($event)">
-                            </mat-paginator>
-                        </ng-container>
-
-                        <!-- No contacts -->
-                        <ng-template #noItems>
-                            <div class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
-                                JFP tidak ditemukan!
-                            </div>
-                        </ng-template>
+                        <mat-paginator class="sticky sm:inset-x-0 sm:bottom-0 border-b sm:border-t sm:border-b-0 z-10 bg-gray-50 dark:bg-transparent"
+                            [ngClass]="{'pointer-events-none': isLoading}"
+                            [length]="pagination.recordsTotal"
+                            [pageIndex]="(pagination.draw)"
+                            [pageSize]="pagination.perPage"
+                            [pageSizeOptions]="[10, 50, 100, 250, 500]"
+                            [showFirstLastButtons]="true"
+                            (page)="pageEvent($event)">
+                        </mat-paginator>
                     </ng-container>
+
+                    <!-- No contacts -->
+                    <ng-template #noItems>
+                        <tr>
+                            <td colspan="11" class="p-8 sm:p-16 border-t text-4xl font-semibold tracking-tight text-center">
+                                JFP tidak ditemukan!
+                            </td>
+                        </tr>
+                    </ng-template>
                 </div>
             </div>
         </mat-drawer-content>

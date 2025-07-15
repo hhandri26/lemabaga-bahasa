@@ -144,9 +144,11 @@ updateStatus() {
     (response) => {
       if (response) {
         console.log('Status updated successfully:', response);
+        this._penerjemahService.getDataUtama(this.jfpItem.pnsId).subscribe();
         this._changeDetectorRef.detectChanges();
       } else {
         console.log('Status update failed, but no further action needed.');
+        window.location.reload();
       }
     },
     (error) => {
@@ -171,9 +173,11 @@ updateStatusKepegawaian() {
       (response) => {
         if (response) {
           console.log('Status updated successfully:', response);
+          this._penerjemahService.getDataUtama(this.jfpItem.pnsId).subscribe();
           this._changeDetectorRef.detectChanges();
         } else {
           console.log('Status update failed, but no further action needed.');
+          window.location.reload();
         }
       },
       (error) => {
@@ -198,9 +202,11 @@ updateStatusJabatan() {
       (response) => {
         if (response) {
           console.log('Status updated successfully:', response);
+          this._penerjemahService.getDataUtama(this.jfpItem.pnsId).subscribe();
           this._changeDetectorRef.detectChanges();
         } else {
           console.log('Status update failed, but no further action needed.');
+          window.location.reload();
         }
       },
       (error) => {

@@ -124,6 +124,12 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
                 link : '/referensi-satuan-organisasi'
             },
             {
+                id   : 'referensi.unit-kerja',
+                title: 'Unit Kerja',
+                type : 'basic',
+                link : '/referensi-unit-kerja'
+            },
+            {
                 id   : 'referensi.bobot',
                 title: 'Bobot Penilaian Kinerja',
                 type : 'basic',

@@ -1,0 +1,43 @@
+<div class="flex flex-col flex-auto md:w-220 md:min-w-220 max-h-160 -m-6 overflow-y-auto">
+    <div class="flex flex-0 items-center justify-between h-16 pr-3 sm:pr-5 pl-6 sm:pl-8 bg-primary text-on-primary">
+        <div class="text-lg font-medium">Tambah Referensi Satuan Organisasi</div>
+        <button mat-icon-button (click)="matDialogRef.close()" [tabIndex]="-1">
+            <mat-icon class="text-current" [svgIcon]="'heroicons_outline:x'"></mat-icon>
+        </button>
+    </div>
+
+    <!-- Card form -->
+    <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
+        <div class="flex flex-col w-full">
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 25rem !important;">
+                    <mat-label>Instansi</mat-label>
+                    <mat-select [formControlName]="'instansiId'">
+                        <mat-option [value]="null">-- Pilih Instansi --</mat-option>
+                        <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
+                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis === 'P') ? 'Pusat' : 'Daerah'}}</span>
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+                <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
+                    Anda harus memilih pilihan instansi dari hasil pencarian
+                </mat-error>
+            </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Nama Satuan Organisasi</mat-label>
+                    <input matInput [formControlName]="'nama'">
+                </mat-form-field>
+            </div>
+        </div>
+    </form>
+
+    <div class="flex items-center justify-end border-t px-8 py-5 bg-gray-50 dark:bg-gray-700">
+        <button mat-button (click)="matDialogRef.close()">
+            Batal
+        </button>
+        <button mat-flat-button [color]="'primary'" class="ml-4" [disabled]="form.invalid" (click)="create()">
+            Submit
+        </button>
+    </div>
+</div>

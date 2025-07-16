@@ -105,6 +105,7 @@ export const appRoutes: Route[] = [
             { path: 'referensi-pelatihan', loadChildren: () => import('app/modules/referensi/pelatihan/pelatihan.module').then(m => m.PelatihanModule) },
             { path: 'referensi-kegiatan-translasi', loadChildren: () => import('app/modules/referensi/jenis-kegiatan-translasi/jenis-kegiatan-translasi.module').then(m => m.JenisKegiatanTranslasiModule) },
             { path: 'referensi-satuan-organisasi', loadChildren: () => import('app/modules/referensi/satuan-organisasi/satuan-organisasi.module').then(m => m.SatuanOrganisasiModule) },
+            { path: 'referensi-unit-kerja', loadChildren: () => import('app/modules/referensi/unit-kerja/unit-kerja.module').then(m => m.UnitKerjaModule) },
             { path: 'referensi-bobot', loadChildren: () => import('app/modules/referensi/bobot/bobot.module').then(m => m.BobotModule) },
             { path: 'referensi-dokumen', loadChildren: () => import('app/modules/referensi/dokumen/dokumen.module').then(m => m.DokumenModule) },
             { path: 'referensi-diklat-kelompok', loadChildren: () => import('app/modules/referensi/diklat-group/diklat-group.module').then(m => m.DiklatGroupModule) },

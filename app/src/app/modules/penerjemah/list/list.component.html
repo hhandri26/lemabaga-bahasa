@@ -217,7 +217,12 @@
                                             </div>
                                         </mat-menu>
                                     </td>
-                                    <td class="border-r" *ngIf="displayedColumns['ujiKompetensi']"></td>
+                                    <td class="border-r" *ngIf="displayedColumns['ujiKompetensi']">
+                                        <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" [ngClass]="{ 'mat-focused': isUjiKompetensiFilterFilled(), 'mat-form-field-should-float': isUjiKompetensiFilterFilled() }">
+                                            <mat-icon class="icon-size-5" matPrefix [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                                            <input matInput [formControlName]="'byUjiKompetensi'" [autocomplete]="'off'" [placeholder]="'Cari Uji Kompetensi'" />
+                                        </mat-form-field>
+                                    </td>
                                     <td class="" *ngIf="displayedColumns['angkaKredit']"></td>
                                 </tr>
                                 <tr class="border-b">

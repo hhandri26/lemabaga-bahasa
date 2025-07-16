@@ -91,6 +91,7 @@ export class PenerjemahListComponent implements OnInit, OnDestroy {
             byNamaSekolahPendidikan: [''],
             byJurusanPendidikan: [''],
             byTahunLulusPendidikan: [''],
+            byUjiKompetensi: [''],
         });
 
         // Subscribe to form value changes
@@ -109,7 +110,8 @@ export class PenerjemahListComponent implements OnInit, OnDestroy {
             this.form.get('byPendidikan').valueChanges,
             this.form.get('byNamaSekolahPendidikan').valueChanges,
             this.form.get('byJurusanPendidikan').valueChanges,
-            this.form.get('byTahunLulusPendidikan').valueChanges
+            this.form.get('byTahunLulusPendidikan').valueChanges,
+            this.form.get('byUjiKompetensi').valueChanges
         ).pipe(
             debounceTime(300),
             takeUntil(this._unsubscribeAll)
@@ -296,6 +298,7 @@ onYearInput(event: any): void {
         search.byNamaSekolahPendidikan = search.byNamaSekolahPendidikan || null;
         search.byJurusanPendidikan = search.byJurusanPendidikan || null;
         search.byTahunLulusPendidikan = search.byTahunLulusPendidikan || null;
+        search.byUjiKompetensi = search.byUjiKompetensi || null;
 
         console.log('Search params:', search);  // Add logging to debug search parameters
 
@@ -346,6 +349,7 @@ onYearInput(event: any): void {
         params.byNamaSekolahPendidikan = params.byNamaSekolahPendidikan || null;
         params.byJurusanPendidikan = params.byJurusanPendidikan || null;
         params.byTahunLulusPendidikan = params.byTahunLulusPendidikan || null;
+        params.byUjiKompetensi = params.byUjiKompetensi || null;
 
         // Add sortBy and sort to the parameters for printing
         params.sortBy = 'nama';
@@ -409,9 +413,9 @@ onYearInput(event: any): void {
         { id: 'statusAkun', label: 'Status Akun' },
         { id: 'bahasa', label: 'Bahasa' },
         { id: 'pelatihan', label: 'Pelatihan' },
-        { id: 'ujiKompetensi', label: 'Uji Kompetensi' },
         { id: 'angkaKredit', label: 'Angka Kredit' },
-        { id: 'pendidikan', label: 'Pendidikan' }
+        { id: 'pendidikan', label: 'Pendidikan' },
+        { id: 'ujiKompetensi', label: 'Uji Kompetensi' },
     ];
     
     toggleColumn(columnId: string): void {
@@ -433,6 +437,11 @@ onYearInput(event: any): void {
                f.get('byPendidikan')?.value ||
                f.get('byJurusanPendidikan')?.value;
       }
+
+    isUjiKompetensiFilterFilled(): boolean {
+        const f = this.form;
+        return f.get('byUjiKompetensi')?.value;
+    }
 
     isPelatihanFilterFilled(): boolean {
         const f = this.form;

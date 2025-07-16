@@ -9,7 +9,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { HelperService } from 'app/services/helper.service';
 import { DATE_FORMATS, ReferensiService } from 'app/services/referensi.service';
 import { ToastrService } from 'ngx-toastr';
-import { debounceTime, filter, finalize, map, Subject, switchMap, takeUntil, tap } from 'rxjs';
+import { finalize, Subject, takeUntil } from 'rxjs';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
 import { ReferensiSatuanOrganisasiService } from 'app/services/referensi-satuan-organisasi.service';
 
@@ -41,27 +41,15 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.form = this._formBuilder.group({
-            instansiId: ['', [Validators.required, this._helperService.requireMatch]],
+            instansiId: [null, [Validators.required]],
             nama: ['', [Validators.required]],
         });
 
-        this.form.get('instansiId').valueChanges
-        .pipe(
-            debounceTime(300),
+        this._referensiService.instansi({ q: '', size: 1000 }).pipe(
             takeUntil(this._unsubscribeAll),
-            tap(() => this.isLoading = true),
-            map((value) => {
-                if (!value || value.length < 2) {
-                    this.resultInstansi = null;
-                }
-                return value;
-            }),
-            filter(value => value && value.length >= 2),
-            switchMap(value => this._referensiService.instansi({ q: value }).pipe(
-                finalize(() => this.isLoading = false),
-            ))
+            finalize(() => this.isLoading = false)
         ).subscribe((items: any) => {
-            this.resultInstansi = items?.content;
+            this.resultInstansi = items;
             this._changeDetectorRef.markForCheck();
         });
     }
@@ -87,9 +75,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         );
     }
 
-    displayInstansiFn(item: { nama: string; jenis: string }) {
-        if (item) { return item.nama; }
-    }
+
 
     trackByFn(index: number, item: any): any {
         return item.id || index;

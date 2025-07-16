@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable max-len */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, ElementRef, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Inject, OnDestroy, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { FormGroup, UntypedFormBuilder } from '@angular/forms';
 import { MatDrawer } from '@angular/material/sidenav';
 import { fromEvent, Observable, Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged, filter, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, finalize, takeUntil } from 'rxjs/operators';
 import { FuseMediaWatcherService } from '@fuse/services/media-watcher';
 import { MatPaginator } from '@angular/material/paginator';
 import { Pagination } from 'app/modules/penerjemah/penerjemah.types';
@@ -23,7 +23,7 @@ import { HelperService } from 'app/services/helper.service';
 })
 export class ListComponent implements OnInit, OnDestroy {
     @ViewChild('matDrawer', { static: true }) matDrawer: MatDrawer;
-    @ViewChild('keyword', { static: true }) findKeyword: ElementRef;
+
     items$: Observable<any[]>;
     pagination: Pagination;
     isLoading: boolean = false;
@@ -45,13 +45,11 @@ export class ListComponent implements OnInit, OnDestroy {
         public _helperService: HelperService,
         private _fuseMediaWatcherService: FuseMediaWatcherService,
         private _matDialog: MatDialog,
+        private _formBuilder: UntypedFormBuilder,
     ) {
     }
 
     ngOnInit(): void {
-        this.form = new FormGroup({
-            instansiId: new FormControl('', [Validators.required, this._helperService.requireMatch])
-        });
 
         this.items$ = this._referensiSatuanOrganisasiService.items$;
 
@@ -69,26 +67,18 @@ export class ListComponent implements OnInit, OnDestroy {
                 this._changeDetectorRef.markForCheck();
             });
 
-        this.form.get('instansiId').valueChanges
-            .pipe(
-                debounceTime(300),
-                takeUntil(this._unsubscribeAll),
-                tap(() => this.isLoading = true),
-                map((value) => {
-                    if (!value || value.length < 2) {
-                        this.resultInstansi = null;
-                    }
-                    return value;
-                }),
-                filter(value => value && value.length >= 2),
-                switchMap(value => this._referensiService.instansi({ q: value }).pipe(
-                    finalize(() => this.isLoading = false),
-                ))
-            ).subscribe((items: any) => {
-                this.resultInstansi = items?.content;
-                console.log(this.resultInstansi);
-                this._changeDetectorRef.markForCheck();
-            });
+        this.form = this._formBuilder.group({
+            instansiId: [null],
+        });
+
+        this._referensiService.instansi({ q: '', size: 1000 }).pipe(
+            takeUntil(this._unsubscribeAll),
+            finalize(() => this.isLoading = false)
+        ).subscribe((items: any) => {
+            this.resultInstansi = items;
+            this._changeDetectorRef.markForCheck();
+            console.log('Instansi result:', this.resultInstansi);
+        });
 
         // fromEvent(this.findKeyword.nativeElement, 'keyup')
         //     .pipe(
@@ -179,9 +169,5 @@ export class ListComponent implements OnInit, OnDestroy {
 
     trackByFn(index: number, item: any): any {
         return item?.id || index;
-    }
-
-    displayInstansiFn(item: { nama: string; jenis: string }) {
-        if (item) { return item.nama; }
     }
 }

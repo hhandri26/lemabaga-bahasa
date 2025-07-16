@@ -22,20 +22,13 @@
                             <div class="flex-auto">
                                 <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 25rem !important;">
                                     <mat-label>Instansi</mat-label>
-                                    <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                    <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocompleteInstansi" [placeholder]="'Cari nama instansi...'">
-                                    <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('instansiId').setValue('') || find()">
-                                        <mat-icon>close</mat-icon>
-                                    </button>
+                                    <mat-select [formControlName]="'instansiId'" (selectionChange)="find()">
+                                        <mat-option [value]="null">-- Pilih Instansi --</mat-option>
+                                        <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
+                                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis === 'P') ? 'Pusat' : 'Daerah'}}</span>
+                                        </mat-option>
+                                    </mat-select>
                                 </mat-form-field>
-                                <mat-autocomplete #matAutocompleteInstansi="matAutocomplete" [displayWith]="displayInstansiFn" [disableRipple]="true" (optionSelected)='find()'>
-                                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultInstansi && !resultInstansi.length">
-                                        Instansi tidak ditemukan!
-                                    </mat-option>
-                                    <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
-                                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis === 'P') ? 'Pusat' : 'Daerah'}}</span>
-                                    </mat-option>
-                                </mat-autocomplete>
                                 <!-- <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
                                     Anda harus memilih pilihan instansi dari hasil pencarian
                                 </mat-error> -->

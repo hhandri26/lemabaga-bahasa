@@ -3,7 +3,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, startWith } from 'rxjs';
 import { debounceTime, filter, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ListComponent } from '../list/list.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -26,6 +26,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
     items: any[];
     resultInstansi: any[];
     // resultSatuanKerja: any[];
+    filteredInstansi$: Observable<any[]>;
     itemUnitKerja$: Observable<any[]>;
     jenisInstansiList = this._referensiService.jenisInstansiList();
     unitKerja$: Observable<any[]> = this._referensiService.unitKerja();
@@ -49,7 +50,7 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
         this.form = this._formBuilder.group({
             id: [''],
-            instansiId: ['', [Validators.required, this._helperService.requireMatch]],
+            instansiId: ['', [Validators.required]],
             nama: ['', [Validators.required]],
         });
 
@@ -70,27 +71,50 @@ export class DetailsComponent implements OnInit, OnDestroy {
                 this.form.controls['instansiId'].setValue(selected.instansi);
                 this.toggleEditMode(false);
                 this._changeDetectorRef.markForCheck();
-            });
+        });
 
-        this.form.get('instansiId').valueChanges
-            .pipe(
-                debounceTime(300),
-                takeUntil(this._unsubscribeAll),
-                tap(() => this.isLoading = true),
-                map((value) => {
-                    if (!value || value.length < 2) {
-                        this.resultInstansi = null;
-                    }
-                    return value;
-                }),
-                filter(value => value && value.length >= 2),
-                switchMap(value => this._referensiService.instansi({ q: value }).pipe(
-                    finalize(() => this.isLoading = false),
-                ))
-            ).subscribe((items: any) => {
-                this.resultInstansi = items?.content;
-                this._changeDetectorRef.markForCheck();
-            });
+        this._referensiService.instansi({ q: '', size: 1000 }).pipe(
+            takeUntil(this._unsubscribeAll),
+            finalize(() => this.isLoading = false)
+        ).subscribe((items: any) => {
+            this.resultInstansi = items;
+            this._changeDetectorRef.markForCheck();
+            console.log('Instansi result:', this.resultInstansi);
+        });
+
+        // this.form.get('instansiId')?.valueChanges
+        // .pipe(
+        //     debounceTime(300),
+        //     takeUntil(this._unsubscribeAll),
+        //     tap(() => this.isLoading = true),
+        //     map((value) => {
+        //         if (typeof value === 'string') {
+        //             if (value.length < 2) {
+        //                 this.resultInstansi = [];
+        //             }
+        //             return value;
+        //         } else {
+        //             this.resultInstansi = [];
+        //             return '';
+        //         }
+        //     }),
+        //     filter(value => !!value && value.length >= 2),
+        //     switchMap(value => this._referensiService.instansi({ q: value }).pipe(
+        //         finalize(() => this.isLoading = false)
+        //     ))
+        // )
+        // .subscribe((items: any) => {
+        //     this.resultInstansi = items?.content || [];
+        //     this._changeDetectorRef.markForCheck();
+        // });
+
+        this.filteredInstansi$ = this.form.get('instansiId')!.valueChanges.pipe(
+            startWith(''),
+            map(value => {
+                const nama = typeof value === 'string' ? value : value?.nama;
+                return this._filterInstansi(nama);
+            })
+        );
     }
 
     ngOnDestroy(): void {
@@ -159,5 +183,10 @@ export class DetailsComponent implements OnInit, OnDestroy {
 
     displayInstansiFn(item: { nama: string; jenis: string }) {
         if (item) { return item.nama; }
+    }
+
+    private _filterInstansi(nama: string): any[] {
+        const filterValue = nama?.toLowerCase() || '';
+        return this.resultInstansi?.filter(option => option.nama.toLowerCase().includes(filterValue));
     }
 }

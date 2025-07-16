@@ -18,8 +18,8 @@
                         </div>
                     </div>
                     <form [formGroup]="form">
-                        <div class="flex items-center">
-                            <div class="flex-auto">
+                        <div class="flex flex-row gap-4">
+                            <div class="w-[25rem]">
                                 <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 25rem !important;">
                                     <mat-label>Instansi</mat-label>
                                     <mat-select [formControlName]="'instansiId'" (selectionChange)="find()">
@@ -29,14 +29,25 @@
                                         </mat-option>
                                     </mat-select>
                                 </mat-form-field>
+                            </div>
+                            <div class="w-[25rem]">
+                                <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 25rem !important;">
+                                    <mat-label>Satuan Organisasi</mat-label>
+                                    <mat-select [formControlName]="'satuanOrganisasiId'" (selectionChange)="find()">
+                                        <mat-option [value]="null">-- Pilih Satuan Organisasi --</mat-option>
+                                        <mat-option *ngFor="let item of resultSatuanOrganisasi; trackBy: trackByFn" [value]="item">
+                                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}}</span>
+                                        </mat-option>
+                                    </mat-select>
+                                </mat-form-field>
+                            </div>
                                 <!-- <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
                                     Anda harus memilih pilihan instansi dari hasil pencarian
                                 </mat-error> -->
-                            </div>
                             <button class="ml-4" mat-flat-button [color]="'primary'" (click)="create()">
-                            <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
-                            <span class="ml-2 mr-1">Unit Kerja</span>
-                        </button>
+                                <mat-icon [svgIcon]="'heroicons_outline:plus'"></mat-icon>
+                                <span class="ml-2 mr-1">Unit Kerja</span>
+                            </button>
                         </div>
                     </form>
                 </div>
@@ -50,10 +61,17 @@
                                     'bg-primary-50 dark:bg-hover': selected && selected.id === item.id}" [routerLink]="['./', item.id]">
                                     <div class="min-w-0 ml-4">
                                         <div class="font-medium tracking-tight leading-6 truncate text-md">
-                                            {{item.nama | titlecase}}</div>
+                                            {{item.nama | titlecase}}
+                                        </div>
                                         <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
                                             <div class="font-medium tracking-tight leading-6 truncate text-md">
-                                                {{item.nama | titlecase}}</div>
+                                                {{ (item.satuanOrganisasi?.nama ?? '-') | titlecase }}
+                                            </div>
+                                        </div>
+                                        <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                            <div class="font-medium tracking-tight leading-6 truncate text-md">
+                                                {{ (item.satuanOrganisasi?.instansi?.nama ?? item.instansi?.nama) | titlecase }}
+                                            </div>
                                             <div class="hidden sm:block">&bull;</div>
                                             <div class="inline-flex items-center font-bold text-xs px-2.5 py-0.5 rounded-full tracking-wide text-gray-500 bg-gray-100 dark:text-gray-300 dark:bg-gray-700">
                                                 <span class="leading-relaxed whitespace-nowrap text-sm">{{(item.satuanOrganisasi?.instansi?.jenis ?? item.instansi?.jenis) === 'P' ? 'Pusat' : 'Daerah'}}</span>

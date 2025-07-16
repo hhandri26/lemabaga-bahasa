@@ -31,6 +31,7 @@ export class ListComponent implements OnInit, OnDestroy {
     draw: number;
     drawerMode: 'side' | 'over';
     resultInstansi: any[];
+    resultSatuanOrganisasi: any[];
     selected: any;
     form: FormGroup;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
@@ -70,6 +71,35 @@ export class ListComponent implements OnInit, OnDestroy {
 
         this.form = this._formBuilder.group({
             instansiId: [null],
+            satuanOrganisasiId: [null],
+        });
+
+        this.form.get('instansiId').valueChanges.subscribe(value => {
+            if (value) {
+                // Jika memilih instansi langsung, kosongkan satuan organisasi
+                this.form.get('satuanOrganisasiId').patchValue(null, { emitEvent: false });
+            }
+        });
+        
+        this.form.get('satuanOrganisasiId').valueChanges
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe(value => {
+                if (value) {
+                    // Cari object lengkap satuanOrganisasi dari result
+                    const selectedSatuanOrganisasi = this.resultSatuanOrganisasi.find(item => item.id === value.id);
+                    const instansi = selectedSatuanOrganisasi?.instansi;
+
+                    if (instansi && instansi.id) {
+                        // Cocokkan instansi dari list supaya referensi sama
+                        const matchedInstansi = this.resultInstansi.find(i => i.id === instansi.id);
+                        if (matchedInstansi) {
+                            this.form.get('instansiId').patchValue(matchedInstansi, { emitEvent: false });
+                        }
+                    }
+                } else {
+                    // Jika satuanOrganisasi dikosongkan, instansi juga dikosongkan
+                    this.form.get('instansiId').patchValue(null, { emitEvent: false });
+                }
         });
 
         this._referensiService.instansi({ q: '', size: 1000 }).pipe(
@@ -79,6 +109,15 @@ export class ListComponent implements OnInit, OnDestroy {
             this.resultInstansi = items;
             this._changeDetectorRef.markForCheck();
             console.log('Instansi result:', this.resultInstansi);
+        });
+
+        this._referensiService.satuanOrganisasi({}).pipe(
+            takeUntil(this._unsubscribeAll),
+            finalize(() => this.isLoading = false)
+        ).subscribe((items: any) => {
+            this.resultSatuanOrganisasi = items;
+            this._changeDetectorRef.markForCheck();
+            console.log('Satuan Organisasi result:', this.resultSatuanOrganisasi);
         });
 
         // fromEvent(this.findKeyword.nativeElement, 'keyup')
@@ -131,6 +170,9 @@ export class ListComponent implements OnInit, OnDestroy {
         if(this.form.get('instansiId').value){
             params.instansiId = this.form.get('instansiId').value.id;
         }
+        if(this.form.get('satuanOrganisasiId').value){
+            params.satuanOrganisasiId = this.form.get('satuanOrganisasiId').value.id;
+        }
         this._referensiUnitKerjaService.getList(params, this.draw, this.perPage).subscribe();
     }
 
@@ -150,6 +192,9 @@ export class ListComponent implements OnInit, OnDestroy {
         const params: any = {};
         if(this.form.get('instansiId').value){
             params.instansiId = this.form.get('instansiId').value.id;
+        }
+        if(this.form.get('satuanOrganisasiId').value){
+            params.satuanOrganisasiId = this.form.get('satuanOrganisasiId').value.id;
         }
         return this._referensiUnitKerjaService.getList(params, pageIndex, pageSize).pipe();
     }

@@ -64,7 +64,7 @@
                         <div class="space-y-4">
                             <div class="flex flex-col">
                                 <span class="text-sm text-gray-500">Satuan Organisasi/Unit Kerja</span>
-                                <span class="text-base font-medium">{{jfpItem.unitKerjaNama || jfpItem.satuanOrganisasi || '-'}}</span>
+                                <span class="text-base font-medium">{{ (jfpItem.satuanOrganisasi ?? '-') + ' / ' + (jfpItem.unitKerjaNama ?? '-') }}</span>
                             </div>
                             <div class="flex flex-col">
                                 <span class="text-sm text-gray-500">Pangkat/Golongan</span>

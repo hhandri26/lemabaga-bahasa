@@ -102,52 +102,59 @@
         <div class="relative flex flex-col flex-auto items-center px-6 sm:px-12">
             <div class="w-full max-w-3xl">
                 <form [formGroup]="form">
+                    <!-- Instansi -->
                     <div class="mt-4">
                         <mat-form-field class="fuse-mat-no-subscript w-full">
                             <mat-label>Instansi</mat-label>
                             <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                            <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocompleteInstansi" [placeholder]="'Cari nama instansi...'">
-                            <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('instansiId').setValue('')">
+                            <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocompleteInstansi" placeholder="Cari nama instansi...">
+                            <button *ngIf="form.get('instansiId')?.value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('instansiId')?.setValue('')">
                                 <mat-icon>close</mat-icon>
                             </button>
                         </mat-form-field>
-                        <mat-autocomplete #matAutocompleteInstansi="matAutocomplete" [displayWith]="displayInstansiFn" [disableRipple]="true">
-                            <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultInstansi && !resultInstansi.length">
+                        <mat-autocomplete #matAutocompleteInstansi="matAutocomplete" [displayWith]="displayInstansiFn">
+                            <mat-option *ngIf="(filteredInstansi$ | async)?.length === 0" disabled>
                                 Instansi tidak ditemukan!
                             </mat-option>
-                            <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
-                                <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis === 'P') ? 'Pusat' : 'Daerah'}}</span>
+                            <mat-option *ngFor="let item of filteredInstansi$ | async" [value]="item">
+                                {{ item.nama | titlecase }} - {{ item.jenis === 'P' ? 'Pusat' : 'Daerah' }}
                             </mat-option>
                         </mat-autocomplete>
-                        <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
-                            Anda harus memilih pilihan instansi dari hasil pencarian
-                        </mat-error>
                     </div>
+                
+                    <!-- Satuan Organisasi -->
                     <div class="mt-4">
                         <mat-form-field class="fuse-mat-no-subscript w-full">
-                            <mat-label>Nama Satuan Organisasi</mat-label>
+                            <mat-label>Satuan Organisasi</mat-label>
+                            <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
+                            <input matInput [formControlName]="'satuanOrganisasiId'" [matAutocomplete]="matAutocompleteSatker" placeholder="Cari satuan organisasi...">
+                            <button *ngIf="form.get('satuanOrganisasiId')?.value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('satuanOrganisasiId')?.setValue('')">
+                                <mat-icon>close</mat-icon>
+                            </button>
+                        </mat-form-field>
+                        <mat-autocomplete #matAutocompleteSatker="matAutocomplete" [displayWith]="displaySatuanOrganisasiFn">
+                            <mat-option *ngIf="(filteredSatuanOrganisasi$ | async)?.length === 0" disabled>
+                                Satuan Organisasi tidak ditemukan!
+                            </mat-option>
+                            <mat-option *ngFor="let item of filteredSatuanOrganisasi$ | async" [value]="item">
+                                {{ item.nama | titlecase }}
+                            </mat-option>
+                        </mat-autocomplete>
+                    </div>
+                
+                    <!-- Nama Unit Kerja -->
+                    <div class="mt-4">
+                        <mat-form-field class="fuse-mat-no-subscript w-full">
+                            <mat-label>Nama Unit Kerja</mat-label>
                             <input matInput [formControlName]="'nama'">
                         </mat-form-field>
                     </div>
-                    <!-- <div class="mt-4">
-                        <mat-form-field class="fuse-mat-no-subscript w-full">
-                            <mat-label>Unit Kerja</mat-label>
-                            <mat-select [formControlName]="'roles'">
-                                <mat-option *ngFor="let item of unitKerja$ | async" [value]="item.id">{{item.nama | titlecase}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </div> -->
+                
+                    <!-- Button Area -->
                     <div class="flex items-center mt-10 -mx-6 sm:-mx-12 py-4 pr-4 pl-1 sm:pr-12 sm:pl-7 border-t bg-gray-50 dark:bg-transparent">
-                        <button mat-button [color]="'warn'" [matTooltip]="'Delete'" (click)="delete()">
-                            Hapus
-                        </button>
-                        <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode(false)">
-                            Batal
-                        </button>
-                        <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Save'" (click)="update()">
-                            Simpan
-                        </button>
+                        <button mat-button [color]="'warn'" [matTooltip]="'Delete'" (click)="delete()">Hapus</button>
+                        <button class="ml-auto" mat-button [matTooltip]="'Cancel'" (click)="toggleEditMode(false)">Batal</button>
+                        <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Save'" (click)="update()">Simpan</button>
                     </div>
                 </form>
             </div>

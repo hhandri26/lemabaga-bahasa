@@ -3,7 +3,7 @@
 import { ChangeDetectionStrategy, ChangeDetectorRef, Component, OnDestroy, OnInit, ViewEncapsulation } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDrawerToggleResult } from '@angular/material/sidenav';
-import { Observable, Subject } from 'rxjs';
+import { Observable, Subject, startWith } from 'rxjs';
 import { debounceTime, filter, finalize, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ListComponent } from '../list/list.component';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -25,7 +25,9 @@ export class DetailsComponent implements OnInit, OnDestroy {
     selected: any;
     items: any[];
     resultInstansi: any[];
-    // resultSatuanKerja: any[];
+    resultSatuanOrganisasi: any[];
+    filteredInstansi$: Observable<any[]>;
+    filteredSatuanOrganisasi$: Observable<any[]>;
     itemUnitKerja$: Observable<any[]>;
     jenisInstansiList = this._referensiService.jenisInstansiList();
     unitKerja$: Observable<any[]> = this._referensiService.unitKerja();
@@ -48,8 +50,8 @@ export class DetailsComponent implements OnInit, OnDestroy {
         this._listComponent.matDrawer.open();
 
         this.form = this._formBuilder.group({
-            id: [''],
-            instansiId: ['', [Validators.required, this._helperService.requireMatch]],
+            instansiId: [null],
+            satuanOrganisasiId: [null],
             nama: ['', [Validators.required]],
         });
 
@@ -65,32 +67,75 @@ export class DetailsComponent implements OnInit, OnDestroy {
             .subscribe((selected: any) => {
                 this._listComponent.matDrawer.open();
                 this.selected = selected;
-                // this.itemUnitKerja$ = this._referensiUnitKerjaService.itemUnitKerja$;
+        
+                // Patch basic data
                 this.form.patchValue(selected);
-                this.form.controls['instansiId'].setValue(selected.instansi);
+        
+                // Prioritaskan satuanOrganisasi, dan pastikan instansi ikut terisi dari dalamnya
+                if (selected.satuanOrganisasi) {
+                    this.form.controls['instansiId'].setValue(selected.satuanOrganisasi.instansi);
+                    this.form.controls['satuanOrganisasiId'].setValue(selected.satuanOrganisasi);
+                } else if (selected.instansi) {
+                    this.form.controls['instansiId'].setValue(selected.instansi);
+                }
+        
                 this.toggleEditMode(false);
                 this._changeDetectorRef.markForCheck();
-            });
+        });
 
-        this.form.get('instansiId').valueChanges
-            .pipe(
-                debounceTime(300),
-                takeUntil(this._unsubscribeAll),
-                tap(() => this.isLoading = true),
-                map((value) => {
-                    if (!value || value.length < 2) {
-                        this.resultInstansi = null;
-                    }
-                    return value;
-                }),
-                filter(value => value && value.length >= 2),
-                switchMap(value => this._referensiService.instansi({ q: value }).pipe(
-                    finalize(() => this.isLoading = false),
-                ))
-            ).subscribe((items: any) => {
-                this.resultInstansi = items?.content;
-                this._changeDetectorRef.markForCheck();
-            });
+        this.form.get('instansiId').valueChanges.subscribe(value => {
+            if (value) {
+                this.form.get('satuanOrganisasiId').patchValue(null, { emitEvent: false });
+            }
+        });
+    
+        this.form.get('satuanOrganisasiId').valueChanges.subscribe(value => {
+            if (value) {
+                const instansi = value.instansi;
+                if (instansi && instansi.id) {
+                    this.form.get('instansiId').patchValue(instansi, { emitEvent: false });
+                }
+            } else {
+                // Jika satuanOrganisasi dihapus, kosongkan juga instansi
+                this.form.get('instansiId').patchValue(null, { emitEvent: false });
+            }
+        });
+
+        this._referensiService.instansi({ q: '', size: 1000 }).pipe(
+            takeUntil(this._unsubscribeAll),
+            finalize(() => this.isLoading = false)
+        ).subscribe((items: any) => {
+            this.resultInstansi = items;
+            this._changeDetectorRef.markForCheck();
+            console.log('Instansi result:', this.resultInstansi);
+        });
+
+        this._referensiService.satuanOrganisasi({}).pipe(
+            takeUntil(this._unsubscribeAll),
+            finalize(() => this.isLoading = false)
+        ).subscribe((items: any) => {
+            this.resultSatuanOrganisasi = items;
+            this._changeDetectorRef.markForCheck();
+            console.log('Satuan Organisasi result:', this.resultSatuanOrganisasi);
+        });
+
+        // Autocomplete Instansi
+        this.filteredInstansi$ = this.form.get('instansiId')!.valueChanges.pipe(
+            startWith(''),
+            map(value => {
+                const nama = typeof value === 'string' ? value : value?.nama;
+                return this._filterInstansi(nama);
+            })
+        );
+
+        // Autocomplete Satuan Organisasi
+        this.filteredSatuanOrganisasi$ = this.form.get('satuanOrganisasiId')!.valueChanges.pipe(
+            startWith(''),
+            map(value => {
+                const nama = typeof value === 'string' ? value : value?.nama;
+                return this._filterSatuanOrganisasi(nama);
+            })
+        );
     }
 
     ngOnDestroy(): void {
@@ -157,7 +202,21 @@ export class DetailsComponent implements OnInit, OnDestroy {
         return item.id || index;
     }
 
-    displayInstansiFn(item: { nama: string; jenis: string }) {
-        if (item) { return item.nama; }
+    displaySatuanOrganisasiFn(item: any): string {
+        return item ? item.nama : '';
+    }
+
+    displayInstansiFn(item: any): string {
+        return item ? item.nama : '';
+    }
+
+    private _filterInstansi(nama: string): any[] {
+        const filterValue = nama?.toLowerCase() || '';
+        return this.resultInstansi?.filter(option => option.nama.toLowerCase().includes(filterValue));
+    }
+    
+    private _filterSatuanOrganisasi(nama: string): any[] {
+        const filterValue = nama?.toLowerCase() || '';
+        return this.resultSatuanOrganisasi?.filter(option => option.nama.toLowerCase().includes(filterValue));
     }
 }

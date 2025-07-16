@@ -351,6 +351,9 @@ onYearInput(event: any): void {
         params.sortBy = 'nama';
         params.sort = 'ASC';
 
+        // Add visible columns to the parameters
+        params.columnsToPrint = Object.keys(this.displayedColumns).filter(key => this.displayedColumns[key]);
+
         this._penerjemahService.cetak(params).subscribe(
             (result) => {
                 const fileURL = URL.createObjectURL(result);

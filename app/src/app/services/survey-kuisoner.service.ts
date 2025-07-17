@@ -101,7 +101,8 @@ export class SurveyKuisonerService {
         return this.items$.pipe(
             take(1),
             map((items) => {
-                const _item = items.find(item => item.id === id) || null;
+                // Ensure items is an array before calling find
+                const _item = (items || []).find(item => item.id === id) || null;
                 this._item.next(_item);
                 return _item;
             }),

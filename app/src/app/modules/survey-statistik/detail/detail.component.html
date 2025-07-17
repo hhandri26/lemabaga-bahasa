@@ -1,21 +1,73 @@
-<div class="flex flex-col flex-auto p-6 bg-card rounded-2xl overflow-hidden shadow-lg">
+<div class="sm:col-span-2 md:col-span-3 flex flex-col flex-auto p-6 bg-card rounded-2xl overflow-hidden shadow-lg">
     <div class="flex items-center justify-between">
-        <div class="text-lg font-medium">Statistik Survei</div>
+        <div class="text-2xl font-extrabold tracking-tight leading-none">Statistik Survei</div>
     </div>
 
     <div *ngIf="surveyStatistics" class="mt-6">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-            <div class="flex flex-col p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-md">
+            <div class="relative flex flex-col flex-auto p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-md">
                 <div class="text-4xl font-bold">{{ surveyStatistics.totalRespondents }}</div>
                 <div class="text-secondary">Total Responden</div>
             </div>
-            <div class="flex flex-col p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-md">
+            <div class="relative flex flex-col flex-auto p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-md">
                 <div class="text-4xl font-bold">{{ surveyStatistics.completionPercentage }}</div>
                 <div class="text-secondary">Persentase Penyelesaian</div>
             </div>
-            <div class="flex flex-col p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-md">
+            <div class="relative flex flex-col flex-auto p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-md">
                 <div class="text-4xl font-bold">{{ surveyStatistics.completedSurveys }}</div>
                 <div class="text-secondary">Survei Selesai</div>
+            </div>
+        </div>
+
+        <div class="mt-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl border border-blue-100 dark:border-gray-600">
+            <div class="flex items-center mb-4">
+                <div class="w-2 h-8 bg-blue-500 rounded-full mr-3"></div>
+                <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Gambaran Umum Survei</h3>
+            </div>
+            
+            <div class="space-y-4 text-gray-700 dark:text-gray-300">
+                <p class="leading-relaxed">
+                    Secara keseluruhan, penyelenggaraan survei 
+                    <span class="font-semibold text-blue-600 dark:text-blue-400">{{ surveyData?.title || '-' }}</span> 
+                    yang diselenggarakan pada periode 
+                    <span class="font-semibold text-blue-600 dark:text-blue-400">{{ surveyData?.startDate || '-' }}</span> 
+                    mendapatkan respons yang sangat baik. Dari 
+                    <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md font-semibold">
+                        {{ surveyStatistics?.totalRespondents || 0 }} responden
+                    </span> 
+                    yang telah mengisi survei, sebanyak 
+                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md font-semibold">
+                        {{ surveyStatistics?.completionPercentage || 0 }}%
+                    </span> 
+                    responden berhasil menyelesaikan survei hingga akhir, menunjukkan tingkat engagement yang tinggi.
+                </p>
+                
+                <p class="leading-relaxed">
+                    Berdasarkan hasil survei ini, dapat disimpulkan bahwa mayoritas responden memberikan tanggapan yang 
+                    <span class="font-semibold text-green-600 dark:text-green-400">positif</span> 
+                    terhadap layanan yang diberikan. Tingkat penyelesaian 
+                    <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md font-semibold">
+                        {{ surveyStatistics?.completionPercentage || 0 }}%
+                    </span> 
+                    menunjukkan bahwa format dan konten survei mudah dipahami serta relevan dengan pengalaman responden.
+                </p>
+                
+                <!-- <div class="mt-6 p-4 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <div class="flex items-center mb-2">
+                        <svg class="w-5 h-5 text-yellow-500 mr-2" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clip-rule="evenodd"></path>
+                        </svg>
+                        <h4 class="font-semibold text-gray-800 dark:text-gray-200">Insight Utama</h4>
+                    </div>
+                    <p class="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                        Analisis mendalam menunjukkan distribusi respons yang dapat dilihat pada chart di bawah ini. 
+                        Data menunjukkan pola kepuasan yang konsisten dengan 
+                        <span class="font-semibold text-blue-600 dark:text-blue-400">
+                            {{ surveyStatistics?.completedSurveys || 0 }} survei
+                        </span> 
+                        yang telah selesai dari total responden yang berpartisipasi.
+                    </p>
+                </div> -->
             </div>
         </div>
 
@@ -28,6 +80,38 @@
                     [type]="pieChartType"
                     [legend]="pieChartLegend">
                 </canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-6 p-6 bg-gradient-to-r from-green-50 to-teal-50 dark:from-gray-800 dark:to-gray-700 rounded-2xl border border-green-100 dark:border-gray-600">
+        <div class="flex items-center mb-4">
+            <div class="w-2 h-8 bg-green-500 rounded-full mr-3"></div>
+            <h3 class="text-lg font-semibold text-gray-800 dark:text-gray-200">Analisis Distribusi Respons</h3>
+        </div>
+        
+        <div class="space-y-4 text-gray-700 dark:text-gray-300">
+            <p class="leading-relaxed">
+                Berdasarkan chart persentase di atas, dapat diamati bahwa distribusi respons menunjukkan pola yang 
+                <span class="font-semibold text-green-600 dark:text-green-400">positif</span>. 
+                Mayoritas responden memberikan penilaian yang baik terhadap aspek-aspek yang dievaluasi dalam survei ini.
+            </p>
+            
+            <p class="leading-relaxed">
+                Tingkat partisipasi yang tinggi dengan 
+                <span class="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-200 rounded-md font-semibold">
+                    {{ surveyStatistics?.completionPercentage || 0 }}% completion rate
+                </span> 
+                menunjukkan bahwa responden merasa survei ini relevan dan mudah untuk diselesaikan. 
+                Hal ini juga mengindikasikan kualitas desain survei yang baik dan topik yang menarik minat responden.
+            </p>
+            
+            <div *ngIf="surveyStatistics?.likechartPercentages" class="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div *ngFor="let item of surveyStatistics.likechartPercentages | keyvalue" 
+                     class="flex items-center justify-between p-3 bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <span class="text-sm font-medium text-gray-700 dark:text-gray-300">{{ item.key }}</span>
+                    <span class="text-sm font-bold text-blue-600 dark:text-blue-400">{{ item.value }}%</span>
+                </div>
             </div>
         </div>
     </div>

@@ -260,4 +260,52 @@ delete(id: string): Observable<any> {
         );
     }
 
+    getSurveyStatistics(surveyKuisonerId: string): Observable<any> {
+        return this._httpClient.get<any>(`${this._apiUrl}/survey-statistics/dashboard/${surveyKuisonerId}`).pipe(
+            tap((result: any) => result),
+            switchMap((result) => {
+                if (!result) {
+                    return throwError('Error fetching survey statistics!');
+                }
+                return of(result);
+            }),
+            catchError((error) => {
+                console.error('Error in getSurveyStatistics:', error);
+                return throwError(error);
+            })
+        );
+    }
+
+    getSurveySuggestions(surveyKuisonerId: string): Observable<any> {
+        return this._httpClient.get<any>(`${this._apiUrl}/survey-statistics/suggestions/${surveyKuisonerId}`).pipe(
+            tap((result: any) => result),
+            switchMap((result) => {
+                if (!result) {
+                    return throwError('Error fetching survey suggestions!');
+                }
+                return of(result);
+            }),
+            catchError((error) => {
+                console.error('Error in getSurveySuggestions:', error);
+                return throwError(error);
+            })
+        );
+    }
+
+    updateFeedbackStatus(params: { feedbackId: string; status: string }): Observable<any> {
+        return this._httpClient.post<any>(`${this._apiUrl}/survey/update-feedback-status`, params, { headers: this.httpHeaders }).pipe(
+            tap((result: any) => result),
+            switchMap((result) => {
+                if (!result?.success) {
+                    return throwError('Error updating feedback status!');
+                }
+                return of(result);
+            }),
+            catchError((error) => {
+                console.error('Error in updateFeedbackStatus:', error);
+                return throwError(error);
+            })
+        );
+    }
+
 }

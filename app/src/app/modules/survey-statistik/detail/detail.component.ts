@@ -415,6 +415,16 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.loadSurveyDetail(feedbackId);
   }
 
+  // Method untuk mendapatkan warna chart berdasarkan index
+  getChartColorByIndex(index: number): string {
+    if (this.chartColors && this.chartColors.length > 0) {
+      return this.chartColors[index % this.chartColors.length];
+    }
+    // Fallback colors jika chartColors tidak tersedia
+    const fallbackColors = ['#3B82F6', '#10B981', '#F59E0B', '#F97316', '#EF4444', '#8B5CF6'];
+    return fallbackColors[index % fallbackColors.length];
+  }
+
   // Method untuk debugging - bisa dihapus setelah masalah resolved
   debugIds(): void {
     console.log('=== DEBUG INFO ===');

@@ -1,0 +1,90 @@
+<div class="flex flex-col flex-auto p-6 bg-card rounded-2xl overflow-hidden shadow-lg">
+    <div class="flex items-center justify-between">
+        <div class="text-lg font-medium">Statistik Survei</div>
+    </div>
+
+    <div *ngIf="surveyStatistics" class="mt-6">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            <div class="flex flex-col p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-md">
+                <div class="text-4xl font-bold">{{ surveyStatistics.totalRespondents }}</div>
+                <div class="text-secondary">Total Responden</div>
+            </div>
+            <div class="flex flex-col p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-md">
+                <div class="text-4xl font-bold">{{ surveyStatistics.completionPercentage }}</div>
+                <div class="text-secondary">Persentase Penyelesaian</div>
+            </div>
+            <div class="flex flex-col p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl shadow-md">
+                <div class="text-4xl font-bold">{{ surveyStatistics.completedSurveys }}</div>
+                <div class="text-secondary">Survei Selesai</div>
+            </div>
+        </div>
+
+        <div class="mt-8">
+            <h3 class="text-lg font-medium">Persentase Likechart</h3>
+            <div style="display: block; max-width: 500px; margin: auto;">
+                <canvas baseChart
+                    [options]="pieChartOptions"
+                    [data]="pieChartData"
+                    [type]="pieChartType"
+                    [legend]="pieChartLegend">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-8">
+        <div class="flex items-center justify-between">
+            <div class="text-lg font-medium">Saran dan Masukan</div>
+        </div>
+        <div class="overflow-auto mt-4">
+            <table mat-table [dataSource]="surveySuggestions" class="w-full">
+
+                <ng-container matColumnDef="isianAnswer">
+                    <th mat-header-cell *matHeaderCellDef> Masukan/Saran </th>
+                    <td mat-cell *matCellDef="let element"> {{element.isianAnswer}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="respondentName">
+                    <th mat-header-cell *matHeaderCellDef> Nama Responden </th>
+                    <td mat-cell *matCellDef="let element"> {{element.respondentName}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="respondentEmail">
+                    <th mat-header-cell *matHeaderCellDef> Email Responden </th>
+                    <td mat-cell *matCellDef="let element"> {{element.respondentEmail}} </td>
+                </ng-container>
+
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Status </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="fill">
+                            <mat-select [value]="element.status" (selectionChange)="onStatusChange(element.feedbackId, $event.value)">
+                                <mat-option *ngFor="let status of getFilteredStatusOptions(element.feedbackId)" [value]="status">
+                                    {{status}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+
+                <ng-container matColumnDef="komentar">
+                    <th mat-header-cell *matHeaderCellDef> Komentar </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="fill">
+                            <textarea 
+                                matInput 
+                                placeholder="Tambahkan komentar" 
+                                [value]="newComment[element.feedbackId] || ''"
+                                (input)="onCommentChange(element.feedbackId, $event.target.value)"
+                                [required]="element.status === 'Closed'">
+                            </textarea>
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+
+                <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+                <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+            </table>
+        </div>
+    </div>
+</div>

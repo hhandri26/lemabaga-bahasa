@@ -91,6 +91,7 @@ export const appRoutes: Route[] = [
             // { path: 'survey', loadChildren: () => import('app/modules/survey/survey.module').then(m => m.SurveyModule) },
             // { path: 'survey-user', loadChildren: () => import('app/modules/survey-user/survey-user.module').then(m => m.SurveyUserModule) },
             { path: 'survey-user-kuisoner', loadChildren: () => import('app/modules/survey-user-kuisoner/survey-user-kuisoner.module').then(m => m.SurveyKuisonerUserModule) },
+            { path: 'survey-statistik', loadChildren: () => import('app/modules/survey-statistik/survey-statistik.module').then(m => m.SurveyStatistikModule) },
 
             { path: 'rekapitulasi-monev', loadChildren: () => import('app/modules/rekapitulasi/rekapitulasi-monev/rekapitulasi-monev.module').then(m => m.RekapitulasiMonevModule) },
             { path: 'rekapitulasi-formasi', loadChildren: () => import('app/modules/rekapitulasi/rekapitulasi-formasi/rekapitulasi-formasi.module').then(m => m.RekapitulasiFormasiModule) },

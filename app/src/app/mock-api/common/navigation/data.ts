@@ -203,11 +203,11 @@ export const ROLE_ADMIN: FuseNavigationItem[] = [
         type : 'collapsable',
              children: [
               {
-                    id   : 'dashboard',
-                    title: 'Dashboard',
-                    type : 'basic',
-                    link : ''
-                 },
+                id   : 'dashboard',
+                title: 'Statistik Survey',
+                type : 'basic',
+                link : '/survey-statistik'
+                },
               {
                 id   : 'kuisioner',
                 title: 'Susun Kuesioner',

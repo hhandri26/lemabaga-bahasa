@@ -1,0 +1,25 @@
+<div class="sm:col-span-2 md:col-span-3 flex flex-col flex-auto p-6 bg-card rounded-2xl overflow-hidden shadow-lg">
+    <div class="flex items-center justify-between">
+        <div class="text-lg font-medium">Daftar Survei Kuisoner</div>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+        <ng-container *ngIf="(surveys$ | async) as surveys">
+            <ng-container *ngIf="surveys.length > 0; else noSurveys">
+                <div *ngFor="let survey of surveys; trackBy: trackByFn" class="relative flex flex-col flex-auto p-6 bg-gray-100 dark:bg-gray-700 rounded-2xl overflow-hidden shadow-md">
+                    <div class="text-xl font-semibold leading-tight">{{ survey.title }}</div>
+                    <div class="mt-2 text-secondary">{{ survey.description }}</div>
+                    <div class="flex items-center mt-4">
+                        <a [routerLink]="['/survey-statistik', survey.id]" class="ml-auto px-4 py-2 text-sm font-medium text-white bg-primary-500 rounded-md hover:bg-primary-600 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2">
+                            Lihat Statistik
+                        </a>
+                    </div>
+                </div>
+            </ng-container>
+            <ng-template #noSurveys>
+                <div class="col-span-full text-center text-secondary">
+                    Tidak ada survei yang tersedia.
+                </div>
+            </ng-template>
+        </ng-container>
+    </div>
+</div>

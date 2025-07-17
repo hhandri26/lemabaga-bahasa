@@ -49,11 +49,11 @@
                         <div class="space-y-4">
                             <div class="flex flex-col">
                                 <span class="text-sm text-gray-500">Angka Kredit</span>
-                                <span class="text-base font-medium">{{jfpItem.nilaiAkkonversi !== null ? jfpItem.nilaiAkkonversi : '-'}}</span>
+                                <span class="text-base font-medium">{{jfpItem.nilaiAkAkumulasi || '-'}}</span>
                             </div>
                             <div class="flex flex-col">
                                 <span class="text-sm text-gray-500">JP</span>
-                                <span class="text-base font-medium">{{jfpItem.totalJp || '-'}}</span>
+                                <span class="text-base font-medium">{{jfpItem.totalJamPelajaran || '-'}}</span>
                             </div>
                             <div class="flex flex-col">
                                 <span class="text-sm text-gray-500">Instansi</span>

@@ -20,6 +20,7 @@ export class SurveyKuisonerQuestionComponent implements OnInit, OnDestroy {
     formGroup: FormGroup;
     isTestActive: boolean = true;
     sessionTest: any;
+    participantType: any;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     constructor(
         private diklatService: DiklatService,
@@ -33,6 +34,9 @@ export class SurveyKuisonerQuestionComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.questions = this.item.questionFeedbacks;
+        this.activeRoute.queryParamMap.subscribe(queryParams => {
+            this.participantType = queryParams.get('participantType') ?? '';
+          });
     }
 
     ngOnDestroy(): void {
@@ -48,7 +52,11 @@ export class SurveyKuisonerQuestionComponent implements OnInit, OnDestroy {
             if (response.success) {
                 this._toastr.success('Survey telah disubmit');
                 this._changeDetectorRef.markForCheck();
-                this.route.navigate(['/survey-user-kuisoner']);
+                if (this.participantType != 'OTHERS') {
+                    this.route.navigate(['/survey-user-kuisoner']);
+                } else {
+                    this.route.navigate(['/survey-publik-end']);
+                }
             } else {
                 this._toastr.error(response?.message, 'ERROR');
             }

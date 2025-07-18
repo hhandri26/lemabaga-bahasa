@@ -261,6 +261,18 @@ delete(id: string): Observable<any> {
         );
     }
 
+    addPublicParticipantKuisoner(params): Observable<any> {
+        return this._httpClient.post<any>(this._apiUrl + '/public/add-participant-kuisoner', JSON.stringify(params), { headers: this.httpHeaders }).pipe(
+            tap((result: any) => result),
+            switchMap((result) => {
+                if (!result) {
+                    return throwError('created error!');
+                }
+                return of(result);
+            })
+        );
+    }
+
     getSurveyStatistics(surveyKuisonerId: string): Observable<any> {
         return this._httpClient.get<any>(`${this._apiUrl}/survey-statistics/dashboard/${surveyKuisonerId}`).pipe(
             tap((result: any) => result),

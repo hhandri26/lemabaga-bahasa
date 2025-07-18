@@ -162,7 +162,7 @@
                                                 [(ngModel)]="onFileInputed"
                                                 [ngModelOptions]="{standalone: true}">
                                                 <mat-radio-button [value]="true">Unggah File Sertifikat</mat-radio-button>
-                                                <mat-radio-button [value]="false" class="mt-2">Pilih dari Riwayat Sertifikat</mat-radio-button>
+                                                <!-- <mat-radio-button [value]="false" class="mt-2">Pilih dari Riwayat Sertifikat</mat-radio-button> -->
                                             </mat-radio-group>
                                         </div>
 
@@ -186,7 +186,7 @@
                                             </mat-error>
                                         </div>
 
-                                        <div class="mt-4" *ngIf="!onFileInputed">
+                                        <!-- <div class="mt-4" *ngIf="!onFileInputed">
                                             <mat-form-field class="fuse-mat-no-subscript w-full">
                                                 <mat-label>Sertifikat</mat-label>
                                                 <mat-select [formControlName]="'sertifikatId'">
@@ -196,7 +196,7 @@
                                                     Sertifikat harus dipilih
                                                 </mat-error>
                                             </mat-form-field>
-                                        </div>
+                                        </div> -->
                                     </form>
                                 </div>
                             </div>

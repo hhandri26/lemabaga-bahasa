@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { SurveyKuisonerService } from 'app/services/survey-kuisoner.service';
 import { Observable } from 'rxjs';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-survey-statistik-list',

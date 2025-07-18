@@ -56,7 +56,7 @@
         </div>
 
         <div class="mt-8">
-            <h3 class="text-lg font-medium">Persentase Likechart</h3>
+            <h3 class="text-lg font-medium">Persentase Likert</h3>
             <div style="display: block; max-width: 500px; margin: auto;">
                 <canvas baseChart
                     [options]="pieChartOptions"
@@ -126,19 +126,6 @@
                     <td mat-cell *matCellDef="let element"> {{element.respondentEmail}} </td>
                 </ng-container>
 
-                <ng-container matColumnDef="status">
-                    <th mat-header-cell *matHeaderCellDef> Status </th>
-                    <td mat-cell *matCellDef="let element">
-                        <mat-form-field appearance="fill">
-                            <mat-select [value]="element.status" (selectionChange)="onStatusChange(element.feedbackId, $event.value)">
-                                <mat-option *ngFor="let status of getFilteredStatusOptions(element.feedbackId)" [value]="status">
-                                    {{status}}
-                                </mat-option>
-                            </mat-select>
-                        </mat-form-field>
-                    </td>
-                </ng-container>
-
                 <ng-container matColumnDef="komentar">
                     <th mat-header-cell *matHeaderCellDef> Komentar </th>
                     <td mat-cell *matCellDef="let element">
@@ -154,6 +141,19 @@
                     </td>
                 </ng-container>
 
+                <ng-container matColumnDef="status">
+                    <th mat-header-cell *matHeaderCellDef> Status </th>
+                    <td mat-cell *matCellDef="let element">
+                        <mat-form-field appearance="fill">
+                            <mat-select [value]="element.status" (selectionChange)="onStatusChange(element.feedbackId, $event.value)">
+                                <mat-option *ngFor="let status of getFilteredStatusOptions(element.feedbackId)" [value]="status">
+                                    {{status}}
+                                </mat-option>
+                            </mat-select>
+                        </mat-form-field>
+                    </td>
+                </ng-container>
+        
                 <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
                 <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
             </table>

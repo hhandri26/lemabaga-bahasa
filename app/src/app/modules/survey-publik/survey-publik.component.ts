@@ -22,6 +22,7 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
     surveyPublikForm: UntypedFormGroup;
     showAlert: boolean = false;
     surveyKuisonerId: string;
+    surveyKuisoner: any;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     /**
      * Constructor
@@ -43,8 +44,15 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
      */
     ngOnInit(): void {
         this.surveyKuisonerId = this._route.snapshot.paramMap.get('id')!;
-        this._surveyKuisonerService.detail(this.surveyKuisonerId);
-        console.log(this._surveyKuisonerService.detail(this.surveyKuisonerId));
+        this._surveyKuisonerService.getBySurveyKuisonerId(this.surveyKuisonerId).subscribe({
+            next: (data) => {
+                this.surveyKuisoner = data; // simpan ke property
+                console.log('Detail survey:', this.surveyKuisoner);
+            },
+            error: (err) => {
+                console.error('Error ambil detail survey:', err);
+            }
+        });
         // Create the form
         this.surveyPublikForm = this._formBuilder.group({
             nama: [null, [Validators.required]],

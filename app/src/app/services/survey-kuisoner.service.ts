@@ -128,6 +128,21 @@ export class SurveyKuisonerService {
         );
     }
 
+    getBySurveyKuisonerId(id: string): Observable<any> {
+        return this._httpClient.get<any>(`${this._apiUrl}/public/survey-kuisoner/${id}`).pipe(
+            tap(result => console.log('Survey detail result:', result)),
+            switchMap(result => {
+                if (!result?.id) {
+                    return throwError(() => new Error('Gagal mengambil detail survey'));
+                }
+    
+                this._item.next(result); // langsung push seluruh result ke BehaviorSubject
+                return of(result); // return result ke subscriber
+            })
+        );
+    }
+    
+
     getListparticipant(id, draw: number = 0, perPage: number = 10):
         Observable<{ pagination: any; items: any[] }> {
         return this._httpClient.get<{ pagination: any; items: any[] }>(this._apiUrl + '/survey/participants/' + id).pipe(

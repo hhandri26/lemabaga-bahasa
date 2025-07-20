@@ -33,9 +33,9 @@ export class PublikIsiComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         this.fetch();
-        this.route.queryParamMap.subscribe(queryParams => {
-            this.participantType = queryParams.get('participantType') ?? '';
-          });
+        // this.route.queryParamMap.subscribe(queryParams => {
+        //     this.participantType = queryParams.get('participantType') ?? '';
+        //   });
     }
 
     fetch(): void {

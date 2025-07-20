@@ -87,3 +87,19 @@
         </div>
     </div>
 </ng-template>
+
+<div #hiddenCertificateForPdf style="position: absolute; left: -99999px;" *ngIf="certificateToGenerate">
+    <div class="certificate-bg download-mode">
+      <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
+      <div class="certificate-content">
+          <div class="nomor-sertifikat">No: {{ certificateToGenerate.certificateNumber }}</div>
+          <div class="nama">{{ certificateToGenerate.nama }}</div>
+          <div class="peserta">atas partisipasinya sebagai Peserta</div>
+          <div class="judul">{{ certificateToGenerate.titleCertificate }}</div>
+          <div class="subjudul">"{{ certificateToGenerate.subtitleCertificate }}"</div>
+          <div class="keterangan">
+            yang diselenggarakan pada {{ formatDate(certificateToGenerate.dateCertificate) }} di {{ certificateToGenerate.placeCertificate }} meliputi {{ certificateToGenerate.studyHours }} Jam Pelajaran
+          </div>
+      </div>
+    </div>
+  </div>

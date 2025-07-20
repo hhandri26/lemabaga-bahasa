@@ -94,13 +94,13 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
                     this.surveyPublikNgForm.resetForm();
                     this.surveyPublikForm.enable();
 
-                    const participantType = res?.mapData?.participantType;
+                    // const participantType = res?.mapData?.participantType;
                     const hash = res?.mapData?.hash;
                     
                     if (hash) {
                         this._router.navigate(
                             ['/survey-publik/start', hash],
-                            { queryParams: { participantType: participantType } }
+                            // { queryParams: { participantType: participantType } }
                           );
                     } else {
                         this.alert = {

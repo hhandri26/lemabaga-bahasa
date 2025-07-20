@@ -6,6 +6,7 @@ import { Observable, Subject, takeUntil } from 'rxjs';
 import { AuthService } from 'app/core/auth/auth.service';
 import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { MatDialog } from '@angular/material/dialog';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { CreateComponent } from '../create/create.component';
 import { ReferensiService } from 'app/services/referensi.service';
 import { environment } from 'environments/environment';
@@ -47,7 +48,8 @@ export class ListComponent implements OnInit, OnDestroy {
         private _surveyKuisonerService: SurveyKuisonerService,
         private _fuseConfirmationService: FuseConfirmationService,
         private _matDialog: MatDialog,
-        private _toastr: ToastrService
+        private _toastr: ToastrService,
+        private _clipboard: Clipboard
     ) {
     }
 
@@ -189,6 +191,12 @@ export class ListComponent implements OnInit, OnDestroy {
     filterByType(change: MatSelectChange): void {
         this.filters.byType = change.value === '' ? null : change.value;
         this.fetch(true);
+    }
+
+    copySurveyLink(surveyKuisonerId: string): void {
+        const surveyLink = `${window.location.origin}/survey-publik/${surveyKuisonerId}`;
+        this._clipboard.copy(surveyLink);
+        this._toastr.success('Tautan survey berhasil disalin!', 'Berhasil');
     }
 
     trackByFn(index: number, item: any): any {

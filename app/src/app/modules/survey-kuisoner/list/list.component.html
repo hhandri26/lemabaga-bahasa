@@ -118,6 +118,13 @@
                                                         <span>Daftar Responden</span>
                                                     </span>
                                                 </button>
+                                                <button mat-menu-item (click)="copySurveyLink(item.id)">
+                                                    <span class="flex items-center">
+                                                        <mat-icon class="icon-size-5 mr-3"
+                                                            [svgIcon]="'heroicons_solid:clipboard-copy'"></mat-icon>
+                                                        <span>Salin Link Survey untuk Publik</span>
+                                                    </span>
+                                                </button>
                                                 <button [disabled]="item.status === 'PUBLISHED'" mat-menu-item
                                                     (click)="toggleEdit(item)">
                                                     <span class="flex items-center">

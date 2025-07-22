@@ -145,7 +145,7 @@ export class SurveyKuisonerService {
 
     getListparticipant(id, draw: number = 0, perPage: number = 10):
         Observable<{ pagination: any; items: any[] }> {
-        return this._httpClient.get<{ pagination: any; items: any[] }>(this._apiUrl + '/survey/participants/' + id).pipe(
+        return this._httpClient.get<{ pagination: any; items: any[] }>(this._apiUrl + '/survey/participants-kuisoner/' + id).pipe(
             tap((response: any) => {
                 const _items = response?.mapData.participants;
                 const firstCut = draw * perPage;

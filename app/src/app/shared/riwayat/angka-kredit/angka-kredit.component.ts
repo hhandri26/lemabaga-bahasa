@@ -26,12 +26,14 @@ export class AngkaKreditComponent implements OnInit, OnDestroy {
     rwAngkaKreditKonversi: any[] = [];
     rwAngkaKreditAkumulasi: any[] = [];
     rwAngkaKreditPenetapan: any[] = [];
+    rwAngkaKredit: any[] = [];
 
     rwUsuls: any[] = [];
     rwUsulAAK: any[] = [];
     rwUsulPAK: any[] = [];
     pnsId: string;
     selected: any | null = null;
+    editMode: boolean = false;
     editAHK: boolean = false;
     editAAK: boolean = false;
     editPAK: boolean = false;
@@ -42,6 +44,7 @@ export class AngkaKreditComponent implements OnInit, OnDestroy {
     onFileInputed: boolean = false;
     onFileInputed2: boolean = false;
     onFileInputed3: boolean = false;
+    form: FormGroup;
     formAHK: FormGroup;
     formAAK: FormGroup;
     formPAK: FormGroup;
@@ -80,6 +83,17 @@ export class AngkaKreditComponent implements OnInit, OnDestroy {
             nilaiAkPenetapan: [null, Validators.required],
             tahun: [null, Validators.required],
             file: [null, Validators.required],
+        });
+
+        this.form = this._formBuilder.group({
+            golonganId: [null, Validators.required],
+            jabatanId: [null, Validators.required],
+            nilaiAk: [null, Validators.required],
+            nilaiSkp: [null, [Validators.required, Validators.max(100)]],
+            noSk: [null, Validators.required],
+            tglSk: [null, Validators.required],
+            tahun: [null, Validators.required],
+            file: [null, Validators.required]
         });
 
         this.loadData();
@@ -130,6 +144,17 @@ export class AngkaKreditComponent implements OnInit, OnDestroy {
             .subscribe((item: any) => {
                 if (item) {
                     this.rwAngkaKreditPenetapan = item;
+                    this._changeDetectorRef.markForCheck();
+                }
+            });
+
+        this._penerjemahService.getRwAngkaKredit(this.pnsId).subscribe();
+
+        this._penerjemahService.rwAngkaKredit$
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe((item: any) => {
+                if (item) {
+                    this.rwAngkaKredit = item;
                     this._changeDetectorRef.markForCheck();
                 }
             });
@@ -559,7 +584,34 @@ export class AngkaKreditComponent implements OnInit, OnDestroy {
     closeDetailsAHK(): void {
         this.selected = null;
     }
-    
+
+    toggleEditMode(editMode: boolean | null = null): void {
+        if (editMode === null) {
+            this.editMode = !this.editMode;
+        } else {
+            this.editMode = editMode;
+        }
+        this._changeDetectorRef.markForCheck();
+    }
+
+    toggleDetails(id: string): void {
+        if (this.selected && this.selected.id === id) {
+            this.closeDetails();
+            return;
+        }
+
+        this._penerjemahService.getRwAngkaKreditById(id)
+            .subscribe((item) => {
+                this.selected = item;
+                this.form.patchValue(item);
+                this.form.get('tglSk').setValue(this._helperService.getDateFromStringID(item.tglSk));
+                this._changeDetectorRef.markForCheck();
+            });
+    }
+
+    closeDetails(): void {
+        this.selected = null;
+    }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);

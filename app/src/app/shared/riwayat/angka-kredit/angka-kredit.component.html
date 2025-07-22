@@ -302,6 +302,156 @@
             </div>
         </ng-template>
     </mat-tab>
+    <mat-tab label="Data Angka Kredit">
+        <ng-template matTabContent>
+            <div class="flex flex-col w-full">
+                <div class="relative flex flex-col flex-auto items-center p-6">
+                    <div class="w-full max-w-3xl">
+                        <ng-container *ngIf="!insertMode">
+                            <!-- <div class="flex flex-auto items-end">
+                                <div class="flex items-center ml-auto mb-4">
+                                    <button mat-stroked-button (click)="toggleInsertMode(true)">
+                                        <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:plus'">
+                                        </mat-icon>
+                                        <span class="ml-2">Data Baru</span>
+                                    </button>
+                                </div>
+                            </div> -->
+            
+                            <ng-container *ngFor="let item of rwAngkaKredit; trackBy: trackByFn">
+                                <div class="grid grid-cols-12 gap-x-1">
+                                    <!-- Item -->
+                                    <div class="col-span-11 text-md font-medium">
+                                        <div class="flex flex-col">
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div>{{item.tahun}}</div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div>{{item.jabatanNama }} - {{item.golonganNama}}</div>
+                                            </div>
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div [matTooltip]="'Nilai AK'">{{item.nilaiAk}}</div>
+                                                <div class="hidden sm:block">&bull;</div>
+                                                <div [matTooltip]="'Nilai SKP'">{{item.nilaiSkp}}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-span-1 self-center text-right">
+                                        <button class="min-w-10 min-h-10 h-10 px-2 leading-6" mat-stroked-button
+                                        (click)="toggleDetails(item.id)">
+                                            <mat-icon class="icon-size-5"
+                                                [svgIcon]="selected?.id === item.id ? 'heroicons_solid:chevron-up' : 'heroicons_solid:chevron-down'">
+                                            </mat-icon>
+                                        </button>
+                                    </div>
+            
+                                    <div class="col-span-12 my-4 border-b"></div>
+                                </div>
+                                <ng-container *ngIf="selected?.id === item.id">
+                                    <ng-container *ngTemplateOutlet="rowDetailsTemplate; context: {$implicit: item}">
+                                    </ng-container>
+                                </ng-container>
+                            </ng-container>
+                            <ng-container *ngIf="!rwAngkaKredit.length">
+                                <fuse-alert [type]="'info'">
+                                    <span fuseAlertTitle>Belum ada data riwayat angka kredit</span>
+                                </fuse-alert>
+                            </ng-container>
+                        </ng-container>
+            
+                        <!-- INSERT NEW DATA -->
+                        <ng-container *ngIf="insertMode">
+                            <div class="relative flex flex-col flex-auto items-center p-6">
+                                <div class="w-full max-w-3xl">
+                                    <form [formGroup]="form">
+                                        <div class="flex flex-auto items-end">
+                                            <div class="flex items-center justify-end w-full max-w-3xl mx-auto">
+                                                <button class="ml-auto" mat-button [matTooltip]="'Batalkan Penambahan Data Baru'" (click)="toggleInsertMode(false)">
+                                                    Batal
+                                                </button>
+                                                <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Submit Usulan Penambahan Data'" (click)="insert()">
+                                                    Submit Usulan
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Pangkat / Golongan</mat-label>
+                                                <mat-select [formControlName]="'golonganId'">
+                                                    <mat-option *ngFor="let item of jenisGolongan$ | async" [value]="item.id">{{item.namaPangkat}} - {{item.nama}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Jenis Jabatan</mat-label>
+                                                <mat-select [formControlName]="'jabatanId'">
+                                                    <mat-option *ngFor="let item of jenisJabatan$ | async" [value]="item.id">{{item.jenjang}} - {{item.nama}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai. AK</mat-label>
+                                                <input matInput [formControlName]="'nilaiAk'" [dropSpecialCharacters]="false" [mask]="'0*.00'" [specialCharacters]="['.']">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai SKP</mat-label>
+                                                <input matInput [formControlName]="'nilaiSkp'" [dropSpecialCharacters]="false" [mask]="'0*.00'" [specialCharacters]="['.']">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tanggal SK</mat-label>
+                                                <input matInput [matDatepicker]="_tglSk" [formControlName]="'tglSk'" (focus)="_tglSk.open()" [max]="this._helperService.maxDate()">
+                                                <mat-datepicker-toggle matSuffix [for]="_tglSk">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #_tglSk></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>No. SK</mat-label>
+                                                <input matInput [formControlName]="'noSk'" [spellcheck]="false">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Dokumen PAK <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event)" style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full max-w-3xl mx-auto">
+                                                        <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false)">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </ng-container>
+                    </div>
+                </div>
+            </div>
+        </ng-template>
+    </mat-tab>
     <mat-tab label="Usulan Angka Kredit Hasil Konversi">
         <ng-template matTabContent>
             <app-usulan [items]="rwUsuls"></app-usulan>
@@ -642,6 +792,189 @@
                                                         <button mat-icon-button class="mr-2" *ngIf="onFileInputed"
                                                             [matTooltip]="'Clear'"
                                                             (click)="toggleOnFileInputed(false, 'fileDokumen', 'file')">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </ng-container>
+                                </form>
+                            </div>
+                        </div>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #rowDetailsTemplate let-item>
+    <div class="grid grid-cols-12 gap-x-1">
+        <div class="col-span-12 shadow-lg overflow-hidden mb-4">
+            <div class="flex border-b">
+                <div class="flex flex-col w-full">
+                    <ng-container *ngIf="!editMode">
+                        <div class="relative flex flex-col flex-auto items-center p-6 pt-0">
+                            <div class="w-full max-w-3xl">
+                                <!-- <div class="flex flex-auto items-end">
+                                    <div class="flex items-center ml-auto mb-4">
+                                        <button mat-button [color]="'warn'" [matTooltip]="'Hapus Data'" class="mr-5" (click)="delete()">
+                                            Hapus
+                                        </button>
+                                        <button mat-stroked-button (click)="toggleEditMode(true)">
+                                            <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:pencil-alt'">
+                                            </mat-icon>
+                                            <span class="ml-2">Ubah</span>
+                                        </button>
+                                    </div>
+                                </div> -->
+                                <ng-container *ngIf="selected">
+                                    <div class="flex flex-col mt-4 border-t border-b divide-y font-medium">
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Tahun</div>
+                                            <div>{{selected.tahun}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Golongan</div>
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div>{{selected.golonganNama ?? '-'}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Jenis Jabatan</div>
+                                            <div class="flex flex-col sm:flex-row sm:items-center mt-2 sm:mt-1 sm:space-x-2 text-md leading-5">
+                                                <div>{{selected.jabatanNama ?? '-'}}</div>
+                                            </div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Nilai AK</div>
+                                            <div>{{selected.nilaiAk ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Nilai SKP</div>
+                                            <div>{{selected.nilaiSkp ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Tanggal SK</div>
+                                            <div>{{selected.tglSk ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">No. PAK</div>
+                                            <div>{{selected.noSk ?? '-'}}</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Dokumen PAK</div>
+                                            <button *ngIf="selected.dokumenId" class="px-3" mat-button (click)="togglePrint(selected.dokumenId)">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
+                                                </mat-icon>
+                                                <span>Unduh</span>
+                                            </button>
+                                            <div *ngIf="!selected.dokumenId">-</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Dokumen Pengkantar</div>
+                                            <button *ngIf="selected.dokumenPengantarId" class="px-3" mat-button (click)="togglePrint(selected.dokumenPengantarId)">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
+                                                </mat-icon>
+                                                <span>Unduh</span>
+                                            </button>
+                                            <div *ngIf="!selected.dokumenPengantarId">-</div>
+                                        </div>
+                                        <div class="flex items-center justify-between py-3">
+                                            <div class="text-secondary">Dokumen SKP</div>
+                                            <button *ngIf="selected.dokumenSkpId" class="px-3" mat-button (click)="togglePrint(selected.dokumenSkpId)">
+                                                <mat-icon class="icon-size-5" [svgIcon]="'heroicons_solid:paper-clip'">
+                                                </mat-icon>
+                                                <span>Unduh</span>
+                                            </button>
+                                            <div *ngIf="!selected.dokumenSkpId">-</div>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </ng-container>
+
+                    <ng-container *ngIf="editMode">
+                        <div class="relative flex flex-col flex-auto items-center p-6">
+                            <div class="w-full max-w-3xl">
+                                <form [formGroup]="form">
+                                    <div class="flex flex-auto items-end">
+                                        <div class="flex items-center justify-end w-full max-w-3xl mx-auto">
+                                            <button class="ml-auto" mat-button [matTooltip]="'Batalkan Perubahan Data'" (click)="toggleEditMode(false)">
+                                                Batal
+                                            </button>
+                                            <button class="ml-2" mat-flat-button [color]="'primary'" [disabled]="form.invalid" [matTooltip]="'Submit Usulan Perubahan Data'" (click)="update()">
+                                                Submit Usulan
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <ng-container *ngIf="selected">
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tahun</mat-label>
+                                                <mat-select [formControlName]="'tahun'">
+                                                    <mat-option *ngFor="let item of tahun" [value]="item">{{item}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Pangkat / Golongan</mat-label>
+                                                <mat-select [formControlName]="'golonganId'">
+                                                    <mat-option *ngFor="let item of jenisGolongan$ | async" [value]="item.id">{{item.namaPangkat}} - {{item.nama}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Jenis Jabatan</mat-label>
+                                                <mat-select [formControlName]="'jabatanId'">
+                                                    <mat-option *ngFor="let item of jenisJabatan$ | async" [value]="item.id">{{item.jenjang}} - {{item.nama}}
+                                                    </mat-option>
+                                                </mat-select>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai. AK</mat-label>
+                                                <input matInput [formControlName]="'nilaiAk'" [dropSpecialCharacters]="false" [mask]="'0*.00'" [specialCharacters]="['.']">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Nilai SKP</mat-label>
+                                                <input matInput [formControlName]="'nilaiSkp'" [dropSpecialCharacters]="false" [mask]="'0*.00'" [specialCharacters]="['.']">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Tanggal SK</mat-label>
+                                                <input matInput [matDatepicker]="_tglSk" [formControlName]="'tglSk'" (focus)="_tglSk.open()" [max]="this._helperService.maxDate()">
+                                                <mat-datepicker-toggle matSuffix [for]="_tglSk">
+                                                </mat-datepicker-toggle>
+                                                <mat-datepicker #_tglSk></mat-datepicker>
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                <mat-label>No. SK</mat-label>
+                                                <input matInput [formControlName]="'noSk'" [spellcheck]="false">
+                                            </mat-form-field>
+                                        </div>
+                                        <div class="mt-4">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Dokumen PAK <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event)" style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full max-w-3xl mx-auto">
+                                                        <button *ngIf="!onFileInputed" class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false)">
                                                             <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
                                                         </button>
                                                         <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>

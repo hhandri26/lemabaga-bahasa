@@ -132,12 +132,31 @@
                     <th mat-header-cell *matHeaderCellDef> Instansi </th>
                     <td mat-cell *matCellDef="let element">
                         {{element.instansi}}
-                    </td>? 'Enabled' : 'Disabled'
+                    </td>
+                </ng-container>
+                <ng-container matColumnDef="jabatan">
+                    <th mat-header-cell *matHeaderCellDef> Jabatan </th>
+                    <td mat-cell *matCellDef="let element">
+                        {{element.jabatan}}
+                    </td>
                 </ng-container>
                 <ng-container matColumnDef="hasAnswered">
                     <th mat-header-cell *matHeaderCellDef> Sudah Mengisi </th>
-                    <td mat-cell *matCellDef="let element">
-                        {{element.hasAnswered ? 'Ya' : 'Tidak'}}
+                    <td class="px-4 py-2" mat-cell *matCellDef="let element">
+                        <div 
+                          [style.display]="'inline-flex'"
+                          [style.justify-content]="'center'"
+                          [style.align-items]="'center'"
+                          [style.padding]="'2px 6px'"
+                          [style.border-radius]="'4px'"
+                          [style.background-color]="element.hasAnswered ? '#4caf50' : '#f44336'"
+                          [style.color]="'white'"
+                          [style.border]="element.hasAnswered ? '2px solid #388e3c' : '2px solid #d32f2f'"
+                          [style.font-size]="'12px'"
+                          [style.font-weight]="'bold'"
+                          [style.text-transform]="'uppercase'">
+                          {{ element.hasAnswered ? 'Sudah' : 'Belum' }}
+                        </div>
                     </td>
                 </ng-container>
                 <ng-container matColumnDef="finishedTimeAt">

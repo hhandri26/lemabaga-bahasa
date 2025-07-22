@@ -18,7 +18,7 @@ export class DetailComponent implements OnInit, OnDestroy {
   items$: Observable<any[]>;
   pagination: Pagination;
   selected: any;
-  displayedColumns: string[] = ['no', 'nip', 'nama', 'instansi', 'hasAnswered', 'finishedTimeAt', 'finishedDateAt'];
+  displayedColumns: string[] = ['no', 'nip', 'nama', 'instansi', 'jabatan', 'hasAnswered', 'finishedTimeAt', 'finishedDateAt'];
   dataSource = new MatTableDataSource<any>();
   pageSize = 10;
   length = null;

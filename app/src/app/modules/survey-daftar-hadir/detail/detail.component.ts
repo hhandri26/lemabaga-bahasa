@@ -116,54 +116,6 @@ export class DetailComponent implements OnInit, OnDestroy {
   }
 
   togglePrint() {
-    // const params = { ...this.form.getRawValue() };
-
-    // Transform lists of objects to lists of IDs
-    // if (params.byBahasa && params.byBahasa.length > 0) {
-    //     params.byBahasa = params.byBahasa.map((bahasa: any) => bahasa.id);
-    // } else {
-    //     params.byBahasa = null;
-    // }
-
-    // if (params.byInstansiList && params.byInstansiList.length > 0) {
-    //     params.byInstansiList = params.byInstansiList.map((instansi: any) => instansi.id);
-    // } else {
-    //     params.byInstansiList = null;
-    // }
-
-    // if (params.byJabatanList && params.byJabatanList.length > 0) {
-    //     params.byJabatanList = params.byJabatanList.map((jabatan: any) => jabatan.id);
-    // } else {
-    //     params.byJabatanList = null;
-    // }
-
-    // if (params.byProvAlamatKantorList && params.byProvAlamatKantorList.length > 0) {
-    //     params.byProvAlamatKantorList = params.byProvAlamatKantorList.map((provinsi: any) => provinsi.id);
-    // } else {
-    //     params.byProvAlamatKantorList = null;
-    // }
-
-    // Ensure other fields are correctly handled (e.g., set to null if empty string)
-    // params.byNama = params.byNama || null;
-    // params.byIsAktif = params.byIsAktif !== null ? params.byIsAktif : null;
-    // params.bynamaPelatihan = params.bynamaPelatihan || null;
-    // params.byTahunPelatihan = params.byTahunPelatihan || null;
-    // params.byPeringkatPelatihan = params.byPeringkatPelatihan || null;
-    // params.byJp = params.byJp || null;
-    // params.byPredikatPelatihan = params.byPredikatPelatihan || null;
-    // params.byPendidikan = params.byPendidikan || null;
-    // params.byNamaSekolahPendidikan = params.byNamaSekolahPendidikan || null;
-    // params.byJurusanPendidikan = params.byJurusanPendidikan || null;
-    // params.byTahunLulusPendidikan = params.byTahunLulusPendidikan || null;
-    // params.byUjiKompetensi = params.byUjiKompetensi || null;
-
-    // Add sortBy and sort to the parameters for printing
-    // params.sortBy = 'nama';
-    // params.sort = 'ASC';
-
-    // Add visible columns to the parameters
-    // params.columnsToPrint = Object.keys(this.displayedColumns).filter(key => this.displayedColumns[key]);
-
     this._surveyKuisonerService.cetak(this.surveyId).subscribe(
         (result) => {
             const fileURL = URL.createObjectURL(result);

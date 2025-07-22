@@ -368,7 +368,7 @@ onYearInput(event: any): void {
                 URL.revokeObjectURL(fileURL);
             }, 
             (error) => {
-                this._toastr.error('ERROR: cetak gagal', 'ERROR');
+                this._toastr.error('ERROR: cetak gagal', error);
             }
         );
     }

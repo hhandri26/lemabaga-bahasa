@@ -336,4 +336,10 @@ delete(id: string): Observable<any> {
         );
     }
 
+    cetak(id): Observable<any> {
+        return this._httpClient.get<any>(`${this._apiUrl}/report/participants-kuisoner-export/` + id, this.__HTTPHeaderBlob(this._authService.accessToken, 'blob')).pipe(
+            map((response: any) => response)
+        );
+    }
+
 }

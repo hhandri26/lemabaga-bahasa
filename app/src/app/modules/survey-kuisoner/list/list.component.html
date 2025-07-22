@@ -111,13 +111,13 @@
                                                         <span>Set Responden</span>
                                                     </span>
                                                 </button>
-                                                <button mat-menu-item [disabled]="item.jumlahResponden === 0" (click)="toggleListResponden(item)">
+                                                <!-- <button mat-menu-item [disabled]="item.jumlahResponden === 0" (click)="toggleListResponden(item)">
                                                     <span class="flex items-center">
                                                         <mat-icon class="icon-size-5 mr-3"
                                                             [svgIcon]="'heroicons_solid:users'"></mat-icon>
                                                         <span>Daftar Responden</span>
                                                     </span>
-                                                </button>
+                                                </button> -->
                                                 <button mat-menu-item (click)="copySurveyLink(item.id)">
                                                     <span class="flex items-center">
                                                         <mat-icon class="icon-size-5 mr-3"
@@ -133,13 +133,13 @@
                                                         <span>Ubah</span>
                                                     </span>
                                                 </button>
-                                                <button mat-menu-item (click)="toggleDownload(item.id)">
+                                                <!-- <button mat-menu-item (click)="toggleDownload(item.id)">
                                                     <span class="flex items-center">
                                                         <mat-icon class="icon-size-5 mr-3"
                                                             [svgIcon]="'heroicons_solid:download'"></mat-icon>
                                                         <span>Unduh Hasil</span>
                                                     </span>
-                                                </button>
+                                                </button> -->
                                                 <button [disabled]="item.status === 'PUBLISHED'" mat-menu-item
                                                     (click)="toggleDelete(item.id)">
                                                     <span class="flex items-center">

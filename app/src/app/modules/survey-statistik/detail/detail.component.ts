@@ -16,7 +16,8 @@ export class DetailComponent implements OnInit, OnDestroy {
   surveySuggestions: any[] = [];
   surveyData: any; // Data survey detail berdasarkan feedbackId
   newComment: { [key: string]: string } = {};
-  displayedColumns: string[] = ['isianAnswer', 'respondentName', 'respondentEmail', 'komentar', 'status'];
+  // displayedColumns: string[] = ['isianAnswer', 'respondentName', 'respondentEmail', 'komentar', 'status'];
+  displayedColumns: string[] = ['isianAnswer', 'respondentName', 'komentar', 'status'];
   statusOptions: string[] = ['Open', 'Resolved', 'Closed'];
 
   // Color palette yang konsisten dengan chart yang ditunjukkan

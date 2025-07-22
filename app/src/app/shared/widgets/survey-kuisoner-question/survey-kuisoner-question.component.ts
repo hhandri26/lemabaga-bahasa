@@ -111,7 +111,8 @@ export class SurveyKuisonerQuestionComponent implements OnInit, OnDestroy {
                             const subject = 'Sertifikat Pelatihan'; // You can customize this
                             const messageBody = 'Terlampir sertifikat pelatihan Anda.'; // You can customize this
     
-                            return this._emailService.sendCertificateEmail(recipientEmail, subject, messageBody, pdfBlob).pipe(
+                            const fileName = `${this.certificateToGenerate.certificateNumber}-(${this.certificateToGenerate.nama}).pdf`;
+                            return this._emailService.sendCertificateEmail(recipientEmail, subject, messageBody, pdfBlob, fileName).pipe(
                                 switchMap(emailResponse => {
                                     if (emailResponse.success) {
                                         this._toastr.success('Sertifikat berhasil dikirim melalui email');

@@ -74,12 +74,12 @@ export class ListComponent implements OnInit, OnDestroy {
         this._changeDetectorRef.markForCheck();
     }
 
-    toggleDownload(id): void {
-        this._surveyKuisonerService.download(id).subscribe((blob: any) => {
-            const fileURL = URL.createObjectURL(blob);
-            window.open(fileURL, '_blank');
-        });
-    }
+    // toggleDownload(id): void {
+    //     this._surveyKuisonerService.download(id).subscribe((blob: any) => {
+    //         const fileURL = URL.createObjectURL(blob);
+    //         window.open(fileURL, '_blank');
+    //     });
+    // }
 
     toggleShowMode(show: boolean | null = null): void {
         if (show === null) {
@@ -90,15 +90,15 @@ export class ListComponent implements OnInit, OnDestroy {
         this._changeDetectorRef.markForCheck();
     }
 
-    toggleListResponden(data): void {
-        this._surveyKuisonerService.getListparticipant(data.id).subscribe();
-        const dialogRef = this._matDialog.open(ListRespondenComponentKuisoner, { data, autoFocus: false });
-        // dialogRef.afterClosed().subscribe((result) => {
-        //     if (result) {
-        //         this.fetch();
-        //     }
-        // });
-    }
+    // toggleListResponden(data): void {
+    //     this._surveyKuisonerService.getListparticipant(data.id).subscribe();
+    //     const dialogRef = this._matDialog.open(ListRespondenComponentKuisoner, { data, autoFocus: false });
+    //     // dialogRef.afterClosed().subscribe((result) => {
+    //     //     if (result) {
+    //     //         this.fetch();
+    //     //     }
+    //     // });
+    // }
 
     toggleCreate(): void {
         const dialogRef = this._matDialog.open(CreateComponent, { autoFocus: false });

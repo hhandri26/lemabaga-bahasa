@@ -392,14 +392,45 @@
                                                 <input matInput [formControlName]="'rekomendasi'" [spellcheck]="false">
                                             </mat-form-field>
                                         </div>
+
+                                        <!-- File Upload / Sertifikat Selection -->
                                         <div class="mt-4">
+                                            <mat-radio-group class="flex flex-col" aria-label="Pilih opsi unggah"
+                                                [(ngModel)]="onFileInputed"
+                                                [ngModelOptions]="{standalone: true}">
+                                                <mat-radio-button [value]="true">Unggah File Sertifikat</mat-radio-button>
+                                                <!-- <mat-radio-button [value]="false" class="mt-2">Pilih dari Riwayat Sertifikat</mat-radio-button> -->
+                                            </mat-radio-group>
+                                        </div>
+
+                                        <div class="mt-4" *ngIf="onFileInputed">
+                                            <div class="fuse-mat-no-subscript w-full">
+                                                <mat-label>Sertifikat <i>(PDF, Maksimal ukuran 2 MB)</i></mat-label>
+                                                <input #fileEditDocument type="file" (click)="fileEditDocument.value = null" accept="application/pdf" (change)="onFileInput($event)" style="display:none;" />
+                                                <div class="flex flex-auto items-start">
+                                                    <div class="flex items-center justify-start w-full mx-auto">
+                                                        <button class="mr-2" mat-flat-button [color]="'accent'" (click)="fileEditDocument.click()">Unggah
+                                                            Dokumen</button>
+                                                        <button mat-icon-button class="mr-2" *ngIf="onFileInputed" [matTooltip]="'Clear'" (click)="toggleOnFileInputed(false)">
+                                                            <mat-icon [svgIcon]="'heroicons_outline:x'"></mat-icon>
+                                                        </button>
+                                                        <span class="ml-auto ml-2" [id]="'fileDokumen'"></span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <mat-error *ngIf="form.controls['file'].hasError('required') && (form.controls['file'].dirty || form.controls['file'].touched)">
+                                                File harus diunggah
+                                            </mat-error>
+                                        </div>
+                                        
+                                        <!-- <div class="mt-4">
                                             <mat-form-field class="fuse-mat-no-subscript w-full">
                                                 <mat-label>Sertifikat</mat-label>
                                                 <mat-select [formControlName]="'sertifikatId'">
                                                     <mat-option *ngFor="let item of sertifikatHistory$ | async" [value]="item.id">{{item.certificateNumber}}</mat-option>
                                                 </mat-select>
                                             </mat-form-field>
-                                        </div>
+                                        </div> -->
                                     </ng-container>
                                 </form>
                             </div>

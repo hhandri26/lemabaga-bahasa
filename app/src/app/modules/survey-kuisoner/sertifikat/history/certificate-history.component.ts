@@ -17,7 +17,7 @@ export class CertificateHistoryComponent implements OnInit, AfterViewInit {
   loading = false;
   
   dataSource: MatTableDataSource<any>;
-  displayedColumns: string[] = ['nomor_sertifikat', 'tipe', 'judul_sertifikat', 'subjudul_sertifikat', 'nama_partisipan', 'jam_pelajaran', 'tanggal_terbit', 'aksi'];
+  displayedColumns: string[] = ['nomor_sertifikat', 'tipe', 'judul_sertifikat', 'subjudul_sertifikat', 'nama_partisipan', 'jam_pelajaran', 'tanggal_mulai', 'tanggal_berakhir','aksi'];
 
   @ViewChild(MatPaginator) paginator: MatPaginator;
   @ViewChild(MatSort) sort: MatSort;

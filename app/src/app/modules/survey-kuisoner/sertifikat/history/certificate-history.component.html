@@ -58,10 +58,16 @@
                             <td mat-cell *matCellDef="let row">{{row.studyHours}} Jam</td>
                         </ng-container>
 
-                        <!-- Tanggal Terbit Column -->
-                        <ng-container matColumnDef="tanggal_terbit">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tanggal Terbit</th>
+                        <!-- Tanggal Mulai Column -->
+                        <ng-container matColumnDef="tanggal_mulai">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tanggal Mulai</th>
                             <td mat-cell *matCellDef="let row">{{formatDate(row.dateCertificate)}}</td>
+                        </ng-container>
+
+                        <!-- Tanggal Berakhir Column -->
+                        <ng-container matColumnDef="tanggal_berakhir">
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header>Tanggal Berakhir</th>
+                            <td mat-cell *matCellDef="let row">{{formatDate(row.endDateCertificate)}}</td>
                         </ng-container>
 
                         <!-- Actions Column -->

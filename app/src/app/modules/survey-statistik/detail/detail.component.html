@@ -30,7 +30,7 @@
                     Survey dengan judul 
                     <span class="font-semibold text-blue-600 dark:text-blue-400">{{ surveyData?.title || '-' }}</span> 
                     telah diselenggarakan pada periode 
-                    <span class="font-semibold text-blue-600 dark:text-blue-400">{{ surveyData?.startDate | date: 'dd MMMM yyyy' || '-' }}</span>. 
+                    <span class="font-semibold text-blue-600 dark:text-blue-400">{{ surveyData?.startDate | date: 'dd MMMM yyyy' || '-' }} s/d {{ surveyData?.endDate | date: 'dd MMMM yyyy' || '-' }}</span>. 
                     Dari 
                     <span class="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-200 rounded-md font-semibold">
                         {{ surveyStatistics?.totalRespondents || 0 }} responden

@@ -51,18 +51,15 @@
             </div>
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 20rem !important;">
-                  <mat-label>Tanggal Sertifikat</mat-label>
-                  <input
-                    matInput
-                    [matDatepicker]="picker"
-                    formControlName="dateCertificate"
-                    placeholder="Pilih tanggal"
-                    [min]="_helperService.maxDate()"
-                  >
-                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                  <mat-datepicker #picker></mat-datepicker>
+                    <mat-label>Tanggal Sertifikat</mat-label>
+                    <mat-date-range-input [rangePicker]="_dateCertificateRangePicker" [min]="_helperService.maxDate()">
+                    <input matStartDate formControlName="dateCertificate" placeholder="Mulai">
+                    <input matEndDate formControlName="endDateCertificate" placeholder="Akhir">
+                    </mat-date-range-input>
+                    <mat-datepicker-toggle matSuffix [for]="_dateCertificateRangePicker"></mat-datepicker-toggle>
+                    <mat-date-range-picker #_dateCertificateRangePicker></mat-date-range-picker>
                 </mat-form-field>
-              </div>
+            </div>
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Waktu Sertifikat</mat-label>

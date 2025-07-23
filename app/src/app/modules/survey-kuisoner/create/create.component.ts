@@ -53,11 +53,12 @@ export class CreateComponent implements OnInit, OnDestroy {
             endDate: [this._data?.endDate, [Validators.required]],
             tipeSurvei: [this._data?.tipeSurvei.id, [Validators.required]],
             bucketId: [this._data?.bucketId, [Validators.required]],
-            titleCertificate: [this._data?.titleCertificate ?? '', [Validators.required]],
-            subtitleCertificate: [this._data?.subtitleCertificate ?? '', [Validators.required]],
-            timeCertificate: [this._data?.timeCertificate ?? '07.00', [Validators.required]],
-            dateCertificate: [this._data?.dateCertificate ?? new Date(), [Validators.required]],
-            placeCertificate: [this._data?.placeCertificate ?? '', [Validators.required]],
+            titleCertificate: [this._data?.titleCertificate, [Validators.required]],
+            subtitleCertificate: [this._data?.subtitleCertificate, [Validators.required]],
+            timeCertificate: [this._data?.timeCertificate, [Validators.required]],
+            dateCertificate: [this._data?.dateCertificate, [Validators.required]],
+            endDateCertificate: [this._data?.endDateCertificate, [Validators.required]],
+            placeCertificate: [this._data?.placeCertificate, [Validators.required]],
             typeCertificate: [this._data?.typeCertificate ?? '1', [Validators.required]],
             studyHours: [this._data?.studyHours ?? 2, [Validators.required]],
         });
@@ -97,6 +98,7 @@ export class CreateComponent implements OnInit, OnDestroy {
           'subtitleCertificate',
           'timeCertificate',
           'dateCertificate',
+          'endDateCertificate',
           'placeCertificate',
           'typeCertificate',
           'studyHours'
@@ -126,12 +128,14 @@ export class CreateComponent implements OnInit, OnDestroy {
 
         // const titleCertificate = formInput.titleCertificate || 'Sertifikat Survey';
         // const dateCertificate = formInput.dateCertificate ? moment(formInput.dateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
+        // const endDateCertificate = formInput.endDateCertificate ? moment(formInput.endDateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
         // const timeCertificate = formInput.timeCertificate || '09:00';
         // const placeCertificate = formInput.placeCertificate || 'Jakarta';
         // const typeCertificate = formInput.typeCertificate || '1';
 
         body.append('titleCertificate', formInput.titleCertificate);
         body.append('dateCertificate', formInput.dateCertificate ? moment(formInput.dateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'));
+        body.append('endDateCertificate', formInput.endDateCertificate ? moment(formInput.endDateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'));
         body.append('subtitleCertificate', formInput.subtitleCertificate);
         body.append('timeCertificate', formInput.timeCertificate);
         body.append('placeCertificate', formInput.placeCertificate);

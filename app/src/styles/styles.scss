@@ -24,6 +24,30 @@
   }
 }
 
+.certificate-preview-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh;
+  background: #f3f4f6;
+  padding: 2rem;
+}
+
+.certificate-bg.preview-mode {
+  width: 1000px;
+  height: 707px;
+  img { width: 1000px; height: 707px; }
+
+  .nomor-sertifikat { position: absolute; top: 17px; right: 60px; font-size: 18px; }
+  .nama { position: absolute; top: 250px; left: 0; right: 0; font-family: 'Pinyon Script', cursive; font-size: 70px; color: #865300; }
+  .nama.small-font { font-size: 50px; top: 265px }
+  .nama.smallest-font { font-size: 40px; top: 275px }
+  .peserta { position: absolute; top: 340px; left: 0; right: 0; font-size: 22px; }
+  .judul { position: absolute; text-transform: uppercase; top: 373px; left: 0; right: 0; font-size: 30px; font-weight: bold; }
+  .subjudul { position: absolute; top: 420px; left: 0; right: 0; font-size: 24px; font-weight: bold; font-style: italic; }
+  .keterangan { position: absolute; top: 460px; left: 0; right: 0; font-size: 22px; }
+}
+
 .certificate-bg.download-mode {
   width: 4000px;
   height: 2828px;
@@ -31,6 +55,8 @@
 
   .nomor-sertifikat { position: absolute; top: 28px; right: 240px; font-size: 72px; }
   .nama { position: absolute; top: 860px; left: 0; right: 0; font-family: 'Pinyon Script', cursive; font-size: 280px; color: #865300; }
+  .nama.small-font { font-size: 200px; top: 920px }
+  .nama.smallest-font { font-size: 160px; top: 965px } /* Adjust as needed for smaller font */
   .peserta { position: absolute; top: 1320px; left: 0; right: 0; font-size: 88px; }
   .judul { position: absolute; text-transform: uppercase; top: 1452px; left: 0; right: 0; font-size: 120px; font-weight: bold; }
   .subjudul { position: absolute; top: 1640px; left: 0; right: 0; font-size: 96px; font-weight: bold; font-style: italic; }

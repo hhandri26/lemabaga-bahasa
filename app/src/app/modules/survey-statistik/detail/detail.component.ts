@@ -1,9 +1,11 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, AfterViewInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { SurveyKuisonerService } from 'app/services/survey-kuisoner.service';
 import { Subject } from 'rxjs';
 import { ChartConfiguration, ChartOptions, ChartType } from 'chart.js';
 import { takeUntil } from 'rxjs/operators';
+import { MatTableDataSource } from '@angular/material/table';
+import { MatPaginator } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-survey-statistik-detail',
@@ -11,9 +13,10 @@ import { takeUntil } from 'rxjs/operators';
   styleUrls: ['./detail.component.scss']
 })
 export class DetailComponent implements OnInit, OnDestroy {
+  @ViewChild(MatPaginator) paginator: MatPaginator;
   surveyId: string;
   surveyStatistics: any;
-  surveySuggestions: any[] = [];
+  surveySuggestions = new MatTableDataSource<any>();
   surveyData: any; // Data survey detail berdasarkan feedbackId
   newComment: { [key: string]: string } = {};
   // displayedColumns: string[] = ['isianAnswer', 'respondentName', 'respondentEmail', 'komentar', 'status'];
@@ -258,57 +261,55 @@ export class DetailComponent implements OnInit, OnDestroy {
 
   // Load survey suggestions menggunakan surveyId dari route
   loadSurveySuggestions(): void {
-    console.log('Loading survey suggestions with surveyId:', this.surveyId);
-    
-    this._surveyKuisonerService.getSurveySuggestions(this.surveyId)
-      .pipe(takeUntil(this._unsubscribeAll))
-      .subscribe({
-        next: (data) => {
-          // Validasi response data
-          if (data && typeof data === 'object') {
-            this.surveySuggestions = data.suggestions || [];
-            console.log('Fetched survey suggestions:', this.surveySuggestions);
-            
-            // Validasi array suggestions
-            if (Array.isArray(this.surveySuggestions)) {
-              // Initialize newComment with existing comments
-              this.newComment = {};
-              this.surveySuggestions.forEach(suggestion => {
-                if (suggestion && suggestion.feedbackId) {
-                  this.newComment[suggestion.feedbackId] = suggestion.komentar || '';
-                } else {
-                  console.warn('Invalid suggestion object:', suggestion);
-                }
-              });
-              console.log('Initialized newComment:', this.newComment);
+  console.log('Loading survey suggestions with surveyId:', this.surveyId);
 
-              // Load survey detail dari feedbackId pertama jika ada
-              const firstValidSuggestion = this.surveySuggestions.find(s => s && s.feedbackId);
-              if (firstValidSuggestion) {
-                console.log('Loading survey detail from first feedback ID:', firstValidSuggestion.feedbackId);
-                this.loadSurveyDetail(firstValidSuggestion.feedbackId);
+  this._surveyKuisonerService.getSurveySuggestions(this.surveyId)
+    .pipe(takeUntil(this._unsubscribeAll))
+    .subscribe({
+      next: (data) => {
+        if (data && typeof data === 'object') {
+          const suggestions = data.suggestions || [];
+          console.log('Fetched survey suggestions:', suggestions);
+
+          if (Array.isArray(suggestions)) {
+            // Inisialisasi data ke MatTableDataSource
+            this.surveySuggestions.data = suggestions;
+
+            // Inisialisasi komentar
+            this.newComment = {};
+            suggestions.forEach(suggestion => {
+              if (suggestion && suggestion.feedbackId) {
+                this.newComment[suggestion.feedbackId] = suggestion.komentar || '';
               } else {
-                console.warn('Tidak ada suggestion dengan feedbackId yang valid');
+                console.warn('Invalid suggestion object:', suggestion);
               }
+            });
+
+            console.log('Initialized newComment:', this.newComment);
+
+            // Load survey detail dari feedbackId pertama
+            const firstValidSuggestion = suggestions.find(s => s && s.feedbackId);
+            if (firstValidSuggestion) {
+              console.log('Loading survey detail from first feedback ID:', firstValidSuggestion.feedbackId);
+              this.loadSurveyDetail(firstValidSuggestion.feedbackId);
             } else {
-              console.error('Suggestions bukan array:', this.surveySuggestions);
-              this.surveySuggestions = [];
+              console.warn('Tidak ada suggestion dengan feedbackId yang valid');
             }
           } else {
-            console.error('Response data tidak valid:', data);
-            this.surveySuggestions = [];
+            console.error('Suggestions bukan array:', suggestions);
+            this.surveySuggestions.data = [];
           }
-        },
-        error: (error) => {
-          console.error('Error loading survey suggestions:', error);
-          console.error('Survey ID yang digunakan:', this.surveyId);
-          console.error('Error detail:', error.message);
-          
-          // Reset data jika terjadi error
-          this.surveySuggestions = [];
-          this.newComment = {};
+        } else {
+          console.error('Response data tidak valid:', data);
+          this.surveySuggestions.data = [];
         }
-      });
+      },
+      error: (error) => {
+        console.error('Error loading survey suggestions:', error);
+        this.surveySuggestions.data = [];
+        this.newComment = {};
+      }
+    });
   }
 
   // Method untuk mengecek apakah status 'Closed' dapat dipilih
@@ -330,7 +331,7 @@ export class DetailComponent implements OnInit, OnDestroy {
     this.newComment[feedbackId] = comment && comment.trim() !== '' ? comment : '';
     
     // Jika komentar dikosongkan dan status saat ini 'Closed', ubah ke 'Resolved'
-    const currentSuggestion = this.surveySuggestions.find(s => s.feedbackId === feedbackId);
+    const currentSuggestion = this.surveySuggestions.data.find(s => s.feedbackId === feedbackId);
     if (currentSuggestion && currentSuggestion.status === 'Closed' && !this.newComment[feedbackId]) {
       this.onStatusChange(feedbackId, 'Resolved');
     }
@@ -385,7 +386,7 @@ export class DetailComponent implements OnInit, OnDestroy {
           console.log('Update response:', response);
           
           if (response && response.success) {
-            const index = this.surveySuggestions.findIndex(s => s && s.feedbackId === feedbackId);
+            const index = this.surveySuggestions.data.findIndex(s => s && s.feedbackId === feedbackId);
             if (index !== -1) {
               this.surveySuggestions[index].status = finalStatus;
               this.surveySuggestions[index].komentar = finalComment;
@@ -434,9 +435,14 @@ export class DetailComponent implements OnInit, OnDestroy {
     console.log('Survey data:', this.surveyData);
     console.log('New comments:', this.newComment);
     
-    if (this.surveySuggestions.length > 0) {
+    if (this.surveySuggestions.data.length > 0) {
       console.log('First feedbackId:', this.surveySuggestions[0].feedbackId);
       console.log('Extracted survey ID:', this.extractSurveyIdFromFeedbackId(this.surveySuggestions[0].feedbackId));
     }
   }
+
+  ngAfterViewInit() {
+  this.surveySuggestions.paginator = this.paginator;
+  }
+
 }

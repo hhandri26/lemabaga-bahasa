@@ -9,6 +9,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
 import { NgChartsModule } from 'ng2-charts';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { NgChartsModule } from 'ng2-charts';
     MatInputModule,
     MatSelectModule,
     MatTableModule,
-    NgChartsModule
+    NgChartsModule,
+    MatPaginatorModule
   ]
 })
 export class SurveyStatistikDetailModule { }

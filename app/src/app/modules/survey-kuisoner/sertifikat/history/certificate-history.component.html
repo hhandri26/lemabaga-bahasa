@@ -98,7 +98,11 @@
                         </tr>
                     </table>
 
-                    <mat-paginator [pageSizeOptions]="[5, 10, 25, 100]" aria-label="Pilih halaman"></mat-paginator>
+                    <mat-paginator
+                        [pageSizeOptions]="[5, 10, 25, 50, 100, 250, 500]"
+                        aria-label="Pilih halaman"
+                        showFirstLastButtons>
+                    </mat-paginator>
                 </div>
             </div>
         </div>

@@ -7,7 +7,7 @@
     <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
     <div class="certificate-content">
       <div class="nomor-sertifikat">No: {{ certificate.certificateNumber }}</div>
-      <div class="nama">{{ certificate.nama }}</div>
+      <div class="nama" [ngClass]="{'small-font': certificate.nama.length > 25, 'smallest-font': certificate.nama.length > 35}">{{ certificate.nama }}</div>
       <div class="peserta">atas partisipasinya sebagai Peserta</div>
       <div class="judul">{{ certificate.titleCertificate }}</div>
       <div class="subjudul">"{{ certificate.subtitleCertificate }}"</div>
@@ -24,7 +24,7 @@
     <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
     <div class="certificate-content">
         <div class="nomor-sertifikat">No: {{ certificate.certificateNumber }}</div>
-        <div class="nama">{{ certificate.nama }}</div>
+        <div class="nama" [ngClass]="{'small-font': certificate.nama.length > 25, 'smallest-font': certificate.nama.length > 35}">{{ certificate.nama }}</div>
         <div class="peserta">atas partisipasinya sebagai Peserta</div>
         <div class="judul">{{ certificate.titleCertificate }}</div>
         <div class="subjudul">"{{ certificate.subtitleCertificate }}"</div>

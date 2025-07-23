@@ -417,7 +417,7 @@
     <img src="assets/images/sertifikat-bg.png" alt="Sertifikat" />
     <div class="certificate-content">
         <div class="nomor-sertifikat">No: {{ certificateToGenerate.certificateNumber }}</div>
-        <div class="nama">{{ certificateToGenerate.nama }}</div>
+        <div class="nama" [ngClass]="{'small-font': certificateToGenerate.nama.length > 25, 'smallest-font': certificateToGenerate.nama.length > 35}">{{ certificateToGenerate.nama }}</div>
         <div class="peserta">atas partisipasinya sebagai Peserta</div>
         <div class="judul">{{ certificateToGenerate.titleCertificate }}</div>
         <div class="subjudul">"{{ certificateToGenerate.subtitleCertificate }}"</div>

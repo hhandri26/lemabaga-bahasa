@@ -141,7 +141,7 @@
                                             </mat-select>
                                         </mat-form-field>
                                     </td>
-                                    <td class="border-r" *ngIf="displayedColumns['statusAkun']">
+                                    <td class="border-r" *ngIf="displayedColumns['isAktif']">
                                         <mat-form-field class="fuse-mat-no-subscript w-full filter-form-field" style="padding: 0px !important; margin: 0px !important;">
                                             <mat-select [formControlName]="'byIsAktif'" placeholder="Status">
                                                 <mat-option [value]="null">Semua</mat-option>
@@ -231,7 +231,7 @@
                                     <th class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">Instansi</th>
                                     <th class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">Provinsi</th>
                                     <th class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">Jabatan</th>
-                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">Status Akun</th>
+                                    <th class="px-4 py-2 border-r" *ngIf="displayedColumns['isAktif']">Status Akun</th>
                                     <th class="px-4 py-2 border-r" *ngIf="displayedColumns['bahasa']">Bahasa</th>
                                     <th class="px-4 py-2 border-r" *ngIf="displayedColumns['pelatihan']">Pelatihan</th>
                                     <th class="px-4 py-2 border-r" *ngIf="displayedColumns['pendidikan']">Pendidikan</th>
@@ -260,7 +260,7 @@
                                         <td class="px-4 py-2 border-r" *ngIf="displayedColumns['instansi']">{{ item.instansiNama | titlecase }}</td>
                                         <td class="px-4 py-2 border-r" *ngIf="displayedColumns['provAlamatKantor']">{{ item.provinsiNama | titlecase }}</td>
                                         <td class="px-4 py-2 border-r" *ngIf="displayedColumns['jabatan']">{{ item.jabatanNama| titlecase }}</td>
-                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['statusAkun']">
+                                        <td class="px-4 py-2 border-r" *ngIf="displayedColumns['isAktif']">
                                             <div [style.background-color]="item.isAktif ? '#4caf50' : '#f44336'" [style.color]="'white'"
                                                 [style.border]="item.isAktif ? '2px solid #388e3c' : '2px solid #d32f2f'"
                                                 [style.padding]="'8px 5px'" [style.border-radius]="'8px'" [style.font-size]="'12px'"

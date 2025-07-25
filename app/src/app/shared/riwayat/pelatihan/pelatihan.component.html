@@ -176,7 +176,7 @@
                                             <mat-form-field class="fuse-mat-no-subscript w-full">
                                                 <mat-label>Sertifikat</mat-label>
                                                 <mat-select [formControlName]="'sertifikatId'">
-                                                    <mat-option *ngFor="let item of sertifikatHistory$ | async"
+                                                    <mat-option *ngFor="let item of getSertifikatHistory$() | async"
                                                         [matTooltip]="item.certificateNumber + '&#10;' + item.titleCertificate + '&#10;' + item.subtitleCertificate"
                                                         [value]="item.id">{{item.certificateNumber}} - {{item.titleCertificate}} - {{item.subtitleCertificate}}
                                                     </mat-option>
@@ -394,7 +394,10 @@
                                             <mat-form-field class="fuse-mat-no-subscript w-full">
                                                 <mat-label>Sertifikat</mat-label>
                                                 <mat-select [formControlName]="'sertifikatId'">
-                                                    <mat-option *ngFor="let item of sertifikatHistory$ | async" [value]="item.id">{{item.certificateNumber}}</mat-option>
+                                                    <mat-option *ngFor="let item of getSertifikatHistory$() | async"
+                                                        [matTooltip]="item.certificateNumber + '&#10;' + item.titleCertificate + '&#10;' + item.subtitleCertificate"
+                                                        [value]="item.id">{{item.certificateNumber}} - {{item.titleCertificate}} - {{item.subtitleCertificate}}
+                                                    </mat-option>
                                                 </mat-select>
                                                 <mat-error *ngIf="form.controls['sertifikatId'].hasError('required') && (form.controls['sertifikatId'].dirty || form.controls['sertifikatId'].touched)">
                                                     Sertifikat harus dipilih

@@ -12,9 +12,9 @@ import { PenerjemahService } from 'app/services/penerjemah.service';
 import { ReferensiService, YEAR_FORMATS } from 'app/services/referensi.service';
 import moment, { Moment } from 'moment';
 import { ToastrService } from 'ngx-toastr';
-import { Observable, Subject, takeUntil } from 'rxjs';
+import { Observable, Subject, takeUntil, BehaviorSubject } from 'rxjs';
 import { CertificateHistoryService } from 'app/modules/survey-kuisoner/sertifikat/history/certificate-history.service';
-import { switchMap, take } from 'rxjs/operators'; // Import switchMap and take
+import { switchMap, take, map } from 'rxjs/operators'; // Import switchMap and take
 import { of } from 'rxjs';
 import { PdfGenerationService } from 'app/services/pdf-generation.service'; // Import PdfGenerationService
 
@@ -40,7 +40,12 @@ export class PelatihanComponent implements OnInit, OnDestroy {
     onChange = (year: Date) => { };
     private _unsubscribeAll: Subject<any> = new Subject<any>();
     jenisPelatihan$: Observable<any[]> = this._referensiService.pelatihan();
-    sertifikatHistory$: Observable<any[]>; // New property for certificate history
+    
+    // Separate observables for insert and edit modes
+    private _allCertificates$ = new BehaviorSubject<any[]>([]);
+    sertifikatHistoryForInsert$: Observable<any[]>;
+    sertifikatHistoryForEdit$: Observable<any[]>;
+    
     certificateToGenerate: any | null = null; // New property for certificate data for PDF generation
 
     @ViewChild('hiddenCertificateForPdf', { static: false }) hiddenCertificateForPdf!: ElementRef;
@@ -57,11 +62,27 @@ export class PelatihanComponent implements OnInit, OnDestroy {
         private _userService: UserService,
         private _certificateHistoryService: CertificateHistoryService,
         private _pdfGenerationService: PdfGenerationService // Inject PdfGenerationService
-    ) { }
+    ) { 
+        // Initialize filtered observables
+        this.sertifikatHistoryForInsert$ = this._allCertificates$.pipe(
+            map(certificates => certificates.filter(cert => !cert.isUsed))
+        );
+
+        this.sertifikatHistoryForEdit$ = this._allCertificates$.pipe(
+            map(certificates => {
+                if (!this.selected) return certificates.filter(cert => !cert.isUsed);
+                
+                return certificates.filter(cert => 
+                    !cert.isUsed || 
+                    (cert.isUsed && cert.rwPelatihanId === this.selected.id)
+                );
+            })
+        );
+    }
 
     ngOnInit(): void {
         this.form = this._formBuilder.group({
-             nama: [null, Validators.required],
+            nama: [null, Validators.required],
             tahun: [moment(), Validators.required],
             lingkupPelatihan: [null, Validators.required],
             institusi: [null, Validators.required],
@@ -117,10 +138,7 @@ export class PelatihanComponent implements OnInit, OnDestroy {
                     this.pnsId = item.id;
                     // Fetch sertifikat history for admin
                     this._certificateHistoryService.getAllCertificates().pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
-                        this.sertifikatHistory$ = new Observable(observer => {
-                            observer.next(response.mapData.certificate);
-                            observer.complete();
-                        });
+                        this._allCertificates$.next(response.mapData.certificate || []);
                         this._changeDetectorRef.markForCheck();
                     });
                     this._changeDetectorRef.markForCheck();
@@ -131,10 +149,7 @@ export class PelatihanComponent implements OnInit, OnDestroy {
                 // Fetch sertifikat history for regular user
                 if (user.email) {
                     this._certificateHistoryService.getCertificates(user.email).pipe(takeUntil(this._unsubscribeAll)).subscribe(response => {
-                        this.sertifikatHistory$ = new Observable(observer => {
-                            observer.next(response.mapData.certificate);
-                            observer.complete();
-                        });
+                        this._allCertificates$.next(response.mapData.certificate || []);
                         this._changeDetectorRef.markForCheck();
                     });
                 }
@@ -251,6 +266,7 @@ export class PelatihanComponent implements OnInit, OnDestroy {
                                 if (formInput.tahun) { body.append('tahun', moment(formInput.tahun).format('YYYY')); }
                                 if (formInput.lingkupPelatihan) { body.append('lingkupPelatihan', formInput.lingkupPelatihan); }
                                 if (formInput.institusi) { body.append('institusi', formInput.institusi); }
+                                if (formInput.sertifikatId) { body.append('certificateId', formInput.sertifikatId); }
                                 body.append('file', file, fileName);
 
                                 // Reset certificateToGenerate after use
@@ -393,6 +409,7 @@ export class PelatihanComponent implements OnInit, OnDestroy {
                                 if (formInput.predikat) { body.append('predikat', formInput.predikat); }
                                 if (formInput.peringkat) { body.append('peringkat', formInput.peringkat); }
                                 if (formInput.jp) { body.append('jp', formInput.jp); }
+                                if (formInput.sertifikatId) { body.append('certificateId', formInput.sertifikatId); }
                                 body.append('file', file, fileName);
 
                                 // Reset certificateToGenerate after use
@@ -477,6 +494,14 @@ export class PelatihanComponent implements OnInit, OnDestroy {
         } else {
             this.insertMode = insertMode;
         }
+        
+        // Reset form and file input state when toggling insert mode
+        if (this.insertMode) {
+            this.form.reset();
+            this.form.get('tahun').setValue(moment());
+            this.onFileInputed = false;
+        }
+        
         this._changeDetectorRef.markForCheck();
     }
 
@@ -486,6 +511,15 @@ export class PelatihanComponent implements OnInit, OnDestroy {
         } else {
             this.editMode = editMode;
         }
+
+        // When entering edit mode, check if current record uses a certificate
+        if (this.editMode && this.selected && this.selected.certificateId) {
+            this.onFileInputed = false; // Default to certificate selection
+            this.form.get('sertifikatId').setValue(this.selected.certificateId);
+            // Trigger observable update for edit mode filtering
+            this._allCertificates$.next(this._allCertificates$.value);
+        }
+
         this._changeDetectorRef.markForCheck();
     }
 
@@ -500,12 +534,18 @@ export class PelatihanComponent implements OnInit, OnDestroy {
                 this.selected = item;
                 this.form.patchValue(item);
                 this.form.get('tahun').setValue(moment(this._helperService.getDateFromStringID('01-01-' + item.tahun)));
+                
+                // Update filtered observables when selected item changes
+                this._allCertificates$.next(this._allCertificates$.value);
+                
                 this._changeDetectorRef.markForCheck();
             });
     }
 
     closeDetails(): void {
         this.selected = null;
+        // Reset filtered observables when no item is selected
+        this._allCertificates$.next(this._allCertificates$.value);
     }
 
     ngOnDestroy(): void {
@@ -528,5 +568,10 @@ export class PelatihanComponent implements OnInit, OnDestroy {
         }
         const [hour, minute, second] = timeArray;
         return `${hour < 10 ? '0' + hour : hour}:${minute < 10 ? '0' + minute : minute}:${second < 10 ? '0' + second : second}`;
+    }
+
+    // Helper method to get the appropriate certificate observable based on mode
+    getSertifikatHistory$(): Observable<any[]> {
+        return this.editMode ? this.sertifikatHistoryForEdit$ : this.sertifikatHistoryForInsert$;
     }
 }

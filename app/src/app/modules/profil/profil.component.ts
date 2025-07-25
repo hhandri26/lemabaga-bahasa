@@ -20,10 +20,10 @@ export class ProfilComponent implements OnInit, OnDestroy {
     panels: any[] = [];
     selectedPanel: string = 'pribadi';
     user: User;
-    totalJp: number;
+    // totalJp: number;
     pnsId: string;
     jabatanId: string; // Tambahkan properti untuk jabatanId jika dibutuhkan
-    nilaiAkKonversi: any; // Properti untuk menyimpan nilai AK Konversi
+    // nilaiAkKonversi: any; // Properti untuk menyimpan nilai AK Konversi
     baseUrl = environment.baseUrl;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -66,27 +66,27 @@ export class ProfilComponent implements OnInit, OnDestroy {
     fetchData(): void {
     this._penerjemahService.getDataUtama(this.pnsId).subscribe();
 
-    this._penerjemahService.getTotalJp(this.pnsId).subscribe(
-        (jp: number) => {
-            this.totalJp = jp || 0; // Jika jp undefined/null, set ke 0
-            this._changeDetectorRef.markForCheck();
-        },
-        () => {
-            this.totalJp = 0; // Jika ada error, set ke 0
-            this._changeDetectorRef.markForCheck();
-        }
-    );
+    // this._penerjemahService.getTotalJp(this.pnsId).subscribe(
+    //     (jp: number) => {
+    //         this.totalJp = jp || 0; // Jika jp undefined/null, set ke 0
+    //         this._changeDetectorRef.markForCheck();
+    //     },
+    //     () => {
+    //         this.totalJp = 0; // Jika ada error, set ke 0
+    //         this._changeDetectorRef.markForCheck();
+    //     }
+    // );
 
-    this._penerjemahService.getNilaiAkKonversi(this.pnsId, this.jabatanId).subscribe(
-        (nilaiAk: any) => {
-            this.nilaiAkKonversi = nilaiAk || 0; // Jika nilaiAk undefined/null, set ke 0
-            this._changeDetectorRef.markForCheck(); // Trigger change detection
-        },
-        () => {
-            this.nilaiAkKonversi = 0; // Jika ada error, set ke 0
-            this._changeDetectorRef.markForCheck();
-        }
-    );
+    // this._penerjemahService.getNilaiAkKonversi(this.pnsId, this.jabatanId).subscribe(
+    //     (nilaiAk: any) => {
+    //         this.nilaiAkKonversi = nilaiAk || 0; // Jika nilaiAk undefined/null, set ke 0
+    //         this._changeDetectorRef.markForCheck(); // Trigger change detection
+    //     },
+    //     () => {
+    //         this.nilaiAkKonversi = 0; // Jika ada error, set ke 0
+    //         this._changeDetectorRef.markForCheck();
+    //     }
+    // );
 
     this._penerjemahService.dataUtama$
         .pipe(takeUntil(this._unsubscribeAll))

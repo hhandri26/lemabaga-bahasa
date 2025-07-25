@@ -2,6 +2,7 @@
 import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MomentDateAdapter } from '@angular/material-moment-adapter';
+import { FuseConfirmationService } from '@fuse/services/confirmation';
 import { DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE } from '@angular/material/core';
 import { AuthService } from 'app/core/auth/auth.service';
 import { UserService } from 'app/core/user/user.service';
@@ -43,6 +44,7 @@ export class MutasiComponent implements OnInit, OnDestroy {
         private _referensiService: ReferensiService,
         private _helperService: HelperService,
         private _changeDetectorRef: ChangeDetectorRef,
+        private _fuseConfirmationService: FuseConfirmationService,
         private _formBuilder: FormBuilder,
         private _toastr: ToastrService,
         private _authService: AuthService,
@@ -170,18 +172,44 @@ export class MutasiComponent implements OnInit, OnDestroy {
     }
 
     delete(): void {
-        this._penerjemahService.deleteRwInstansi(this.selected.id).subscribe(
-            (result) => {
-                if (result?.success) {
-                    this._toastr.success('Selanjutnya usulan Anda akan diproses oleh Admin', 'Usulan Hapus Berhasil');
-                    this.loadData();
-                    this.toggleInsertMode(false);
-                    this.toggleEditMode(false);
-                } else {
-                    this._toastr.error(result?.message, 'ERROR');
+        const dialogRef = this._fuseConfirmationService.open({
+            'title': 'Hapus Data',
+            'message': '<span class="font-medium">Tindakan ini tidak dapat dibatalkan!</span>',
+            'icon': {
+                'show': true,
+                'name': 'heroicons_outline:x',
+                'color': 'warn'
+            },
+            'actions': {
+                'confirm': {
+                    'show': true,
+                    'label': 'Konfirm hapus',
+                    'color': 'warn'
+                },
+                'cancel': {
+                    'show': true,
+                    'label': 'Batal'
                 }
+            },
+            'dismissible': true
+        });
+
+        dialogRef.afterClosed().subscribe((_result) => {
+            if (_result === 'confirmed') {
+                this._penerjemahService.deleteRwInstansi(this.selected.id).subscribe(
+                    (result) => {
+                        if (result?.success) {
+                            this._toastr.success('Selanjutnya usulan Anda akan diproses oleh Admin', 'Usulan Hapus Berhasil');
+                            this.loadData();
+                            this.toggleInsertMode(false);
+                            this.toggleEditMode(false);
+                        } else {
+                            this._toastr.error(result?.message, 'ERROR');
+                        }
+                    }
+                );
             }
-        );
+        });
     }
 
     update(): void {

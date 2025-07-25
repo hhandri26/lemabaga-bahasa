@@ -8,6 +8,10 @@
 // regular style toast
 @import 'ngx-toastr/toastr';
 
+.mat-tooltip {
+  white-space: pre-line;
+}
+
 /* Certificate Styles for PDF Generation */
 .certificate-bg {
   position: relative;

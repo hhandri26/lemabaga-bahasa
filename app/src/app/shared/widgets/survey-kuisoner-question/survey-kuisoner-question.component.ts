@@ -108,8 +108,8 @@ export class SurveyKuisonerQuestionComponent implements OnInit, OnDestroy {
                     }).pipe(
                         switchMap((pdfBlob: Blob) => {
                             const recipientEmail = this.certificateToGenerate.email; // Assuming email is available in certificate data
-                            const subject = 'Sertifikat Pelatihan'; // You can customize this
-                            const messageBody = 'Terlampir sertifikat pelatihan Anda.'; // You can customize this
+                            const subject = `Sertifikat "${this.certificateToGenerate.titleCertificate} - ${this.certificateToGenerate.subtitleCertificate}"`; // You can customize this
+                            const messageBody = `Terlampir sertifikat "${this.certificateToGenerate.titleCertificate} - ${this.certificateToGenerate.subtitleCertificate}" Anda.`; // You can customize this
     
                             const fileName = `${this.certificateToGenerate.certificateNumber}-(${this.certificateToGenerate.nama}).pdf`;
                             return this._emailService.sendCertificateEmail(recipientEmail, subject, messageBody, pdfBlob, fileName).pipe(

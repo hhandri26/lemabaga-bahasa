@@ -25,4 +25,8 @@ export class CertificateHistoryService {
   getAllCertificates(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/public/certificate/all`);
   }
-} 
+
+  updateCertificateRwPelatihanId(sertifikatId: string, rwPelatihanId: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/public/certificate-id/update?id=${sertifikatId}`, { rwPelatihanId });
+  }
+}

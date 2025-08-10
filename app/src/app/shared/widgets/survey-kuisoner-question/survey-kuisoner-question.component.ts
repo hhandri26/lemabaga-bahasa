@@ -72,7 +72,11 @@ export class SurveyKuisonerQuestionComponent implements OnInit, OnDestroy {
                     this.route.navigate(['/survey-user-kuisoner']);
                 } else {
                     // Gunakan certificateId dari response untuk handleOthersParticipantType
-                    this.handleOthersParticipantType(certificateId);
+                    if (certificateId) {
+                        this.handleOthersParticipantType(certificateId);
+                    } else {
+                        this.route.navigate(['/survey-publik-end']);
+                    }
                 }
             } else {
                 this._toastr.error(response?.message, 'ERROR');

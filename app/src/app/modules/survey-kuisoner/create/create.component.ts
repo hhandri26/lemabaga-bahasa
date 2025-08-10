@@ -55,7 +55,7 @@ export class CreateComponent implements OnInit, OnDestroy {
             bucketId: [this._data?.bucketId, [Validators.required]],
             titleCertificate: [this._data?.titleCertificate, [Validators.required]],
             subtitleCertificate: [this._data?.subtitleCertificate, [Validators.required]],
-            timeCertificate: [this._data?.timeCertificate, [Validators.required]],
+            timeCertificate: [this._data?.timeCertificate ?? '07.00', [Validators.required]],
             dateCertificate: [this._data?.dateCertificate, [Validators.required]],
             endDateCertificate: [this._data?.endDateCertificate, [Validators.required]],
             placeCertificate: [this._data?.placeCertificate, [Validators.required]],

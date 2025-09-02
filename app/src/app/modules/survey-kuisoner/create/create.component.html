@@ -9,15 +9,16 @@
     <!-- Card form -->
     <form class="flex flex-auto flex-wrap w-full p-6 space-y-1 overflow-y-auto" [formGroup]="form">
         <div class="flex flex-col w-full">
-                        <div class="mt-4">
-                            <mat-form-field class="fuse-mat-no-subscript w-full">
-                                <mat-label>Tipe Survei</mat-label>
-                                <mat-select [formControlName]="'tipeSurvei'">
-                                    <mat-option *ngFor="let item of tipeSurvei$ | async" [value]="item.id">{{item.nama}}
-                                    </mat-option>
-                                </mat-select>
-                            </mat-form-field>
-                        </div>
+            <div class="mt-4">
+                <mat-form-field class="fuse-mat-no-subscript w-full">
+                    <mat-label>Tipe Survei</mat-label>
+                    <mat-select [formControlName]="'tipeSurvei'">
+                        <mat-option *ngFor="let item of tipeSurvei$ | async" [value]="item.id">{{item.nama}}
+                        </mat-option>
+                    </mat-select>
+                </mat-form-field>
+            </div>
+            
             <div class="mt-4 flex items-center">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Soal</mat-label>
@@ -29,6 +30,7 @@
                     </mat-select>
                 </mat-form-field>
             </div>
+            
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Judul Survey</mat-label>
@@ -36,58 +38,76 @@
                 </mat-form-field>
             </div>
 
-        <ng-container *ngIf="selectedTipeSurveiId !== 5">
+            <!-- Certificate Requirement Selection -->
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
-                    <mat-label>Judul Sertifikat</mat-label>
-                    <input matInput [formControlName]="'titleCertificate'">
-                </mat-form-field>
-            </div>
-            <div class="mt-4">
-                <mat-form-field class="fuse-mat-no-subscript w-full">
-                    <mat-label>Sub Judul Sertifikat</mat-label>
-                    <input matInput [formControlName]="'subtitleCertificate'">
-                </mat-form-field>
-            </div>
-            <div class="mt-4">
-                <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 20rem !important;">
-                    <mat-label>Tanggal Sertifikat</mat-label>
-                    <mat-date-range-input [rangePicker]="_dateCertificateRangePicker" [min]="_helperService.maxDate()">
-                    <input matStartDate formControlName="dateCertificate" placeholder="Mulai">
-                    <input matEndDate formControlName="endDateCertificate" placeholder="Akhir">
-                    </mat-date-range-input>
-                    <mat-datepicker-toggle matSuffix [for]="_dateCertificateRangePicker"></mat-datepicker-toggle>
-                    <mat-date-range-picker #_dateCertificateRangePicker></mat-date-range-picker>
-                </mat-form-field>
-            </div>
-            <div class="mt-4">
-                <mat-form-field class="fuse-mat-no-subscript w-full">
-                    <mat-label>Waktu Sertifikat</mat-label>
-                    <input matInput type="time" formControlName="timeCertificate">
-                </mat-form-field>
-            </div>
-            <div class="mt-4">
-                <mat-form-field class="fuse-mat-no-subscript w-full">
-                    <mat-label>Lokasi Sertifikat</mat-label>
-                    <input matInput [formControlName]="'placeCertificate'">
-                </mat-form-field>
-            </div>
-            <div class="mt-4">
-                <mat-form-field class="fuse-mat-no-subscript w-full">
-                    <mat-label>Tipe Sertifikat</mat-label>
-                    <mat-select [formControlName]="'typeCertificate'">
-                        <mat-option [value]="'1'">Sosialisasi</mat-option>
-                        <mat-option [value]="'2'">Bimtek</mat-option>
+                    <mat-label>Perlu Sertifikat?</mat-label>
+                    <mat-select [formControlName]="'needCertificate'">
+                        <mat-option value="ya">Ya</mat-option>
+                        <mat-option value="tidak">Tidak</mat-option>
                     </mat-select>
                 </mat-form-field>
             </div>
-            <div class="mt-4">
-                <mat-form-field class="fuse-mat-no-subscript w-full">
-                    <mat-label>Jumlah Jam Pelajaran</mat-label>
-                    <input matInput type="number" [formControlName]="'studyHours'">
-                </mat-form-field>
-            </div>
-        </ng-container>
+
+            <!-- Certificate Fields (shown only when certificate is needed) -->
+            <ng-container *ngIf="needCertificate">
+                <div class="mt-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Judul Sertifikat</mat-label>
+                        <input matInput [formControlName]="'titleCertificate'">
+                    </mat-form-field>
+                </div>
+                
+                <div class="mt-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Sub Judul Sertifikat</mat-label>
+                        <input matInput [formControlName]="'subtitleCertificate'">
+                    </mat-form-field>
+                </div>
+                
+                <div class="mt-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 20rem !important;">
+                        <mat-label>Tanggal Sertifikat</mat-label>
+                        <mat-date-range-input [rangePicker]="_dateCertificateRangePicker" [min]="_helperService.maxDate()">
+                        <input matStartDate formControlName="dateCertificate" placeholder="Mulai">
+                        <input matEndDate formControlName="endDateCertificate" placeholder="Akhir">
+                        </mat-date-range-input>
+                        <mat-datepicker-toggle matSuffix [for]="_dateCertificateRangePicker"></mat-datepicker-toggle>
+                        <mat-date-range-picker #_dateCertificateRangePicker></mat-date-range-picker>
+                    </mat-form-field>
+                </div>
+                
+                <div class="mt-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Waktu Sertifikat</mat-label>
+                        <input matInput type="time" formControlName="timeCertificate">
+                    </mat-form-field>
+                </div>
+                
+                <div class="mt-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Lokasi Sertifikat</mat-label>
+                        <input matInput [formControlName]="'placeCertificate'">
+                    </mat-form-field>
+                </div>
+                
+                <div class="mt-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Tipe Sertifikat</mat-label>
+                        <mat-select [formControlName]="'typeCertificate'">
+                            <mat-option [value]="'1'">Sosialisasi</mat-option>
+                            <mat-option [value]="'2'">Bimtek</mat-option>
+                        </mat-select>
+                    </mat-form-field>
+                </div>
+                
+                <div class="mt-4">
+                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                        <mat-label>Jumlah Jam Pelajaran</mat-label>
+                        <input matInput type="number" [formControlName]="'studyHours'">
+                    </mat-form-field>
+                </div>
+            </ng-container>
 
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full" style="min-width: 20rem !important;">

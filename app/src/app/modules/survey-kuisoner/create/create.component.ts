@@ -32,6 +32,7 @@ export class CreateComponent implements OnInit, OnDestroy {
     tipeSurvei$: Observable<any[]>;
     selectedTipeSurveiId: number | null = null;
     selectedBucketId: number | null = null;
+    needCertificate: boolean = false;
 
     constructor(
         public matDialogRef: MatDialogRef<CreateComponent>,
@@ -47,30 +48,40 @@ export class CreateComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         console.log('this._data', this._data);
+        
+        // Determine initial certificate requirement
+        this.needCertificate = this._data?.needCertificate ?? (this._data?.tipeSurvei?.id !== 5);
+        
         this.form = this._formBuilder.group({
             title: [this._data?.title ?? '', [Validators.required]],
             startDate: [this._data?.startDate, [Validators.required]],
             endDate: [this._data?.endDate, [Validators.required]],
-            tipeSurvei: [this._data?.tipeSurvei.id, [Validators.required]],
+            tipeSurvei: [this._data?.tipeSurvei?.id, [Validators.required]],
             bucketId: [this._data?.bucketId, [Validators.required]],
-            titleCertificate: [this._data?.titleCertificate, [Validators.required]],
-            subtitleCertificate: [this._data?.subtitleCertificate, [Validators.required]],
-            timeCertificate: [this._data?.timeCertificate ?? '07.00', [Validators.required]],
-            dateCertificate: [this._data?.dateCertificate, [Validators.required]],
-            endDateCertificate: [this._data?.endDateCertificate, [Validators.required]],
-            placeCertificate: [this._data?.placeCertificate, [Validators.required]],
-            typeCertificate: [this._data?.typeCertificate ?? '1', [Validators.required]],
-            studyHours: [this._data?.studyHours ?? 2, [Validators.required]],
+            needCertificate: [this.needCertificate ? 'ya' : 'tidak', [Validators.required]],
+            titleCertificate: [this._data?.titleCertificate, this.needCertificate ? [Validators.required] : []],
+            subtitleCertificate: [this._data?.subtitleCertificate, this.needCertificate ? [Validators.required] : []],
+            timeCertificate: [this._data?.timeCertificate ?? '07.00', this.needCertificate ? [Validators.required] : []],
+            dateCertificate: [this._data?.dateCertificate, this.needCertificate ? [Validators.required] : []],
+            endDateCertificate: [this._data?.endDateCertificate, this.needCertificate ? [Validators.required] : []],
+            placeCertificate: [this._data?.placeCertificate, this.needCertificate ? [Validators.required] : []],
+            typeCertificate: [this._data?.typeCertificate ?? '1', this.needCertificate ? [Validators.required] : []],
+            studyHours: [this._data?.studyHours ?? 2, this.needCertificate ? [Validators.required] : []],
         });
 
         this.selectedTipeSurveiId = this.form.get('tipeSurvei')?.value;
-        this.toggleCertificateFields(this.selectedTipeSurveiId);
+
+        // Subscribe to certificate requirement changes
+        this.form.get('needCertificate')?.valueChanges.subscribe((val: string) => {
+            this.needCertificate = val === 'ya';
+            this.toggleCertificateFields(this.needCertificate);
+            console.log("NEED CERTIFICATE = ", this.needCertificate);
+        });
 
         this.form.get('tipeSurvei')?.valueChanges.subscribe((val: number) => {
             this.selectedTipeSurveiId = val;
-            this.toggleCertificateFields(val);
             console.log("TIPE SURVEI = ", this.form.get('tipeSurvei')?.value);
-            console.log("TIPE SURVEI FULL =", this._data?.tipeSurvei.id);
+            console.log("TIPE SURVEI FULL =", this._data?.tipeSurvei?.id);
         });
 
         this.form.get('bucketId')?.valueChanges.subscribe((val: number) => {
@@ -92,7 +103,7 @@ export class CreateComponent implements OnInit, OnDestroy {
         this._unsubscribeAll.complete();
     }
 
-    toggleCertificateFields(tipeId: number): void {
+    toggleCertificateFields(needCertificate: boolean): void {
         const certFields = [
           'titleCertificate',
           'subtitleCertificate',
@@ -108,14 +119,18 @@ export class CreateComponent implements OnInit, OnDestroy {
           const control = this.form.get(field);
           if (!control) return;
       
-          if (tipeId === 5) {
-            control.clearValidators();
-          } else {
+          if (needCertificate) {
             control.setValidators([Validators.required]);
+          } else {
+            control.clearValidators();
+            control.setValue(''); // Clear the value when not needed
           }
           control.updateValueAndValidity();
         });
-      }
+        
+        // Trigger change detection to update the UI
+        this._changeDetectorRef.detectChanges();
+    }
 
     create(): void {
         const formInput: any = this.form.getRawValue();
@@ -125,22 +140,19 @@ export class CreateComponent implements OnInit, OnDestroy {
         body.append('tipeSurvei', formInput.tipeSurvei);
         body.append('startDate', moment(formInput.startDate).format('YYYY-MM-DD'));
         body.append('endDate', moment(formInput.endDate).format('YYYY-MM-DD'));
+        body.append('needCertificate', formInput.needCertificate);
 
-        // const titleCertificate = formInput.titleCertificate || 'Sertifikat Survey';
-        // const dateCertificate = formInput.dateCertificate ? moment(formInput.dateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
-        // const endDateCertificate = formInput.endDateCertificate ? moment(formInput.endDateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD');
-        // const timeCertificate = formInput.timeCertificate || '09:00';
-        // const placeCertificate = formInput.placeCertificate || 'Jakarta';
-        // const typeCertificate = formInput.typeCertificate || '1';
-
-        body.append('titleCertificate', formInput.titleCertificate);
-        body.append('dateCertificate', formInput.dateCertificate ? moment(formInput.dateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'));
-        body.append('endDateCertificate', formInput.endDateCertificate ? moment(formInput.endDateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'));
-        body.append('subtitleCertificate', formInput.subtitleCertificate);
-        body.append('timeCertificate', formInput.timeCertificate);
-        body.append('placeCertificate', formInput.placeCertificate);
-        body.append('typeCertificate', formInput.typeCertificate);
-        body.append('studyHours', formInput.studyHours);
+        // Only append certificate fields if certificate is needed
+        if (formInput.needCertificate === 'ya') {
+            body.append('titleCertificate', formInput.titleCertificate);
+            body.append('dateCertificate', formInput.dateCertificate ? moment(formInput.dateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'));
+            body.append('endDateCertificate', formInput.endDateCertificate ? moment(formInput.endDateCertificate).format('YYYY-MM-DD') : moment().format('YYYY-MM-DD'));
+            body.append('subtitleCertificate', formInput.subtitleCertificate);
+            body.append('timeCertificate', formInput.timeCertificate);
+            body.append('placeCertificate', formInput.placeCertificate);
+            body.append('typeCertificate', formInput.typeCertificate);
+            body.append('studyHours', formInput.studyHours);
+        }
         
         if(this._data?.id){
             body.append('id', this._data?.id);

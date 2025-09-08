@@ -5,94 +5,122 @@
             <div class="mx-auto">
                 <img src="assets/images/logo/ejfp-setkab.png" style="width: unset !important;">
             </div>
+            
             <!-- Title -->
             <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">{{ surveyKuisoner?.title }}</div>
-            <!-- <div class="flex items-baseline mt-0.5 font-medium">
-                <div>Don't have an account?</div>
-                <a
-                    class="ml-1 text-primary-500 hover:underline"
-                    [routerLink]="['/sign-up']">Sign up
-                </a>
-            </div> -->
+            
+            <!-- User Type Selection -->
+            <div id="userTypeOptions" class="mt-6 text-center">
+                <div class="text-md font-medium mb-4">Pilih jenis akses:</div>
+                <div class="flex flex-col gap-3">
+                    <!-- Guest Option - Shows Form -->
+                    <div class="p-4 border border-gray-300 rounded-lg hover:shadow-md transition-shadow dark:border-gray-600">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <mat-icon class="mr-3 text-primary-500">person_outline</mat-icon>
+                                <div class="text-left">
+                                    <div class="font-medium">Guest</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">Ikuti survey sebagai tamu</div>
+                                </div>
+                            </div>
+                            <button 
+                                type="button"
+                                class="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-md hover:bg-primary-100 dark:bg-primary-800 dark:text-primary-300 dark:hover:bg-primary-700"
+                                (click)="showGuestForm()">
+                                Pilih
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Registered User Option -->
+                    <div class="p-4 border border-gray-300 rounded-lg hover:shadow-md transition-shadow dark:border-gray-600">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <mat-icon class="mr-3 text-primary-500">account_circle</mat-icon>
+                                <div class="mr-3 text-left">
+                                    <div class="font-medium">Sudah Punya Akun</div>
+                                    <div class="text-sm text-gray-500 dark:text-gray-400">Login dengan akun yang sudah ada</div>
+                                </div>
+                            </div>
+                            <button 
+                                type="button"
+                                class="px-4 py-2 text-sm font-medium text-primary-600 bg-primary-50 rounded-md hover:bg-primary-100 dark:bg-primary-800 dark:text-primary-300 dark:hover:bg-primary-700"
+                                (click)="goToSignIn(); hideLoginOption();">
+                                Masuk
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- Alert -->
             <fuse-alert class="mt-8 -mb-4" *ngIf="showAlert" [appearance]="'outline'" [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
                 {{alert.message}}
             </fuse-alert>
 
-            <!-- Sign in form -->
-            <form class="mt-8" [formGroup]="surveyPublikForm" #surveyPublikNgForm="ngForm">
+            <!-- Guest Survey Form -->
+            <div id="guestForm" style="display: none;">
+                <form class="mt-8" [formGroup]="surveyPublikForm" #surveyPublikNgForm="ngForm">
+                    <!-- Name field -->
+                    <mat-form-field class="w-full">
+                        <mat-label>Nama Lengkap dan Gelar</mat-label>
+                        <input id="nama" matInput [formControlName]="'nama'">
+                        <mat-error *ngIf="surveyPublikForm.get('nama').hasError('required')">
+                            Nama Lengkap dan Gelar diperlukan
+                        </mat-error>
+                    </mat-form-field>
 
-                <!-- Email field -->
-                <mat-form-field class="w-full">
-                    <mat-label>Nama Lengkap dan Gelar</mat-label>
-                    <input id="nama" matInput [formControlName]="'nama'">
-                    <mat-error *ngIf="surveyPublikForm.get('nama').hasError('required')">
-                        Nama Lengkap dan Gelar diperlukan
-                    </mat-error>
-                </mat-form-field>
+                    <!-- Email field -->
+                    <mat-form-field class="w-full">
+                        <mat-label>Email</mat-label>
+                        <input id="email" matInput [formControlName]="'email'" type="email">
+                        
+                        <mat-error *ngIf="surveyPublikForm.get('email')?.hasError('required')">
+                          Email diperlukan
+                        </mat-error>
+                        <mat-error *ngIf="surveyPublikForm.get('email')?.hasError('email') && !surveyPublikForm.get('email')?.hasError('required')">
+                          Format email tidak valid
+                        </mat-error>
+                    </mat-form-field>
 
-                <mat-form-field class="w-full">
-                    <mat-label>Email</mat-label>
-                    <input id="email" matInput [formControlName]="'email'" type="email">
-                    
-                    <mat-error *ngIf="surveyPublikForm.get('email')?.hasError('required')">
-                      Email diperlukan
-                    </mat-error>
-                    <mat-error *ngIf="surveyPublikForm.get('email')?.hasError('email') && !surveyPublikForm.get('email')?.hasError('required')">
-                      Format email tidak valid
-                    </mat-error>
-                </mat-form-field>
-
-                <!-- Password field -->
-                <!-- <mat-form-field class="w-full">
-                    <mat-label>Password</mat-label>
-                    <input id="password" matInput type="password" [formControlName]="'password'" #passwordField>
-                    <button mat-icon-button type="button" (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'" matSuffix>
-                        <mat-icon
-                            class="icon-size-5"
-                            *ngIf="passwordField.type === 'password'"
-                            [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                        <mat-icon
-                            class="icon-size-5"
-                            *ngIf="passwordField.type === 'text'"
-                            [svgIcon]="'heroicons_solid:eye-off'"></mat-icon>
+                    <!-- Submit button -->
+                    <button 
+                        class="fuse-mat-button-large w-full mt-6" 
+                        mat-flat-button 
+                        [color]="'primary'" 
+                        [disabled]="surveyPublikForm.disabled" 
+                        (click)="start()">
+                        <span *ngIf="!surveyPublikForm.disabled" class="flex items-center justify-center">
+                            <mat-icon class="mr-2">play_arrow</mat-icon>
+                            Mulai Survey
+                        </span>
+                        <mat-progress-spinner
+                            *ngIf="surveyPublikForm.disabled"
+                            [diameter]="24"
+                            [mode]="'indeterminate'"></mat-progress-spinner>
                     </button>
-                    <mat-error>
-                        Password is required
-                    </mat-error>
-                </mat-form-field> -->
 
-                <!-- Actions -->
-                <!-- <div class="inline-flex items-end justify-between w-full mt-1.5">
-                    <mat-checkbox [color]="'primary'" [formControlName]="'rememberMe'">
-                        Remember me
-                    </mat-checkbox>
-                    <a class="text-md font-medium text-primary-500 hover:underline" [routerLink]="['/forgot-password']">Forgot password?
-                    </a>
-                </div> -->
+                    <!-- Back to options -->
+                    <div class="mt-4 text-center">
+                        <button 
+                            type="button" 
+                            class="text-sm text-gray-500 hover:text-primary-500"
+                            (click)="hideGuestForm()">
+                            ← Kembali ke pilihan
+                        </button>
+                    </div>
+                </form>
+            </div>
 
-                <!-- Submit button -->
-                <button class="fuse-mat-button-large w-full mt-6" mat-flat-button [color]="'primary'" [disabled]="surveyPublikForm.disabled" (click)="start()">
-                    <span *ngIf="!surveyPublikForm.disabled">
-                        Mulai Survey
-                    </span>
-                    <mat-progress-spinner
-                        *ngIf="surveyPublikForm.disabled"
-                        [diameter]="24"
-                        [mode]="'indeterminate'"></mat-progress-spinner>
-                </button>
-
-                <!-- Separator -->
-                <!-- <div class="flex items-center mt-8">
-                    <div class="mx-2 text-secondary">Kembali ke <a class="ml-1 text-primary-500 hover:underline ng-tns-c133-7" href="https://penerjemah.setkab.go.id/">Halaman utama </a></div>
-                </div> -->
-
-                <div class="flex items-center mt-8">
-                    <div class="text-secondary text-xs">Instansi Pembina Jabatan Fungsional Penerjemah - Sekretariat Kabinet RI © 2022 | Versi 2.0</div>
-                </div>
-            </form>
+            <!-- Footer -->
+            <div class="flex items-center mt-8">
+                <div class="text-secondary text-xs">Instansi Pembina Jabatan Fungsional Penerjemah - Sekretariat Kabinet RI © 2022 | Versi 2.0</div>
+            </div>
         </div>
     </div>
-    <div style="background-image: url(assets/images/bg-login.png); background-color: #ffffff;" class="bg-auto bg-no-repeat bg-center relative hidden md:flex flex-auto items-center justify-center w-1/2 h-full p-16 lg:px-28 overflow-hidden dark:border-l"></div>
+    
+    <!-- Background Image -->
+    <div style="background-image: url(assets/images/bg-login.png); background-color: #ffffff;" 
+         class="bg-auto bg-no-repeat bg-center relative hidden md:flex flex-auto items-center justify-center w-1/2 h-full p-16 lg:px-28 overflow-hidden dark:border-l">
+    </div>
 </div>

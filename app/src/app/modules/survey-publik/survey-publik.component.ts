@@ -24,6 +24,7 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
     surveyKuisonerId: string;
     surveyKuisoner: any;
     private _unsubscribeAll: Subject<any> = new Subject<any>();
+
     /**
      * Constructor
      */
@@ -32,7 +33,8 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
         private _surveyKuisonerService: SurveyKuisonerService,
         private _formBuilder: UntypedFormBuilder,
         private _route: ActivatedRoute,
-        private _router: Router    ) {
+        private _router: Router
+    ) {
     }
 
     // -----------------------------------------------------------------------------------------------------
@@ -53,6 +55,7 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
                 console.error('Error ambil detail survey:', err);
             }
         });
+        
         // Create the form
         this.surveyPublikForm = this._formBuilder.group({
             nama: [null, [Validators.required]],
@@ -66,6 +69,36 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
     // -----------------------------------------------------------------------------------------------------
     // @ Public methods
     // -----------------------------------------------------------------------------------------------------
+
+    /**
+     * Navigate to sign in page
+     */
+    goToSignIn(): void {
+        this._router.navigate(['/sign-in']);
+    }
+
+    /**
+     * Show guest form
+     */
+    showGuestForm(): void {
+        document.getElementById('guestForm').style.display = 'block';
+        document.getElementById('userTypeOptions').style.display = 'none';
+    }
+
+    /**
+     * Hide guest form
+     */
+    hideGuestForm(): void {
+        document.getElementById('guestForm').style.display = 'none';
+        document.getElementById('userTypeOptions').style.display = 'block';
+    }
+
+    /**
+     * Hide login option
+     */
+    hideLoginOption(): void {
+        document.getElementById('userTypeOptions').style.display = 'none';
+    }
 
     /**
      * Survey Publik
@@ -119,7 +152,6 @@ export class SurveyPublikComponent implements OnInit, OnDestroy {
                     this.surveyPublikForm.enable();
                 }
             });
-
     }
 
     ngOnDestroy(): void {

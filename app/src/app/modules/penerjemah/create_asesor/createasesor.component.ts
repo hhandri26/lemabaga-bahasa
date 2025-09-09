@@ -109,7 +109,7 @@ export class CreateComponentAsesor implements OnInit, OnDestroy {
             ))
         ).subscribe({
             next: (items: any) => {
-                this.resultInstansi = items?.content || [];
+                this.resultInstansi = items|| [];
                 this._changeDetectorRef.markForCheck();
             },
             error: (error) => {

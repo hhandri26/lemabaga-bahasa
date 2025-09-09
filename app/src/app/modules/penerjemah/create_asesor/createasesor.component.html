@@ -117,10 +117,8 @@
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Instansi</mat-label>
                     <!-- <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:location-marker'"></mat-icon> -->
-                    <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocomplete2"
-                        [placeholder]="'Cari nama Unit Kerja...'" #barSearchInput>
-                    <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear"
-                        (click)="form.get('instansiId').setValue('')">
+                    <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocomplete2" [placeholder]="'Cari nama Unit Kerja...'" #barSearchInput>
+                    <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('instansiId').setValue('')">
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
@@ -130,8 +128,8 @@
                         <span class="ml-2">Mencari instansi...</span>
                     </mat-option>
                     <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoading && resultInstansi && resultInstansi.length === 0">
-                         Instansi tidak ditemukan!
-                     </mat-option>
+                        Instansi tidak ditemukan!
+                    </mat-option>
                     <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
                         <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama}}</span>
                         <span class="text-xs text-gray-500 ml-2">({{item.jenis === 'P' ? 'Pusat' : 'Daerah'}})</span>

@@ -104,14 +104,44 @@
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Unit Kerja</mat-label>
-                    <input matInput [formControlName]="'unitKerjaNama'">
+                    <input matInput [formControlName]="'unitKerjaNama'" [matAutocomplete]="matAutocompleteUnitKerja" [placeholder]="'Cari nama Unit Kerja...'">
+                    <button *ngIf="form.get('unitKerjaNama').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('unitKerjaNama').setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
                 </mat-form-field>
+                <mat-autocomplete #matAutocompleteUnitKerja="matAutocomplete" [displayWith]="displayUnitKerjaFn" [disableRipple]="true">
+                    <mat-option *ngIf="isLoadingUnitKerja" class="is-loading">
+                        <mat-spinner diameter="20"></mat-spinner>
+                        <span class="ml-2">Mencari unit kerja...</span>
+                    </mat-option>
+                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoadingUnitKerja && resultUnitKerja && resultUnitKerja.length === 0">
+                        Unit kerja tidak ditemukan!
+                    </mat-option>
+                    <mat-option *ngFor="let item of resultUnitKerja; trackBy: trackByFn" [value]="item">
+                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama}}</span>
+                    </mat-option>
+                </mat-autocomplete>
             </div>
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">
                     <mat-label>Satuan Organisasi</mat-label>
-                    <input matInput [formControlName]="'satuanOrganisasi'">
+                    <input matInput [formControlName]="'satuanOrganisasi'" [matAutocomplete]="matAutocompleteSatuanOrganisasi" [placeholder]="'Cari nama Satuan Organisasi...'">
+                    <button *ngIf="form.get('satuanOrganisasi').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('satuanOrganisasi').setValue('')">
+                        <mat-icon>close</mat-icon>
+                    </button>
                 </mat-form-field>
+                <mat-autocomplete #matAutocompleteSatuanOrganisasi="matAutocomplete" [displayWith]="displaySatuanOrganisasiFn" [disableRipple]="true">
+                    <mat-option *ngIf="isLoadingSatuanOrganisasi" class="is-loading">
+                        <mat-spinner diameter="20"></mat-spinner>
+                        <span class="ml-2">Mencari satuan organisasi...</span>
+                    </mat-option>
+                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoadingSatuanOrganisasi && resultSatuanOrganisasi && resultSatuanOrganisasi.length === 0">
+                        Satuan organisasi tidak ditemukan!
+                    </mat-option>
+                    <mat-option *ngFor="let item of resultSatuanOrganisasi; trackBy: trackByFn" [value]="item">
+                        <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama}}</span>
+                    </mat-option>
+                </mat-autocomplete>
             </div>
             <div class="mt-4">
                 <mat-form-field class="fuse-mat-no-subscript w-full">

@@ -25,9 +25,12 @@ import { Observable } from 'rxjs/internal/Observable';
 })
 export class MutasiComponent implements OnInit, OnDestroy {
     isLoading = false;
-    
+    resultUnitKerja: any[] = [];
+    resultSatuanOrganisasi: any[] = [];
+    isLoadingUnitKerja = false;
+    isLoadingSatuanOrganisasi = false;
 
-    resultInstansi: any[];
+    resultInstansi: any[] = [];
     rwInstansi: any[] = [];
     rwUsuls: any[] = [];
     pnsId: string;
@@ -64,22 +67,96 @@ export class MutasiComponent implements OnInit, OnDestroy {
 
         this.form.get('instansiId').valueChanges
         .pipe(
+            takeUntil(this._unsubscribeAll),
+            debounceTime(300),
+            tap(() => {
+                this.isLoading = true;
+                this._changeDetectorRef.markForCheck();
+            }),
+            map((value) => {
+                if (!value || typeof value === 'object' || value.length < 2) {
+                    this.resultInstansi = [];
+                    this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
+                    return null;
+                }
+                return value;
+            }),
+            filter(value => value !== null),
+            switchMap(value => this._referensiService.instansi({ q: value, size: 10 }).pipe(
+                tap(() => {
+                    if (this.form.get('instansiId').value !== value) {
+                        this.resultInstansi = [];
+                    }
+                }),
+                finalize(() => {
+                    this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
+                })
+            ))
+        ).subscribe({
+            next: (items: any) => {
+                this.resultInstansi = items || [];
+                this._changeDetectorRef.markForCheck();
+            },
+            error: (error) => {
+                console.error('Error fetching instansi:', error);
+                this.resultInstansi = [];
+                this.isLoading = false;
+                this._changeDetectorRef.markForCheck();
+            }
+        });
+
+        this.form.get('unitkerja').valueChanges
+        .pipe(
             debounceTime(300),
             takeUntil(this._unsubscribeAll),
-            tap(() => this.isLoading = true),
+            tap(() => this.isLoadingUnitKerja = true),
             map((value) => {
                 if (!value || value.length < 2) {
-                    this.resultInstansi = null;
+                    this.resultUnitKerja = [];
                 }
                 return value;
             }),
             filter(value => value && value.length >= 2),
-            switchMap(value => this._referensiService.instansi({ q: value }).pipe(
-                finalize(() => this.isLoading = false),
+            switchMap(value => this._referensiService.unitKerja({ q: value }).pipe(
+                finalize(() => this.isLoadingUnitKerja = false),
             ))
-        ).subscribe((items: any) => {
-            this.resultInstansi = items?.content;
-            this._changeDetectorRef.markForCheck();
+        ).subscribe({
+            next: (items: any) => {
+                this.resultUnitKerja = items?.content;
+                this._changeDetectorRef.markForCheck();
+            },
+            error: () => {
+                this.isLoadingUnitKerja = false;
+                this._changeDetectorRef.markForCheck();
+            }
+        });
+
+        this.form.get('satuanorganisasi').valueChanges
+        .pipe(
+            debounceTime(300),
+            takeUntil(this._unsubscribeAll),
+            tap(() => this.isLoadingSatuanOrganisasi = true),
+            map((value) => {
+                if (!value || value.length < 2) {
+                    this.resultSatuanOrganisasi = [];
+                }
+                return value;
+            }),
+            filter(value => value && value.length >= 2),
+            switchMap(value => this._referensiService.satuanOrganisasi({ q: value }).pipe(
+                finalize(() => this.isLoadingSatuanOrganisasi = false),
+            ))
+        ).subscribe({
+            next: (items: any) => {
+                this.resultSatuanOrganisasi = items?.filter(item => item.nama) || [];
+                this._changeDetectorRef.markForCheck();
+            },
+            error: () => {
+                this.isLoadingSatuanOrganisasi = false;
+                this._changeDetectorRef.markForCheck();
+            }
         });
     }
 
@@ -296,6 +373,14 @@ export class MutasiComponent implements OnInit, OnDestroy {
         this.selected = null;
     }
     displayInstansiFn(item: { nama: string; jenis: string }) {
+        if (item) { return item.nama; }
+    }
+
+    displayUnitKerjaFn(item: any) {
+        if (item) { return item.nama; }
+    }
+
+    displaySatuanOrganisasiFn(item: any) {
         if (item) { return item.nama; }
     }
     ngOnDestroy(): void {

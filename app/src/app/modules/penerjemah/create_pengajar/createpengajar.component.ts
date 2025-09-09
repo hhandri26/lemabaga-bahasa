@@ -32,6 +32,9 @@ export class CreateComponentPengajar implements OnInit, OnDestroy {
 
     resultInstansi: any[];
     resultUnitKerja: any[];
+    resultSatuanOrganisasi: any[];
+    isLoadingUnitKerja = false;
+    isLoadingSatuanOrganisasi = false;
     roles$: Observable<any[]> = this._referensiService.roles();
     resultTempatLahir: any[];
     jenisKelaminList = this._helperService.jenisKelaminList();
@@ -125,26 +128,89 @@ export class CreateComponentPengajar implements OnInit, OnDestroy {
             }
         });
 
-        // this.form.get('unitKerjaId').valueChanges
-        //     .pipe(
-        //         debounceTime(300),
-        //         takeUntil(this._unsubscribeAll),
-        //         tap(() => this.isLoading = true),
-        //         map((value) => {
-        //             if (!value || value.length < 2) {
-        //                 this.resultUnitKerja = null;
-        //             }
-        //             return value;
-        //         }),
-        //         filter(value => value && value.length >= 2),
-        //         switchMap(value => this._referensiService.unitKerja({ q: value }).pipe(
-        //             finalize(() => this.isLoading = false),
-        //         ))
-        //     ).subscribe((items: any) => {
-        //         console.log(items);
-        //         this.resultUnitKerja = items;
-        //         this._changeDetectorRef.markForCheck();
-        //     });
+        this.form.get('unitKerjaNama').valueChanges
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                debounceTime(300),
+                tap(() => {
+                    this.isLoadingUnitKerja = true;
+                    this._changeDetectorRef.markForCheck();
+                }),
+                map((value) => {
+                    if (!value || typeof value === 'object' || value.length < 2) {
+                        this.resultUnitKerja = [];
+                        this.isLoadingUnitKerja = false;
+                        this._changeDetectorRef.markForCheck();
+                        return null;
+                    }
+                    return value;
+                }),
+                filter(value => value !== null),
+                switchMap(value => this._referensiService.unitKerja({ q: value }).pipe(
+                    tap(() => {
+                        if (this.form.get('unitKerjaNama').value !== value) {
+                            this.resultUnitKerja = [];
+                        }
+                    }),
+                    finalize(() => {
+                        this.isLoadingUnitKerja = false;
+                        this._changeDetectorRef.markForCheck();
+                    })
+                ))
+            ).subscribe({
+                next: (items: any) => {
+                    this.resultUnitKerja = items?.content || [];
+                    this._changeDetectorRef.markForCheck();
+                },
+                error: (error) => {
+                    console.error('Error fetching unit kerja:', error);
+                    this.resultUnitKerja = [];
+                    this.isLoadingUnitKerja = false;
+                    this._changeDetectorRef.markForCheck();
+                }
+            });
+
+        this.form.get('satuanOrganisasi').valueChanges
+            .pipe(
+                takeUntil(this._unsubscribeAll),
+                debounceTime(300),
+                tap(() => {
+                    this.isLoadingSatuanOrganisasi = true;
+                    this._changeDetectorRef.markForCheck();
+                }),
+                map((value) => {
+                    if (!value || typeof value === 'object' || value.length < 2) {
+                        this.resultSatuanOrganisasi = [];
+                        this.isLoadingSatuanOrganisasi = false;
+                        this._changeDetectorRef.markForCheck();
+                        return null;
+                    }
+                    return value;
+                }),
+                filter(value => value !== null),
+                switchMap(value => this._referensiService.satuanOrganisasi({ q: value }).pipe(
+                    tap(() => {
+                        if (this.form.get('satuanOrganisasi').value !== value) {
+                            this.resultSatuanOrganisasi = [];
+                        }
+                    }),
+                    finalize(() => {
+                        this.isLoadingSatuanOrganisasi = false;
+                        this._changeDetectorRef.markForCheck();
+                    })
+                ))
+            ).subscribe({
+                next: (items: any) => {
+                    this.resultSatuanOrganisasi = (items || []).filter(item => item.nama);
+                    this._changeDetectorRef.markForCheck();
+                },
+                error: (error) => {
+                    console.error('Error fetching satuan organisasi:', error);
+                    this.resultSatuanOrganisasi = [];
+                    this.isLoadingSatuanOrganisasi = false;
+                    this._changeDetectorRef.markForCheck();
+                }
+            });
 
         this.form.get('tempatLahirId').valueChanges
             .pipe(
@@ -233,6 +299,14 @@ export class CreateComponentPengajar implements OnInit, OnDestroy {
     }
 
     displayInstansiFn(item: { nama: string; jenis: string }) {
+        if (item) { return item.nama; }
+    }
+
+    displayUnitKerjaFn(item: { nama: string }) {
+        if (item) { return item.nama; }
+    }
+
+    displaySatuanOrganisasiFn(item: { nama: string }) {
         if (item) { return item.nama; }
     }
 

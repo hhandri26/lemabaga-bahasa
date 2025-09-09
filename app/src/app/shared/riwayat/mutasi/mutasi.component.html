@@ -1,4 +1,4 @@
-    <mat-tab-group class="sm:px-2" [animationDuration]="'0'" class="ml-0 pl-0 mt-5">
+<mat-tab-group class="sm:px-2" [animationDuration]="'0'" class="ml-0 pl-0 mt-5">
         <mat-tab label="Data Disetujui">
             <ng-template matTabContent>
                 <div class="flex flex-col w-full">
@@ -73,40 +73,69 @@
                                                     <mat-form-field class="fuse-mat-no-subscript w-full">
                                                         <mat-label>Instansi</mat-label>
                                                         <mat-icon matPrefix class="hidden sm:flex icon-size-5" [svgIcon]="'heroicons_solid:search'"></mat-icon>
-                                                        <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocompletePendidikan"
-                                                            [placeholder]="'Cari nama instansi...'">
-                                                        <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear"
-                                                            (click)="form.get('instansiId').setValue('')">
+                                                        <input matInput [formControlName]="'instansiId'" [matAutocomplete]="matAutocompletePendidikan" [placeholder]="'Cari nama instansi...'">
+                                                        <button *ngIf="form.get('instansiId').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('instansiId').setValue('')">
                                                             <mat-icon>close</mat-icon>
                                                         </button>
                                                     </mat-form-field>
-                                                    <mat-autocomplete #matAutocompletePendidikan="matAutocomplete" [displayWith]="displayInstansiFn"
-                                                        [disableRipple]="true">
-                                                        <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent"
-                                                            *ngIf="resultInstansi && !resultInstansi.length">
+                                                    <mat-autocomplete #matAutocompletePendidikan="matAutocomplete" [displayWith]="displayInstansiFn" [disableRipple]="true">
+                                                        <mat-option *ngIf="isLoading" class="is-loading">
+                                                            <mat-spinner diameter="20"></mat-spinner>
+                                                            <span class="ml-2">Mencari instansi...</span>
+                                                        </mat-option>
+                                                        <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoading && resultInstansi && resultInstansi.length === 0">
                                                             Instansi tidak ditemukan!
                                                         </mat-option>
                                                         <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
-                                                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis
-                                                                === 'P') ? 'Pusat' : 'Daerah'}}</span>
+                                                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama | titlecase}} - {{(item.jenis === 'P') ? 'Pusat' : 'Daerah'}}</span>
                                                         </mat-option>
                                                     </mat-autocomplete>
                                                     <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">
                                                         Anda harus memilih pilihan instansi dari hasil pencarian
                                                     </mat-error>
+                                                </div> 
+                                                <div class="mt-4">
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                        <mat-label>Unit Kerja</mat-label>
+                                                        <input matInput [formControlName]="'unitkerja'" [matAutocomplete]="matAutocompleteUnitKerja" [placeholder]="'Cari nama Unit Kerja...'">
+                                                        <button *ngIf="form.get('unitkerja').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('unitkerja').setValue('')">
+                                                            <mat-icon>close</mat-icon>
+                                                        </button>
+                                                    </mat-form-field>
+                                                    <mat-autocomplete #matAutocompleteUnitKerja="matAutocomplete" [displayWith]="displayUnitKerjaFn" [disableRipple]="true">
+                                                        <mat-option *ngIf="isLoadingUnitKerja" class="is-loading">
+                                                            <mat-spinner diameter="20"></mat-spinner>
+                                                            <span class="ml-2">Mencari unit kerja...</span>
+                                                        </mat-option>
+                                                        <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoadingUnitKerja && resultUnitKerja && resultUnitKerja.length === 0">
+                                                            Unit kerja tidak ditemukan!
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let item of resultUnitKerja; trackBy: trackByFn" [value]="item">
+                                                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama}}</span>
+                                                        </mat-option>
+                                                    </mat-autocomplete>
                                                 </div>
-                                            <div class="mt-4">
-                                                <mat-form-field class="fuse-mat-no-subscript w-full">
-                                                    <mat-label>Satuan Organisasi</mat-label>
-                                                    <input matInput [formControlName]="'satuanorganisasi'" [spellcheck]="false">
-                                                </mat-form-field>
-                                            </div>
-                                            <div class="mt-4">
-                                                <mat-form-field class="fuse-mat-no-subscript w-full">
-                                                    <mat-label>Unit Kerja</mat-label>
-                                                    <input matInput [formControlName]="'unitkerja'" [spellcheck]="false">
-                                                </mat-form-field>
-                                            </div>
+                                                <div class="mt-4">
+                                                    <mat-form-field class="fuse-mat-no-subscript w-full">
+                                                        <mat-label>Satuan Organisasi</mat-label>
+                                                        <input matInput [formControlName]="'satuanorganisasi'" [matAutocomplete]="matAutocompleteSatuanOrganisasi" [placeholder]="'Cari nama Satuan Organisasi...'">
+                                                        <button *ngIf="form.get('satuanorganisasi').value" matSuffix mat-icon-button aria-label="Clear" (click)="form.get('satuanorganisasi').setValue('')">
+                                                            <mat-icon>close</mat-icon>
+                                                        </button>
+                                                    </mat-form-field>
+                                                    <mat-autocomplete #matAutocompleteSatuanOrganisasi="matAutocomplete" [displayWith]="displaySatuanOrganisasiFn" [disableRipple]="true">
+                                                        <mat-option *ngIf="isLoadingSatuanOrganisasi" class="is-loading">
+                                                            <mat-spinner diameter="20"></mat-spinner>
+                                                            <span class="ml-2">Mencari satuan organisasi...</span>
+                                                        </mat-option>
+                                                        <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoadingSatuanOrganisasi && resultSatuanOrganisasi && resultSatuanOrganisasi.length === 0">
+                                                            Satuan organisasi tidak ditemukan!
+                                                        </mat-option>
+                                                        <mat-option *ngFor="let item of resultSatuanOrganisasi; trackBy: trackByFn" [value]="item">
+                                                            <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama}}</span>
+                                                        </mat-option>
+                                                    </mat-autocomplete>
+                                                </div> 
                                             <div class="mt-4">
                                                 <mat-form-field class="fuse-mat-no-subscript w-full">
                                                     <mat-label>No. SK</mat-label>

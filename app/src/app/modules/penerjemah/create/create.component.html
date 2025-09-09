@@ -84,13 +84,17 @@
                         <mat-icon>close</mat-icon>
                     </button>
                 </mat-form-field>
-                <mat-autocomplete #matAutocomplete2="matAutocomplete" [displayWith]="displayFn" [disableRipple]="true">
-                    <!-- <mat-option *ngIf="isLoading" class="is-loading"><mat-spinner diameter="20"></mat-spinner></mat-option> -->
-                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultInstansi && !resultInstansi.length">
+                <mat-autocomplete #matAutocomplete2="matAutocomplete" [displayWith]="displayInstansiFn" [disableRipple]="true">
+                    <mat-option *ngIf="isLoading" class="is-loading">
+                        <mat-spinner diameter="20"></mat-spinner>
+                        <span class="ml-2">Mencari instansi...</span>
+                    </mat-option>
+                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoading && resultInstansi && resultInstansi.length === 0">
                         Instansi tidak ditemukan!
                     </mat-option>
                     <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">
                         <span class="text-sm font-semibold tracking-wider text-secondary">{{item.nama}}</span>
+                        <span class="text-xs text-gray-500 ml-2">({{item.jenis === 'P' ? 'Pusat' : 'Daerah'}})</span>
                     </mat-option>
                 </mat-autocomplete>
                 <mat-error *ngIf="form.controls['instansiId'].hasError('incorrect')">

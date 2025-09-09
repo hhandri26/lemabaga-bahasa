@@ -53,7 +53,11 @@ item === 'ROLE_INSTRUKTUR' ? 'Role Assesor' :
                     </button>
                 </mat-form-field>
                 <mat-autocomplete #matAutocompletePendidikan="matAutocomplete" [displayWith]="displayInstansiFn" [disableRipple]="true">
-                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="resultInstansi && !resultInstansi.length">
+                    <mat-option *ngIf="isLoading" class="is-loading">
+                        <mat-spinner diameter="20"></mat-spinner>
+                        <span class="ml-2">Mencari instansi...</span>
+                    </mat-option>
+                    <mat-option class="py-0 px-6 text-md pointer-events-none text-secondary bg-transparent" *ngIf="!isLoading && resultInstansi && resultInstansi.length === 0">
                         Instansi tidak ditemukan!
                     </mat-option>
                     <mat-option *ngFor="let item of resultInstansi; trackBy: trackByFn" [value]="item">

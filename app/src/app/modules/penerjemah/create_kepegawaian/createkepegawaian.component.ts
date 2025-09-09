@@ -84,22 +84,44 @@ export class CreateComponentKepegawaian implements OnInit, OnDestroy {
 
         this.form.get('instansiId').valueChanges
         .pipe(
-            debounceTime(300),
             takeUntil(this._unsubscribeAll),
-            tap(() => this.isLoading = true),
+            debounceTime(300),
+            tap(() => {
+                this.isLoading = true;
+                this._changeDetectorRef.markForCheck();
+            }),
             map((value) => {
-                if (!value || value.length < 2) {
-                    this.resultInstansi = null;
+                if (!value || typeof value === 'object' || value.length < 2) {
+                    this.resultInstansi = [];
+                    this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
+                    return null;
                 }
                 return value;
             }),
-            filter(value => value && value.length >= 2),
-            switchMap(value => this._referensiService.instansi({ q: value }).pipe(
-                finalize(() => this.isLoading = false),
+            filter(value => value !== null),
+            switchMap(value => this._referensiService.instansi({ q: value, size: 10 }).pipe(
+                tap(() => {
+                    if (this.form.get('instansiId').value !== value) {
+                        this.resultInstansi = [];
+                    }
+                }),
+                finalize(() => {
+                    this.isLoading = false;
+                    this._changeDetectorRef.markForCheck();
+                })
             ))
-        ).subscribe((items: any) => {
-            this.resultInstansi = items?.content;
-            this._changeDetectorRef.markForCheck();
+        ).subscribe({
+            next: (items: any) => {
+                this.resultInstansi = items?.content || [];
+                this._changeDetectorRef.markForCheck();
+            },
+            error: (error) => {
+                console.error('Error fetching instansi:', error);
+                this.resultInstansi = [];
+                this.isLoading = false;
+                this._changeDetectorRef.markForCheck();
+            }
         });
 
         // this.form.get('unitKerjaId').valueChanges
